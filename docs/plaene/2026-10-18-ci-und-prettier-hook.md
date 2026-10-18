@@ -1,6 +1,6 @@
 ---
 titel: "Plan: CI und Prettier-Hook"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-18
 tags: [plan, ci, github-actions, hooks, phase-0]
 ---
@@ -65,7 +65,7 @@ die CI rot macht. Der Hook übernimmt das Muster des ruff-Hooks aus sport-fantas
 - Nutzt: die npm-Skripte `check` und `build` aus `package.json`
 - Liefert: einen Check mit dem Namen `CI / check` an jedem PR. `gh pr checks <nr>` zeigt ihn an.
 
-- [ ] **Schritt 1: Workflow und falsch formatierte Probedatei schreiben**
+- [x] **Schritt 1: Workflow und falsch formatierte Probedatei schreiben**
 
 `.github/workflows/ci.yml`:
 - `name: CI`
@@ -76,7 +76,7 @@ die CI rot macht. Der Hook übernimmt das Muster des ruff-Hooks aus sport-fantas
 
 `app/ci-probe.ts` enthält genau eine Zeile: `export const probe   =   1` (falsch formatiert).
 
-- [ ] **Schritt 2: Pushen und PR öffnen, die CI muss rot sein**
+- [x] **Schritt 2: Pushen und PR öffnen, die CI muss rot sein**
 
 ```bash
 git add .github/workflows/ci.yml app/ci-probe.ts
@@ -89,7 +89,7 @@ gh pr checks --watch
 Erwartet: `check` mit Status **fail**. In `gh run view --log-failed` meldet `npm run format:check` die Datei
 `app/ci-probe.ts`.
 
-- [ ] **Schritt 3: Probedatei löschen, die CI muss grün sein**
+- [x] **Schritt 3: Probedatei löschen, die CI muss grün sein**
 
 ```bash
 git rm app/ci-probe.ts
@@ -100,7 +100,7 @@ gh pr checks --watch
 
 Erwartet: `check` mit Status **pass**.
 
-- [ ] **Schritt 4: Doku**
+- [x] **Schritt 4: Doku**
 
 - `docs/tools/GitHub Actions - Einrichtung.md` (Frontmatter wie alle Notizen) beschreibt:
   - was der Workflow prüft und wann er läuft
@@ -112,7 +112,7 @@ Erwartet: `check` mit Status **pass**.
 - `Tools Übersicht.md`: neue Zeile „GitHub Actions | 2026-10-18 | prüft jeden PR automatisch“.
 - `CLAUDE.md`, Abschnitt „Befehle“: neue Zeile `gh pr checks <nr>   # vor jedem Merge: CI muss grün sein`.
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -137,7 +137,7 @@ Erwartet: `npm run check` mit Exit-Code 0 und `check` mit Status **pass**. `gh p
 - Liefert: Hook-Skript. Eingabe ist JSON auf stdin mit `.tool_input.file_path`. Exit-Code 0 bedeutet „fertig
   oder nicht zuständig“, Exit-Code 2 bedeutet „Meldung auf stderr geht an Claude“.
 
-- [ ] **Schritt 1: Prüfaufrufe festlegen, sie müssen fehlschlagen (das Skript gibt es noch nicht)**
+- [x] **Schritt 1: Prüfaufrufe festlegen, sie müssen fehlschlagen (das Skript gibt es noch nicht)**
 
 Mit `export CLAUDE_PROJECT_DIR="$PWD"` und `h=.claude/hooks/prettier-nach-aenderung.sh`:
 
@@ -151,7 +151,7 @@ Mit `export CLAUDE_PROJECT_DIR="$PWD"` und `h=.claude/hooks/prettier-nach-aender
 
 Jetzt `bash -c "…Aufruf a)…"`: Erwartet ist der Fehler „No such file or directory“.
 
-- [ ] **Schritt 2: `.claude/hooks/prettier-nach-aenderung.sh` schreiben**
+- [x] **Schritt 2: `.claude/hooks/prettier-nach-aenderung.sh` schreiben**
 
 Aufbau wie `sport-fantasy/.claude/hooks/ruff-nach-aenderung.sh`:
 - Pfad mit `jq` lesen.
@@ -162,11 +162,11 @@ Aufbau wie `sport-fantasy/.claude/hooks/ruff-nach-aenderung.sh`:
   Grund wie beim ruff-Hook).
 - Danach `chmod +x`.
 
-- [ ] **Schritt 3: Prüfaufrufe a) bis e) wiederholen, alle müssen das Erwartete liefern, dann Probedateien löschen**
+- [x] **Schritt 3: Prüfaufrufe a) bis e) wiederholen, alle müssen das Erwartete liefern, dann Probedateien löschen**
 
 `rm "app/probe datei.ts" app/probe-kaputt.ts app/probe-lint.tsx`
 
-- [ ] **Schritt 4: Hook anmelden und im echten Betrieb prüfen**
+- [x] **Schritt 4: Hook anmelden und im echten Betrieb prüfen**
 
 In `.claude/settings.json` unter `hooks.PostToolUse` einen Eintrag mit `matcher: "Write|Edit"`, Befehl
 `"$CLAUDE_PROJECT_DIR"/.claude/hooks/prettier-nach-aenderung.sh`, `timeout: 30` und
@@ -177,7 +177,7 @@ Prüfen: Claude Code liest die Hooks beim Start ein. Deshalb nach einem Neustart
 danach `export const b = 2;`. Dann die Datei löschen. Geht das in der Session nicht mehr, kommt der Test als
 Restpunkt in die Übergabe.
 
-- [ ] **Schritt 5: Doku, prüfen und committen**
+- [x] **Schritt 5: Doku, prüfen und committen**
 
 - `docs/tools/Claude Code - Einrichtung.md`: welche Hooks und Sperren das Projekt hat, die Prüfaufrufe aus Schritt 1
   als Anleitung zum Testen, Verweis auf [[Claude Code]].
