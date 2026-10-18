@@ -1,0 +1,3 @@
+# Doku gehört Obsidian, Prettier formatiert nur Code
+*.md
+package-lock.json
