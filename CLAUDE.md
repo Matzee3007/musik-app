@@ -13,8 +13,9 @@ Regeln von Next.js für Coding-Agents (Doku der installierten Version in `node_m
 
 Hitster Bingo als Web-App, damit der Entwickler es mit seinen Freunden spielen kann: Ein Rad wählt eine Kategorie
 (Titel, Interpret, Jahrzehnt, Erscheinungsjahr, Jahr ±3), ein Song aus einer eigenen Spotify-Playlist läuft,
-wer richtig antwortet, hakt ein Feld seiner 5×5-Bingo-Karte ab. Der Laptop ist der „Tisch“, jeder Spieler hat Karte
-und Antworten auf dem eigenen Handy. Kein Streamingdienst und kein öffentliches Produkt unter dem Namen „Hitster“.
+wer richtig liegt, hakt ein Feld seiner 5×5-Karte ab (die Spieler prüfen selbst, `docs/adr/0002-spieler-pruefen-selbst.md`).
+Der Laptop ist der „Tisch“, jeder Spieler hat Karte und Notizfläche auf dem eigenen Handy. Kein Streamingdienst und kein
+öffentliches Produkt unter dem Namen „Hitster“. Fachbegriffe: `docs/Glossar.md`.
 
 Gleichwertiges Ziel ist das **Lernen**: TypeScript, Spotify in eine App einbinden und aus einer Idee Schritt für
 Schritt eine funktionierende App entwickeln.
@@ -34,9 +35,10 @@ Begründung und Alternativen: `docs/adr/0001-stack.md`.
 
 1. **Nur der DJ meldet sich bei Spotify an.** Mitspieler treten über einen Raum-Code bei und brauchen kein
    Spotify-Konto. Grund: Eine private Spotify-App erlaubt höchstens 5 freigeschaltete Konten.
-2. **Spiellogik als reine Funktionen, testgetrieben:** Rad, Karte, Antwortprüfung und Bingo-Erkennung hängen
+2. **Spiellogik als reine Funktionen, testgetrieben:** Rad, Karte, Songauswahl und Bingo-Erkennung hängen
    weder an React noch an Spotify oder Supabase.
-3. **Kategorien sind Daten, nicht Code.** Eine neue Kategorie braucht Name, Farbe und Prüfregel, keinen Umbau.
+3. **Kategorien sind Daten, nicht Code.** Eine neue Kategorie braucht Name, Farbe und Lösung (welche Angabe
+   zum Song sie zeigt), keinen Umbau.
 4. **Das Erscheinungsjahr kommt nicht nur von Spotify.** Album-Daten von Remastern und Best-ofs sind oft falsch,
    das Jahr kommt aus MusicBrainz und lässt sich vom DJ korrigieren. Es wird je Playlist einmal ermittelt und
    gespeichert, nicht während des Spiels.
