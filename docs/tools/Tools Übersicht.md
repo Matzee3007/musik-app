@@ -21,7 +21,7 @@ alle benutzten Befehle, Fehler.
 |---|---|---|
 | [[Git]], [[GitHub und gh]] | 2026-10-18 | Versionen und Repo `musik-app` |
 | [[Claude Code]] | 2026-10-18 | KI-Entwickler im Terminal |
-| [[Next.js]] (mit Node.js 24, npm, TypeScript, React) | 2026-10-18 | Oberfläche und Server-Teil der App |
+| [[Next.js.md\|Next.js]] (mit Node.js 24, npm, TypeScript, React) | 2026-10-18 | Oberfläche und Server-Teil der App |
 | [[Vitest, ESLint und Prettier]] | 2026-10-18 | Tests, Code prüfen, einheitlich formatieren |
 
 ## Geplant

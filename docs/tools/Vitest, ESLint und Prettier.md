@@ -34,7 +34,7 @@ Spiellogik testgetrieben bauen (ab Phase 1), Oberfläche prüfen, einheitlicher 
 
 ## Wie haben wir es eingerichtet?
 
-1. **2026-10-18:** ESLint 9 kam mit `create-next-app` (`eslint-config-next`), siehe [[Next.js]].
+1. **2026-10-18:** ESLint 9 kam mit `create-next-app` (`eslint-config-next`), siehe [[Next.js.md|Next.js]].
 2. Vitest nach der Next.js-Doku (Guide „Vitest“): `npm install -D vitest @vitejs/plugin-react jsdom
    @testing-library/react @testing-library/dom vite-tsconfig-paths`, dazu `vitest.config.mts` mit
    `environment: "jsdom"`. Vitest 5.0.5.
@@ -66,4 +66,4 @@ npm run check        # vor jedem Commit
 
 ## Fehler, die uns passiert sind
 
-- Konflikt bei der Installation von Vitest (`ERESOLVE`): siehe [[Next.js]], Abschnitt „Fehler“.
+- Konflikt bei der Installation von Vitest (`ERESOLVE`): siehe [[Next.js.md|Next.js]], Abschnitt „Fehler“.

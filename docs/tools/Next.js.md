@@ -92,3 +92,8 @@ npm run check   # vor jedem Commit: lint, format:check, typecheck, test
   `micromatch` → `braces` (Absturz durch tief verschachtelte Suchmuster). `npm audit --omit=dev`: 0 Lücken.
   **Entscheidung:** so lassen, die Suchmuster schreiben wir selbst. `npm audit fix --force` würde Pakete
   zurückstufen, die nicht zu Next.js 16 passen. Bei jedem Update von Next.js erneut prüfen.
+- Notiz „Next.js“ in Obsidian verwaist, obwohl `[[Next.js]]` dreimal verlinkt war. **Ursache:** Obsidian liest
+  `.js` als Dateiendung und löst den Link auf `node_modules/next/dist/server/next.js` auf (geprüft mit
+  `obsidian links path=…`). **Lösung:** `[[Next.js.md|Next.js]]`, in Tabellen `[[Next.js.md\|Next.js]]`.
+  Dazu `node_modules/` in `.vault-pruefung.json` ausgeschlossen, das Prüfskript las sonst rund 1.200 README-Dateien
+  der Pakete.

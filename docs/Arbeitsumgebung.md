@@ -12,7 +12,7 @@ Die Einrichtung des Rechners für alle Projekte (Terminal, Statuszeile, `install
 
 ## Voraussetzungen
 
-- Node.js 24 LTS mit npm 11 (Homebrew `node@24`, eingerichtet 2026-10-18, siehe [[Next.js]])
+- Node.js 24 LTS mit npm 11 (Homebrew `node@24`, eingerichtet 2026-10-18, siehe [[Next.js.md|Next.js]])
 - Spotify Premium für das Konto des DJs (Web Playback SDK, Development Mode)
 - ab Phase 3: Supabase CLI und Docker Desktop für die lokale Datenbank
 
