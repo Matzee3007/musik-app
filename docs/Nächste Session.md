@@ -33,8 +33,7 @@ einem Gerät**.
    - **Agents nach dem SDLC-Artikel (Ecosystem):** einen Code-Reviewer (vorher testen, ob das eingebaute
      `/code-review` reicht) und einen Verifier als nur lesende Agents in `agents/qualitaets-agents/`, dazu eine
      `REVIEW.md` je Projekt. Bewertung im [[Lernjournal Phase 0 - Projektstart|Journal]] unter „AI-native SDLC
-     Playbook“. Das Ecosystem hat noch nicht committete Änderungen von dir (`agents/meta-agents/` nach
-     `agents/lern-agents/meta-agents/` verschoben).
+     Playbook“.
    - **Ecosystem-Restpunkte:** Abkürzungen `SDLC` (Software Development Lifecycle) und `YAGNI` (You Aren't Gonna
      Need It) in `~/claude-ecosystem/docs/Abkürzungen.md` eintragen. Die allgemeine Notiz „GitHub Actions“ liegt nur
      in sport-fantasy und soll nach `docs/werkzeuge/` umziehen. Regel „zweimal derselbe Fehler, dann in die
