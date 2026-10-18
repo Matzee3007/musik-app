@@ -98,9 +98,9 @@ Begründung und Alternativen: [[0001-stack|ADR 0001]].
 Jede Phase endet mit etwas, das läuft und getestet ist. Eine fertige Phase wird in derselben Session
 abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
 
-- [ ] **Phase 0 – Fundament:** Repo und `CLAUDE.md` stehen, Node, TypeScript und Next.js eingerichtet, ESLint,
-  Prettier und Vitest, erster Test grün, CI mit GitHub Actions, Projektvision mit `/grill-with-docs` geschärft,
-  Phasen 1 bis 3 geplant
+- [x] **Phase 0 – Fundament:** Repo und `CLAUDE.md` stehen, Node, TypeScript und Next.js eingerichtet, ESLint,
+  Prettier und Vitest, erster Test grün, CI mit GitHub Actions, Projektvision mit `/grill-with-docs` geschärft.
+  Statt „Phasen 1 bis 3 geplant“: Jede Phase wird zu Beginn mit `plan-schreiben` geplant (abgeschlossen 2026-10-18)
 - [ ] **Phase 1 – Spiel auf einem Gerät:** Rad, Karte 5×5 mit Farben je Kategorie, Auflösung, Abhaken,
   Bingo-Erkennung, testgetrieben. Tisch und Karte nebeneinander am Laptop, feste Songliste, noch ohne Spotify
 - [ ] **Phase 2 – Spotify:** Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
