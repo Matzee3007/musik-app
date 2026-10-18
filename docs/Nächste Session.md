@@ -7,7 +7,7 @@ tags: [session, übergabe]
 
 # Nächste Session
 
-Stand vom 2026-10-18. Gehört zu [[Projektvision]]. Angelegt von `/projekt-starten`, ab dem ersten
+Stand vom 2026-10-18. Gehört zu [[Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]]. Angelegt von `/projekt-starten`, ab dem ersten
 Session-Ende schreibt der Skill `naechste-session` diese Datei.
 
 ## Stand bei Sessionende
