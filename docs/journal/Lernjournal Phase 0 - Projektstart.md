@@ -1,9 +1,9 @@
 ---
 titel: Lernjournal Phase 0 - Projektstart
-status: aktiv
+status: abgeschlossen
 phase: 0
 erstellt: 2026-10-18
-tags: [lernjournal, phase-0, projekt-starten, spotify, musicbrainz, nextjs, typescript, node, vitest]
+tags: [lernjournal, phase-0, projekt-starten, spotify, musicbrainz, nextjs, typescript, node, vitest, grill-with-docs, github-actions, hooks]
 ---
 
 # Lernjournal Phase 0: Projektstart
@@ -23,8 +23,19 @@ Erstes Journal der Musik-App. Gehört zu [[Projektvision]]. Angelegt in einer Se
 - [x] Erster Test (Startseite zeigt „Musik-App“) erst rot, dann grün, `npm run check` Exit 0, `npm run build` läuft
 - [x] Privates Repo `Matzee3007/musik-app`, erster Commit direkt auf `main`
 - [x] Links im Vault repariert und `node_modules/` von der Vault-Prüfung ausgeschlossen (PR #1)
-- [ ] Projektvision mit `/grill-with-docs` schärfen
-- [ ] CI mit GitHub Actions, evtl. Prettier-Hook
+- [x] Projektvision mit `/grill-with-docs` geschärft (zweite Session am 2026-10-18, PR #3): [[Glossar]] mit
+  15 Begriffen, [[0002-spieler-pruefen-selbst|ADR 0002]] (die App prüft keine Antworten), Spielregeln im Detail in der
+  [[Projektvision]], Prinzipien 2, 3 und 5 in Vision und `CLAUDE.md` angepasst
+- [x] Plan [[2026-10-18-ci-und-prettier-hook|Plan: CI und Prettier-Hook]] mit `plan-schreiben` geschrieben und
+  umgesetzt (PR #4)
+- [x] CI mit GitHub Actions: `.github/workflows/ci.yml` erst rot mit Probedatei, dann grün, Doku in
+  [[GitHub Actions - Einrichtung]]
+- [x] Prettier- und ESLint-Hook nach jeder Änderung durch Claude, fünf Prüfaufrufe bestanden, Doku in
+  [[Claude Code - Einrichtung]]
+- [x] Roadmap-Punkt „Phasen 1 bis 3 geplant“ ersetzt: Jede Phase wird zu Beginn mit `plan-schreiben` geplant, für
+  Phase 2 und 3 wäre ein Plan heute Raten
+- [x] Artikel „AI-native SDLC Playbook“ gegen das Ecosystem bewertet, Ergebnis unter „Neu gelernt“
+- [x] Phase 0 abgeschlossen, PRs #3 und #4 gemergt
 
 ## Befehle: Stack einrichten
 
@@ -149,15 +160,136 @@ Paketen. Mit `npm install-scripts ls` sieht man, was wartet, `approve` oder `den
 - **Lösung:** `[[Next.js.md|Next.js]]`, in Tabellen mit `\|`. `node_modules/` in `.vault-pruefung.json` ausgeschlossen.
 - **Prüfen:** `obsidian backlinks path=…/Next.js.md` zeigt 3 Notizen, `pruefen.py` → SAUBER.
 
+## Befehle: Fragerunde und Plan
+
+```bash
+git checkout -b docs/projektvision-schaerfen
+git switch -c feature/ci
+gh api repos/actions/setup-node/releases/latest -q '.tag_name'
+gh repo view --json visibility -q .visibility
+```
+
+- `git checkout -b` / `git switch -c`: neuen Branch anlegen und hineinwechseln, ein Branch pro Feature.
+- `gh api repos/<owner>/<repo>/releases/latest`: neueste Version einer GitHub Action nachsehen, statt eine alte
+  aus dem Gedächtnis zu nehmen (heute `checkout@v7`, `setup-node@v7`).
+- `gh repo view --json visibility`: zeigt, ob das Repo privat ist. Wichtig für Branch-Schutz (siehe unten).
+
+## Befehle: CI und PRs
+
+```bash
+gh pr create --draft --title "…" --body "…"
+gh pr checks --watch
+gh run view <id> --log-failed
+gh pr ready 4
+gh pr update-branch 3
+gh pr merge 4 --merge --delete-branch
+```
+
+- `gh pr create --draft`: PR als Entwurf öffnen, solange er noch nicht zum Mergen gedacht ist.
+- `gh pr checks --watch`: wartet, bis die CI des PRs fertig ist, und zeigt `pass` oder `fail`.
+- `gh run view <id> --log-failed`: nur die Log-Zeilen des fehlgeschlagenen Schritts, z. B. welche Datei Prettier
+  bemängelt.
+- `gh pr ready`: Entwurfsstatus wegnehmen.
+- `gh pr update-branch`: holt den neuen Stand von `main` in den Branch eines PRs. PR #3 war älter als die CI und
+  bekam so erst seinen ersten Check.
+- `gh pr merge --merge --delete-branch`: PR mit Merge-Commit übernehmen und den Branch löschen.
+
+## Befehle: Hook testen
+
+```bash
+chmod +x .claude/hooks/prettier-nach-aenderung.sh
+echo "{\"tool_input\":{\"file_path\":\"$PWD/app/probe datei.ts\"}}" | .claude/hooks/prettier-nach-aenderung.sh
+```
+
+- `chmod +x`: macht das Skript ausführbar, sonst kann Claude Code es nicht starten.
+- `echo '{…}' | <hook>`: spielt Claude Code nach. Der Hook liest das JSON von stdin, so lässt er sich ohne Claude
+  prüfen.
+
+## Neu gelernt (zweite Session)
+
+### Skills, die nur der Entwickler starten kann
+
+`disable-model-invocation: true` im Frontmatter einer `SKILL.md` versteckt den Skill vor Claude. Er läuft nur, wenn
+der Entwickler `/grill-with-docs` tippt. So startet eine lange Fragerunde nicht ungefragt.
+
+### Fragerunden als Entscheidungsbaum
+
+`/grill-with-docs` stellt in jeder Runde alle Fragen, deren Voraussetzungen schon geklärt sind (die „Front“), jede mit
+Empfehlung. Fakten sucht Claude selbst (heute die Originalregeln), Entscheidungen trifft der Entwickler. Begriffe
+kommen sofort ins Glossar, ein ADR nur, wenn eine Entscheidung schwer umkehrbar, überraschend und echt abgewogen ist.
+
+### Hitster im Original genauer
+
+Die 25 Sekunden sind der Timer fürs Aufschreiben, nicht die Länge der Musik. Die Musik läuft bei Spotify Free etwa 20
+Sekunden, bei Premium 30 Sekunden oder ganz. Die Bonusregel gibt es nur auf Seite A. Als Erscheinungsjahr zählt die
+erste Veröffentlichung oder Aufführung durch den Original-Interpreten.
+
+### CI: erst rot, dann grün
+
+Eine CI, die immer grün ist, beweist nichts. Deshalb zuerst eine absichtlich falsch formatierte Datei: Die CI wurde
+rot, nach dem Löschen grün. Das ist TDD für Konfiguration.
+
+### Kein Branch-Schutz bei privaten Repos mit GitHub Free
+
+GitHub verbietet einen Merge bei roter CI nur mit Branch-Schutz, und den gibt es bei GitHub Free nur für öffentliche
+Repos. Deshalb steht in der `CLAUDE.md` die Regel: vor jedem Merge `gh pr checks <nr>` grün.
+
+### ESLint-Warnungen enden mit Exit-Code 0
+
+Eine unbenutzte Variable ist in der Next.js-Einstellung nur eine Warnung. Der Hook meldet deshalb nur echte Fehler,
+z. B. `react-hooks/rules-of-hooks`. Fast wäre ein Testfall im Plan gelandet, der nie rot geworden wäre. Vorher
+ausprobieren hat das gezeigt.
+
+### Hooks wirken sofort
+
+Die Änderung an `.claude/settings.json` griff ohne Neustart von Claude Code: Die nächste Write-Probe wurde schon
+formatiert. Anders als bei geänderten Agent-Dateien (siehe Agents-Katalog im Ecosystem).
+
+### AI-native SDLC Playbook (Anthropic)
+
+Der Artikel (claude.com/de/resources/articles/the-ai-native-sdlc-playbook) beschreibt sechs Phasen, jede endet mit
+einer Datei, die die nächste auslöst: Plan, Design, Build, Test, Deploy, Maintain. Plan bis Test haben wir schon
+(Vision, `/grill-with-docs`, `plan-schreiben`, `tdd`, CI). Die Lücke ist Deploy: ein unabhängiges Review jedes PRs.
+Wert von Subagents ist vor allem der frische Kontext, z. B. ein Verifier, der nicht von den Annahmen des Codes
+beeinflusst ist. Parallele Agents, die Code schreiben, lohnen erst bei vielen unabhängigen Aufgaben und kosten
+Lernzeit. Faustregel aus dem Artikel: zweimal derselbe Fehler, dann in die `CLAUDE.md`.
+
+## Fehler und Lösungen (zweite Session)
+
+### `(eval):1: ===== not found`
+
+- **Wo:** Trenner `echo ======` zwischen zwei Befehlen in zsh, zweimal
+- **Ursache:** zsh liest ein Wort, das mit `=` beginnt, als „Pfad zum Befehl“ (`=ls` → `/bin/ls`) und sucht einen
+  Befehl namens `====`.
+- **Lösung:** Trenner in Anführungszeichen, z. B. `echo '---ENDE---'`.
+- **Prüfen:** Der Befehl läuft durch und zeigt den Trenner.
+
+### `fatal: ambiguous argument 'docs/Glossar.md': unknown revision or path not in the working tree.`
+
+- **Wo:** Prüfaufruf d) des Hooks auf dem Branch `feature/ci`
+- **Ursache:** `docs/Glossar.md` lag erst im Branch von PR #3, auf `feature/ci` gab es sie nicht. Ohne `--` hält
+  `git diff` einen unbekannten Pfad für eine Version.
+- **Lösung:** Test mit einer vorhandenen Datei (`docs/Projektvision.md`) und `git diff -- <pfad>`.
+- **Prüfen:** Exit 0 und leeres `git diff -- docs/Projektvision.md`.
+
+### `[warn] app/ci-probe.ts` / `Code style issues found in the above file` (absichtlich)
+
+- **Wo:** erster Lauf der CI auf PR #4
+- **Ursache:** absichtlich falsch formatierte Probedatei
+- **Lösung:** Datei gelöscht, die CI wurde grün.
+- **Prüfen:** `gh pr checks 4` → `pass`
+
 ## Aus dem Chat
 
 -
 
 ## Offene Fragen
 
-- Was zählt bei Titel und Interpret als „richtig“ (Tippfehler, „feat.“, Zusätze wie „Remastered“)?
-- Übernehmen wir Bonusregel und Timer von 25 Sekunden?
-- Welche eigenen Kategorien kommen dazu?
+- Was zählt bei Titel und Interpret als „richtig“ (Tippfehler, „feat.“, Zusätze wie „Remastered“)? → geklärt:
+  entfällt, die Spieler prüfen selbst ([[0002-spieler-pruefen-selbst|ADR 0002]])
+- Übernehmen wir Bonusregel und Timer von 25 Sekunden? → geklärt: keine Bonusregel, kein Timer fürs Aufschreiben,
+  Ausschnitt standardmäßig 30 Sekunden
+- Welche eigenen Kategorien kommen dazu? → geklärt: Liste für Phase 4 in der [[Projektvision]]
 - `[[Projektvision]]` löst in diesem Projekt auf die Vorlage im Ecosystem auf statt auf die eigene Notiz. Wird in der
   nächsten Ecosystem-Session untersucht.
 
@@ -167,3 +299,7 @@ Paketen. Mit `npm install-scripts ls` sieht man, was wartet, `approve` oder `den
 2. `plan-schreiben` für den Rest von Phase 0: CI mit GitHub Actions (`npm ci`, `npm run check`, `npm run build`),
    evtl. Prettier-Hook.
 3. In Obsidian `node_modules` ausblenden (Einstellungen → Dateien und Links → Ausgeschlossene Dateien, `/node_modules/`).
+4. (zweite Session) Im Ecosystem nach dem SDLC-Artikel einen Code-Reviewer (vorher `/code-review` testen) und einen
+   Verifier als nur lesende Agents in `qualitaets-agents` anlegen, dazu `REVIEW.md` je Projekt.
+5. (zweite Session) Phase 1 starten: vorher fragen, ob etwas anderes ansteht, dann `docs/Tools für später.md`
+   prüfen und den Plan für Phase 1 mit `plan-schreiben` schreiben.
