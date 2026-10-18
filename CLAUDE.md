@@ -52,6 +52,7 @@ Aktuell (Phase 0):
 app/              Next.js App Router: layout.tsx, page.tsx, globals.css
 __tests__/        Vitest-Tests
 docs/             Obsidian-Vault: adr/, journal/, plaene/, tools/
+.github/          workflows/ci.yml: CI mit GitHub Actions
 AGENTS.md         Regeln von Next.js für Coding-Agents (schreibt `next dev` neu)
 CLAUDE.md
 package.json      Abhängigkeiten und npm-Skripte
@@ -71,9 +72,11 @@ npm run typecheck          # Next.js-Typen erzeugen, dann TypeScript prüfen
 npm test                   # Vitest einmal ausführen (npm run test:watch: bei jeder Änderung)
 npm run build              # Produktionsfassung bauen
 npm run check              # alle Prüfungen: lint, format:check, typecheck, test
+gh pr checks <nr>          # CI-Ergebnis eines PRs (GitHub Actions)
 ```
 
-Vor jedem Commit: `npm run check` muss mit Exit-Code 0 durchlaufen.
+Vor jedem Commit: `npm run check` muss mit Exit-Code 0 durchlaufen. Vor jedem Merge: `gh pr checks <nr>` muss grün
+sein (privates Repo mit GitHub Free, daher kein Branch-Schutz).
 
 ## Dokumentation
 
