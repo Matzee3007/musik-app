@@ -7,18 +7,17 @@ tags: [session, übergabe]
 
 # Nächste Session
 
-Stand vom 2026-10-18. Gehört zu [[Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]]. Angelegt von `/projekt-starten`, ab dem ersten
-Session-Ende schreibt der Skill `naechste-session` diese Datei.
+Stand vom 2026-10-18. Gehört zu [[Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (Initial-Commit)
+- **Branch:** `main` (nach dem Merge von PR #5)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts
 
 ## Vor dem Start
 
-1. Claude Code im Projektordner starten, damit die Projekt-`CLAUDE.md` geladen wird:
+1. Claude Code im Projektordner starten, damit die Projekt-`CLAUDE.md` und der Prettier-Hook geladen werden:
 
    ```bash
    cd ~/claude-ecosystem/projects/musik-app
@@ -27,20 +26,28 @@ Session-Ende schreibt der Skill `naechste-session` diese Datei.
 
 ## Womit es weitergeht
 
-**Phase 0 – Fundament** läuft. Schon erledigt bei `/projekt-starten` (2026-10-18): Repo, `CLAUDE.md`,
-[[0001-stack|ADR 0001]], Node 24, Next.js 16, ESLint, Prettier, Vitest, erster Test grün, `npm run check` mit
-Exit-Code 0, `npm run build` läuft.
+**Phase 0 – Fundament ist abgeschlossen** (PRs #3, #4, #5). Die nächste Session beginnt mit **Phase 1 – Spiel auf
+einem Gerät**.
 
-Die nächsten Aufgaben:
-
-1. `/grill-with-docs Projektvision schärfen`: Ziel, Abgrenzung und Phasen in Fragerunden klären, dazu die
-   offenen Fragen der [[Projektvision]] (was zählt bei Titel und Interpret als richtig, Bonusregel, Timer, eigene
-   Kategorien). Fachbegriffe wie Tisch, DJ, Runde, Kategorie landen in `docs/Glossar.md`, Entscheidungen als ADR.
-2. Danach mit `plan-schreiben` den Plan für den Rest von Phase 0: CI mit GitHub Actions (`npm ci`,
-   `npm run check`, `npm run build`), evtl. Hook mit Prettier nach jeder Änderung (wie der ruff-Hook in sport-fantasy).
+1. **Claude fragt zuerst, ob etwas anderes ansteht.** Vorschläge:
+   - **Agents nach dem SDLC-Artikel (Ecosystem):** einen Code-Reviewer (vorher testen, ob das eingebaute
+     `/code-review` reicht) und einen Verifier als nur lesende Agents in `agents/qualitaets-agents/`, dazu eine
+     `REVIEW.md` je Projekt. Bewertung im [[Lernjournal Phase 0 - Projektstart|Journal]] unter „AI-native SDLC
+     Playbook“. Das Ecosystem hat noch nicht committete Änderungen von dir (`agents/meta-agents/` nach
+     `agents/lern-agents/meta-agents/` verschoben).
+   - **Ecosystem-Restpunkte:** Abkürzungen `SDLC` (Software Development Lifecycle) und `YAGNI` (You Aren't Gonna
+     Need It) in `~/claude-ecosystem/docs/Abkürzungen.md` eintragen. Die allgemeine Notiz „GitHub Actions“ liegt nur
+     in sport-fantasy und soll nach `docs/werkzeuge/` umziehen. Regel „zweimal derselbe Fehler, dann in die
+     `CLAUDE.md`“ für die globale `CLAUDE.md` prüfen.
+   - **Obsidian:** `node_modules` ausblenden (Einstellungen → Dateien und Links → Ausgeschlossene Dateien), falls
+     noch nicht geschehen.
+2. Danach [[Tools für später]] auf Werkzeuge für Phase 1 prüfen.
+3. Den Plan für Phase 1 mit `plan-schreiben` schreiben. Grundlage: „Spielregeln im Detail“ und Roadmap in der
+   [[Projektvision]], Begriffe im [[Glossar]]. Spiellogik (Rad, Karte, Songauswahl, Bingo-Erkennung) als reine
+   Funktionen in `lib/`, Tisch und Karte nebeneinander am Laptop, feste Songliste.
 
 ## Passende Skills
 
-- `grill-with-docs`: Projektvision und Phasen schärfen
-- `plan-schreiben`: Plan für Phase 0
-- `tdd`: der erste Test
+- `plan-schreiben`: Plan für Phase 1
+- `tdd`: Spiellogik testgetrieben bauen
+- `agent-texte-schreiben`: falls zuerst die Agents fürs Ecosystem entstehen
