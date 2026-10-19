@@ -177,7 +177,7 @@ geworfen statt als „nicht gefunden“ zu gelten.
 - Liefert: `GET(request: Request): Promise<Response>`. `?isrc=` muss dem ISRC-Muster `^[A-Z]{2}[A-Z0-9]{3}\d{7}$`
   entsprechen, sonst 400. Erfolg: 200 `{ jahr: number | null }`. Überlastet: 503 `{ fehler: "beschäftigt" }`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (`fetch` mit `vi.stubGlobal` ersetzen)
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (`fetch` mit `vi.stubGlobal` ersetzen)
 
 ```ts
 const anfrage = (isrc: string) => new Request(`http://127.0.0.1:3000/api/erscheinungsjahr?isrc=${isrc}`);
@@ -199,10 +199,13 @@ test("reicht ein überlastetes MusicBrainz als 503 weiter", async () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/api/erscheinungsjahr.test.ts`)
-- [ ] **Schritt 3: `route.ts` schreiben.** ISRC aus `new URL(request.url).searchParams`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add release year API route"`
+Bei der Umsetzung: Der 400-Test prüft zusätzlich leeren, kleingeschriebenen und zu kurzen ISRC und eine Anfrage ganz
+ohne `isrc`. `npm run build` zeigt die Route als dynamisch (ƒ), wie die Doku zu Cache Components beschreibt.
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/api/erscheinungsjahr.test.ts`)
+- [x] **Schritt 3: `route.ts` schreiben.** ISRC aus `new URL(request.url).searchParams`.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add release year API route"`
 
 ### Aufgabe 4: Songs einer Playlist laden
 
