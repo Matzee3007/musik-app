@@ -270,7 +270,7 @@ Bei der Umsetzung ergänzt: abgelaufenes Token ergibt `SpotifyFehler` 401, `is_p
   `vorbereiten(songs: readonly PlaylistSong[], p?: { jahrAbfragen?: (isrc: string) => Promise<number | null>; warten?: (ms: number) => Promise<void>; onFortschritt?: (fertig: number, gesamt: number) => void }): Promise<void>`,
   `spielSongs(songs: readonly PlaylistSong[], gespeichert: Record<string, GespeicherteJahre>): Song[]`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const song = (id: string, isrc: string | null = `ISRC${id}`): PlaylistSong =>
@@ -324,12 +324,17 @@ test("jahrUeberServer fragt die eigene Route und meldet 503 als beschäftigt", a
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/vorbereiten.test.ts`)
-- [ ] **Schritt 3: `lib/vorbereiten.ts` schreiben.** Gefragt werden nur Songs ohne gespeicherten Eintrag, jedes
+Bei der Umsetzung geschärft und ergänzt: genau eine Pause zwischen zwei Anfragen (keine vor der ersten, keine für
+Songs ohne ISRC), der Fortschritt zählt nur offene Songs, ein kurz überlastetes MusicBrainz gelingt beim neuen Versuch,
+ein noch nicht vorbereiteter Song spielt mit dem Spotify-Jahr, `jahrUeberServer` wirft bei 500, ohne eigene Abfrage
+fragt `vorbereiten` die Route.
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/vorbereiten.test.ts`)
+- [x] **Schritt 3: `lib/vorbereiten.ts` schreiben.** Gefragt werden nur Songs ohne gespeicherten Eintrag, jedes
   Ergebnis wird sofort gespeichert. Pause 1100 ms vor jeder Anfrage außer der ersten, bei `MusicBrainzBeschaeftigt`
   2000 ms und neuer Versuch, nach dem dritten Fehlschlag weiterwerfen.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add preparing a playlist with stored years"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add preparing a playlist with stored years"`
 
 ### Aufgabe 6: Songliste
 
