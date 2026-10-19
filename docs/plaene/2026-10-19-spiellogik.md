@@ -112,7 +112,7 @@ test("mischen behält alle Elemente und ändert die Eingabe nicht", () => {
   `type Kategorie = { id: KategorieId; name: string; farbe: string; loesung: (song: Song) => string }`,
   `KATEGORIEN: readonly Kategorie[]` in der Reihenfolge Titel, Interpret, Jahrzehnt, Jahr, Jahr ±3.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const bohemian: Song = { id: "x", titel: "Bohemian Rhapsody", interpret: "Queen", jahr: 1975 };
@@ -135,10 +135,10 @@ test("fünf Kategorien mit eigener Id, eigenem Namen und eigener Farbe", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/kategorien.test.ts`)
-- [ ] **Schritt 3: `Song`, `KategorieId`, `Kategorie`, `KATEGORIEN` schreiben**, Farben aus „Annahmen“.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add categories as data"`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/kategorien.test.ts`)
+- [x] **Schritt 3: `Song`, `KategorieId`, `Kategorie`, `KATEGORIEN` schreiben**, Farben aus „Annahmen“.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add categories as data"`
 
 ### Aufgabe 3: Rad
 
