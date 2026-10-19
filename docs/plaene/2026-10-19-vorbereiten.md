@@ -34,8 +34,8 @@ Erscheinungsjahr); baut auf [[2026-10-19-spotify-anmeldung|Plan A]] auf.
 
 ## Annahmen (bitte prüfen)
 
-- **Kontakt im User-Agent:** MusicBrainz verlangt eine Kontaktangabe. Vorschlag:
-  `musik-app/0.1 ( https://github.com/Matzee3007/musik-app )`. Willst du lieber eine E-Mail-Adresse dort, sag welche.
+- **Kontakt im User-Agent:** MusicBrainz verlangt eine Kontaktangabe:
+  `musik-app/0.1 ( https://github.com/Matzee3007/musik-app )`. Vom Entwickler am 2026-10-19 bestätigt, keine E-Mail.
 - **Jahr aus MusicBrainz:** das früheste Jahr aus `first-release-date` aller Aufnahmen zum ISRC. Kein Datum oder ISRC
   unbekannt (404): kein Jahr, der Song gilt als „nicht gefunden“.
 - **MusicBrainz überlastet (503):** bis zu 3 Versuche mit 2 Sekunden Pause, dann bricht das Vorbereiten mit einer
@@ -419,7 +419,7 @@ ein `<progress>` mit der Beschriftung „Erscheinungsjahre: <fertig> von <gesamt
 `MusicBrainzBeschaeftigt`: „MusicBrainz ist gerade überlastet.“ und Knopf „Nochmal versuchen“. „Spiel starten“ zeigt
 `<SpielAnsicht songs={…} sofort />`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (`fetch` mit `vi.stubGlobal` nach URL verzweigen: Spotify-Adresse
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (`fetch` mit `vi.stubGlobal` nach URL verzweigen: Spotify-Adresse
   → Songs, `/api/erscheinungsjahr` → Jahr oder 503; `warten={async () => {}}`)
 
 ```ts
@@ -442,11 +442,15 @@ test("überlastetes MusicBrainz zeigt die Meldung, Nochmal versuchen setzt fort"
 In `__tests__/ui/start.test.tsx`: Klick auf „Partyhits (98 Songs)“ zeigt die Überschrift „Partyhits“, „Zurück“ führt
 zur Playlist-Liste zurück.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+Bei der Umsetzung ergänzt: Im StrictMode wird nur einmal vorbereitet (sonst doppelt so viele Anfragen an
+MusicBrainz wie erlaubt, Merker per `useRef` mit der Nummer des Versuchs), der Fortschritt erscheint als `<progress>`,
+die Songliste sagt bei einem Song „1 Song bereit“.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
   (`npx vitest run __tests__/ui/vorbereiten-ansicht.test.tsx __tests__/ui/start.test.tsx`)
-- [ ] **Schritt 3: `VorbereitenAnsicht` schreiben, Playlists in `Start` anklickbar machen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen** (dann `npm test` für alles)
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add preparing view and clickable playlists"`
+- [x] **Schritt 3: `VorbereitenAnsicht` schreiben, Playlists in `Start` anklickbar machen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen** (dann `npm test` für alles)
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add preparing view and clickable playlists"`
 
 ### Aufgabe 8: Echt prüfen und abschließen
 

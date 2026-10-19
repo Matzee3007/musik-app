@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
+import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
 import { SpotifyFehler } from "@/lib/spotify/abruf";
 import { clientId } from "@/lib/spotify/konfig";
 import { eigenePlaylists, type Playlist } from "@/lib/spotify/playlists";
@@ -22,6 +23,7 @@ export default function Start() {
   // und Browser verschiedenes HTML (Hydration-Fehler).
   const [token, setToken] = useState<Token | null | undefined>(undefined);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [gewaehlt, setGewaehlt] = useState<Playlist | null>(null);
   const id = clientId();
 
   useEffect(() => {
@@ -45,6 +47,15 @@ export default function Start() {
 
   if (demo) return <SpielAnsicht songs={SONGLISTE} />;
   if (token === undefined) return null;
+  if (token && gewaehlt) {
+    return (
+      <VorbereitenAnsicht
+        playlist={gewaehlt}
+        accessToken={token.accessToken}
+        onZurueck={() => setGewaehlt(null)}
+      />
+    );
+  }
 
   async function anmelden() {
     window.location.assign(await anmeldungStarten(id!));
@@ -69,7 +80,9 @@ export default function Start() {
         <ul className="flex flex-col gap-1">
           {playlists.map((p) => (
             <li key={p.id}>
-              {p.name} ({p.anzahlSongs} Songs)
+              <button className="underline" onClick={() => setGewaehlt(p)}>
+                {p.name} ({p.anzahlSongs} Songs)
+              </button>
             </li>
           ))}
         </ul>

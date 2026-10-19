@@ -52,7 +52,8 @@ export default function Songliste({
   return (
     <div className="flex w-full max-w-4xl flex-col items-center gap-4">
       <h2 className="text-2xl font-semibold">
-        {songs.length} Songs bereit, {uebersprungen} übersprungen
+        {songs.length} {songs.length === 1 ? "Song" : "Songs"} bereit,{" "}
+        {uebersprungen} übersprungen
       </h2>
       {songs.length === 0 ? (
         <p>Keine spielbaren Songs</p>
