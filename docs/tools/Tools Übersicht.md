@@ -23,7 +23,7 @@ alle benutzten Befehle, Fehler.
 | [[Claude Code]] ([[projects/musik-app/docs/tools/Claude Code - Einrichtung|Einrichtung]]) | 2026-10-18 | KI-Entwickler im Terminal, mit Prettier-Hook |
 | [[Next.js.md\|Next.js]] (mit Node.js 24, npm, TypeScript, React) | 2026-10-18 | Oberfläche und Server-Teil der App |
 | [[Vitest, ESLint und Prettier]] | 2026-10-18 | Tests, Code prüfen, einheitlich formatieren |
-| [[GitHub Actions - Einrichtung\|GitHub Actions]] | 2026-10-18 | prüft jeden PR automatisch (CI) |
+| [[projects/musik-app/docs/tools/GitHub Actions - Einrichtung\|GitHub Actions]] | 2026-10-18 | prüft jeden PR automatisch (CI) |
 
 ## Geplant
 
