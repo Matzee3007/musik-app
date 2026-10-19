@@ -136,7 +136,7 @@ test("gueltigesJahr nimmt nur ganze Jahre von 1900 bis heute", () => {
   `https://musicbrainz.org/ws/2/isrc/<isrc>?fmt=json` mit Header `User-Agent`, 404 → `null`, 503 →
   `MusicBrainzBeschaeftigt`, anderer Fehler → `Error`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("jahrAusMusicBrainz nimmt das früheste Jahr und übergeht Aufnahmen ohne Datum", () => {
@@ -160,10 +160,13 @@ test("unbekannter ISRC ergibt kein Jahr, überlastetes MusicBrainz einen eigenen
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/musicbrainz.test.ts`)
-- [ ] **Schritt 3: `lib/musicbrainz.ts` schreiben.** Jahr = erste vier Zeichen von `first-release-date` als Zahl.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add MusicBrainz release year lookup"`
+Bei der Umsetzung ergänzt: leere Liste `recordings: []` ergibt kein Jahr, ein anderer Fehler (z. B. 500) wird
+geworfen statt als „nicht gefunden“ zu gelten.
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/musicbrainz.test.ts`)
+- [x] **Schritt 3: `lib/musicbrainz.ts` schreiben.** Jahr = erste vier Zeichen von `first-release-date` als Zahl.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add MusicBrainz release year lookup"`
 
 ### Aufgabe 3: Server-Route für das Erscheinungsjahr
 
