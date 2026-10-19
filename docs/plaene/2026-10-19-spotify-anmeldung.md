@@ -262,7 +262,7 @@ angemeldet und der Fehler kommt durch“ (Rot-Grün durch Ausbauen des Zweigs be
   `https://api.spotify.com/v1/me/playlists?limit=50`, folgt `next`, bis es `null` ist, Header
   `Authorization: Bearer <accessToken>`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const seite = (playlists: object[], next: string | null) => antwort({ items: playlists, next });
@@ -285,11 +285,11 @@ test("abgelaufenes Token ergibt SpotifyFehler 401", async () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/playlists.test.ts`)
-- [ ] **Schritt 3: `playlists.ts` schreiben.** Eine Playlist gehört dazu, wenn ihr Feld `items` vorhanden ist,
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/playlists.test.ts`)
+- [x] **Schritt 3: `playlists.ts` schreiben.** Eine Playlist gehört dazu, wenn ihr Feld `items` vorhanden ist,
   `anzahlSongs` ist `items.total`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add loading own Spotify playlists"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add loading own Spotify playlists"`
 
 ### Aufgabe 5: Rückruf-Seite
 
