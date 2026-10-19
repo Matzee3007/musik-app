@@ -27,7 +27,7 @@ Schritt eine funktionierende App entwickeln.
 - **Daten und Echtzeit:** Supabase (Postgres, Realtime-Kanäle für die Spielräume), ab Phase 3
 - **Hosting:** Vercel, ab Phase 3
 - **Qualität:** ESLint, Prettier, Vitest (später Playwright für Browser-Tests)
-- **Musik:** Spotify Web API und Web Playback SDK (Premium des Entwicklers), MusicBrainz für das Original-Jahr
+- **Musik:** Spotify Web API und Web Playback SDK (Premium des Entwicklers), MusicBrainz für das Erscheinungsjahr
 
 Begründung und Alternativen: `docs/adr/0001-stack.md`.
 
@@ -64,7 +64,7 @@ package.json      Abhängigkeiten und npm-Skripte
 ```bash
 npm ci                     # Abhängigkeiten genau nach package-lock.json installieren
 npm install -D <paket>     # Entwicklungs-Abhängigkeit hinzufügen (ohne -D: Laufzeit)
-npm run dev                # App lokal starten, http://localhost:3000
+npm run dev                # App lokal starten, http://127.0.0.1:3000 (nicht localhost, Spotify verlangt 127.0.0.1)
 npm run lint               # ESLint prüft den Code
 npm run format             # Prettier formatiert den Code (Markdown nicht)
 npm run typecheck          # Next.js-Typen erzeugen, dann TypeScript prüfen

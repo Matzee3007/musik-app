@@ -51,6 +51,14 @@ das Spiel.
 Eine einstellbare Verlängerung, wenn mehrere Spieler in derselben Runde Bingo haben: Nur sie spielen weiter, und wer
 als Einziger richtig liegt, gewinnt. Standard ist, dass alle mit Bingo gemeinsam gewinnen.
 
+**Vorbereiten**:
+Eine Playlist einmalig laden, die Erscheinungsjahre ihrer Songs ermitteln und speichern; danach ist sie spielbereit.
+Songs, die sich nicht abspielen lassen (Podcast-Folgen, lokale Dateien), werden dabei übersprungen.
+
+**Demo**:
+Ein Spiel ohne Spotify-Anmeldung mit der festen Songliste aus Phase 1 und ohne Musik, zum Ausprobieren und Testen.
+_Nicht verwenden_: Offline-Modus, Testmodus
+
 ## Rollen und Geräte
 
 **Tisch**:
@@ -67,6 +75,11 @@ Eine Person, die mit Karte und Notizfläche auf dem eigenen Handy mitspielt.
 _Nicht verwenden_: Mitspieler, User
 
 ## Karte und Kategorien
+
+**Erscheinungsjahr**:
+Das Jahr, in dem die Aufnahme eines Songs zum ersten Mal veröffentlicht wurde, ermittelt über MusicBrainz und vom DJ
+korrigierbar; nicht das Jahr des Albums, auf dem der Song bei Spotify liegt.
+_Nicht verwenden_: Original-Jahr, Album-Jahr
 
 **Kategorie**:
 Die Art der Frage einer Runde, z. B. Titel oder Jahr ±3, mit eigener Farbe; das Rad wählt sie zufällig.
