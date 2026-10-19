@@ -96,7 +96,7 @@ Erscheinungsjahr); baut auf [[2026-10-19-spotify-anmeldung|Plan A]] auf.
   `markierung(j: Jahre): "nicht gefunden" | "später als Spotify" | null`,
   `gueltigesJahr(text: string, bisJahr: number): number | null` (ganze Zahl von 1900 bis `bisJahr`, sonst `null`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const remaster: Jahre = { spotify: 2011, musicbrainz: 1975, korrigiert: null };
@@ -118,10 +118,10 @@ test("gueltigesJahr nimmt nur ganze Jahre von 1900 bis heute", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/erscheinungsjahr.test.ts`)
-- [ ] **Schritt 3: `Jahre`, `jahrFuerSpiel`, `markierung`, `gueltigesJahr` schreiben**
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add release year rules"`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/erscheinungsjahr.test.ts`)
+- [x] **Schritt 3: `Jahre`, `jahrFuerSpiel`, `markierung`, `gueltigesJahr` schreiben**
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add release year rules"`
 
 ### Aufgabe 2: MusicBrainz fragen
 
