@@ -38,6 +38,11 @@ Der Moment, in dem der Tisch nach „Lösung anzeigen“ die Lösung der Runde z
 hervorgehoben, die übrigen Angaben zum Song als Zusatzinfo.
 _Nicht verwenden_: Reveal, Aufdecken
 
+**Stapel**:
+Die Songs, die in diesem Spiel noch nicht gelaufen sind; ist er leer, mischt der DJ neu oder wählt eine andere
+Playlist.
+_Nicht verwenden_: Queue, Warteschlange
+
 **Bingo**:
 Fünf abgehakte Felder in einer Reihe auf einer Karte, waagerecht, senkrecht oder diagonal; wer es zuerst hat, gewinnt
 das Spiel.

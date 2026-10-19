@@ -307,7 +307,7 @@ test("mindestens sechs Jahrzehnte, damit die Kategorie Jahrzehnt etwas zu raten 
   - `stapelNeuMischen(spiel: Spiel, songs: readonly Song[], zufall: Zufall = Math.random): Spiel`: neuer gemischter
     Stapel aus allen Songs, Karte bleibt.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben.** Hilfe `aufgeloesteRunde()`: `spielStarten(SONGS, () => 0)`,
+- [x] **Schritt 1: Fehlschlagende Tests schreiben.** Hilfe `aufgeloesteRunde()`: `spielStarten(SONGS, () => 0)`,
   `rundeStarten(…, () => 0)` (Kategorie Titel), `loesungAnzeigen`; `SONGS` sind drei Songs aus `SONGLISTE`;
   `titelFeld(spiel)` und `anderesFeld(spiel)` liefern den Index des ersten freien Feldes mit bzw. ohne Kategorie
   Titel. Tests:
@@ -321,14 +321,14 @@ test("mindestens sechs Jahrzehnte, damit die Kategorie Jahrzehnt etwas zu raten 
   - `feldAbhaken(spiel, titelFeld)` → Feld abgehakt, `abgehaktesFeld` gesetzt; zweites Titel-Feld danach → unverändert.
   - `abhakenZuruecknehmen` des eben abgehakten Feldes → Feld frei, danach geht `feldAbhaken` in derselben Runde wieder.
   - Karte mit Bingo (Felder direkt per `feldSetzen` gesetzt) → `rundeStarten` unverändert.
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spiel.test.ts`)
-- [ ] **Schritt 3: `lib/spiel.ts` schreiben** nach den Schnittstellen oben.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Doku:** Glossar unter „Ablauf“: **Stapel**: Die Songs, die in diesem Spiel noch nicht gelaufen sind;
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spiel.test.ts`)
+- [x] **Schritt 3: `lib/spiel.ts` schreiben** nach den Schnittstellen oben.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Doku:** Glossar unter „Ablauf“: **Stapel**: Die Songs, die in diesem Spiel noch nicht gelaufen sind;
   ist er leer, mischt der DJ neu oder wählt eine andere Playlist. _Nicht verwenden_: Queue, Warteschlange.
   `CLAUDE.md`, Repo-Struktur: `lib/` mit der Spiellogik als reine Funktionen eintragen, den Satz „kommt in Phase 1“
   streichen.
-- [ ] **Schritt 6: Prüfen und committen:** `npm run check`, `git commit -m "Add game state and moves"`
+- [x] **Schritt 6: Prüfen und committen:** `npm run check`, `git commit -m "Add game state and moves"`
 
 ## Abschluss
 

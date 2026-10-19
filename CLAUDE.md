@@ -46,19 +46,18 @@ Begründung und Alternativen: `docs/adr/0001-stack.md`.
 
 ## Repo-Struktur
 
-Aktuell (Phase 0):
+Aktuell (Phase 1):
 
 ```
 app/              Next.js App Router: layout.tsx, page.tsx, globals.css
-__tests__/        Vitest-Tests
+lib/              Spiellogik als reine Funktionen: Rad, Karte, Bingo, Songliste, Spielzüge (spiel.ts)
+__tests__/        Vitest-Tests, lib/ für die Spiellogik, hilfen/ für Testhilfen
 docs/             Obsidian-Vault: adr/, journal/, plaene/, tools/
 .github/          workflows/ci.yml: CI mit GitHub Actions
 AGENTS.md         Regeln von Next.js für Coding-Agents (schreibt `next dev` neu)
 CLAUDE.md
 package.json      Abhängigkeiten und npm-Skripte
 ```
-
-Die Spiellogik (Rad, Karte, Bingo) kommt in Phase 1 als reine Funktionen nach `lib/`.
 
 ## Befehle
 
