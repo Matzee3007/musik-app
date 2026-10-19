@@ -120,7 +120,7 @@ test("Länge in Millisekunden und Name", () => {
 - Liefert: `Song` bekommt `cover?: string` (die Songs der Demo haben keins), `PlaylistSong` bekommt
   `cover: string | null` (aus `album.images[0].url`), `spielSongs` übernimmt das Cover (`null` wird weggelassen).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 // playlist-songs.test.ts: track("t1", { album: { release_date: "2011", images: [{ url: "gross.jpg" }, { url: "klein.jpg" }] } })
@@ -133,12 +133,12 @@ expect(spielSongs([song("t1")], {})[0]).not.toHaveProperty("cover");
 
 Die vorhandenen Erwartungen mit ganzen `PlaylistSong`-Objekten bekommen `cover: null`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
   (`npx vitest run __tests__/lib/spotify/playlist-songs.test.ts __tests__/lib/vorbereiten.test.ts`)
-- [ ] **Schritt 3: Cover durchreichen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test` (Songliste und Ansichten nutzen
+- [x] **Schritt 3: Cover durchreichen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test` (Songliste und Ansichten nutzen
   `PlaylistSong`)
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Pass album cover to game songs"`
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Pass album cover to game songs"`
 
 ### Aufgabe 3: Jahr im laufenden Spiel korrigieren
 

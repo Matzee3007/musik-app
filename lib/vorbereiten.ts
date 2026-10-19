@@ -61,6 +61,7 @@ export function spielSongs(
     titel: s.titel,
     interpret: s.interpret,
     jahr: jahrFuerSpiel(jahreVon(s, gespeichert)),
+    ...(s.cover ? { cover: s.cover } : {}),
   }));
 }
 

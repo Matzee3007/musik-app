@@ -16,6 +16,7 @@ const song = (id: string, isrc: string | null = `ISRC${id}`): PlaylistSong => ({
   interpret: "Queen",
   isrc,
   spotifyJahr: 2011,
+  cover: null,
 });
 
 // t1: MusicBrainz kennt 1975 (Remaster, nicht markiert), t2: ohne ISRC, also nicht gefunden.
