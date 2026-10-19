@@ -238,7 +238,7 @@ test("Reihe über den Zeilenumbruch ist kein Bingo", () => expect(hatBingo(abgeh
 - Nutzt: `Song`
 - Liefert: `SONGLISTE: readonly Song[]`, Id als Kurzform `"<interpret>-<titel>"` in Kleinbuchstaben mit Bindestrichen
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("25 Songs mit eindeutiger Id", () => {
@@ -250,8 +250,8 @@ test("mindestens sechs Jahrzehnte, damit die Kategorie Jahrzehnt etwas zu raten 
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: `SONGLISTE` schreiben** mit diesen Songs (Original-Erscheinungsjahr, im PR zu prüfen):
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: `SONGLISTE` schreiben** mit diesen Songs (Original-Erscheinungsjahr, im PR zu prüfen):
 
 | Interpret | Titel | Jahr |
 |---|---|---|
@@ -281,8 +281,8 @@ test("mindestens sechs Jahrzehnte, damit die Kategorie Jahrzehnt etwas zu raten 
 | Daft Punk | Get Lucky | 2013 |
 | The Weeknd | Blinding Lights | 2019 |
 
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add fixed song list for phase 1"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add fixed song list for phase 1"`
 
 ### Aufgabe 7: Spielstand und Spielzüge
 
