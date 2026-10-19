@@ -96,7 +96,7 @@ Ablauf am Tisch, Demo); [[0003-spotify-anmeldung-nur-im-browser|ADR 0003]]; Begr
   `codeChallenge(verifier: string): Promise<string>` (SHA-256, Base64url ohne `=`),
   `anmeldeUrl(p: { clientId: string; redirectUri: string; challenge: string; state: string }): string`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("codeChallenge ergibt den Testwert aus RFC 7636", async () => {
@@ -118,12 +118,12 @@ test("anmeldeUrl führt zu Spotify mit PKCE und allen Scopes", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
   `npx vitest run __tests__/lib/spotify/pkce.test.ts`, erwartet: FAIL, `@/lib/spotify/pkce` lässt sich nicht auflösen.
-- [ ] **Schritt 3: `SCOPES`, `zufallsText`, `codeChallenge`, `anmeldeUrl` schreiben.** `zufallsText` bildet jedes
+- [x] **Schritt 3: `SCOPES`, `zufallsText`, `codeChallenge`, `anmeldeUrl` schreiben.** `zufallsText` bildet jedes
   Zufallsbyte mit `% 66` auf das Alphabet ab. `anmeldeUrl` baut die Parameter mit `URLSearchParams`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen** (gleicher Befehl, PASS).
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add PKCE helpers for Spotify login"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen** (gleicher Befehl, PASS).
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add PKCE helpers for Spotify login"`
 
 ### Aufgabe 2: Token tauschen und erneuern
 
