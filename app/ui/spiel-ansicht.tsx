@@ -15,6 +15,7 @@ import type { Song } from "@/lib/song";
 import {
   abhakenZuruecknehmen,
   feldAbhaken,
+  jahrKorrigieren,
   loesungAnzeigen,
   rundeStarten,
   spielStarten,
@@ -29,6 +30,7 @@ export default function SpielAnsicht({
   zufall = Math.random,
   sofort = false,
   abspieler,
+  onJahrKorrigiert,
 }: {
   songs: readonly Song[];
   zufall?: Zufall;
@@ -36,10 +38,14 @@ export default function SpielAnsicht({
   sofort?: boolean;
   // Mit Spotify läuft zu jeder Runde der Song, ohne (Demo) nicht.
   abspieler?: Abspieler;
+  // Nur mit Spotify: Eine Korrektur aus der Auflösung wird dauerhaft gespeichert.
+  onJahrKorrigiert?: (songId: string, jahr: number) => void;
 }) {
   // Startet sonst erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
   // Browser verschiedene Karten (Hydration-Fehler). Mit sofort erscheint die Ansicht erst nach
   // einem Klick, nie beim ersten Rendern auf dem Server.
+  // Eigene Liste für "Von vorn" und "Neues Spiel", damit Korrekturen aus der Auflösung erhalten bleiben.
+  const [spielSongs, setSpielSongs] = useState(songs);
   const [spiel, setSpiel] = useState<Spiel | null>(() =>
     sofort ? spielStarten(songs, zufall) : null,
   );
@@ -86,6 +92,16 @@ export default function SpielAnsicht({
     ausschnittLaeuft(musik?.dauerMs ?? null);
   }
 
+  function jahrKorrigiert(jahr: number) {
+    if (!spiel?.runde) return;
+    const songId = spiel.runde.song.id;
+    setSpiel(jahrKorrigieren(spiel, songId, jahr));
+    setSpielSongs((alt) =>
+      alt.map((s) => (s.id === songId ? { ...s, jahr } : s)),
+    );
+    onJahrKorrigiert?.(songId, jahr);
+  }
+
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
   function musikAnhalten() {
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
@@ -107,7 +123,7 @@ export default function SpielAnsicht({
     return (
       <button
         className="rounded-lg bg-foreground px-6 py-3 text-lg font-semibold text-background"
-        onClick={() => setSpiel(spielStarten(songs, zufall))}
+        onClick={() => setSpiel(spielStarten(spielSongs, zufall))}
       >
         Spiel starten
       </button>
@@ -122,9 +138,10 @@ export default function SpielAnsicht({
         bingo={hatBingo(spiel.karte)}
         onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
         onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
-        onVonVorn={() => setSpiel(stapelNeuMischen(spiel, songs, zufall))}
-        onNeuesSpiel={() => setSpiel(spielStarten(songs, zufall))}
+        onVonVorn={() => setSpiel(stapelNeuMischen(spiel, spielSongs, zufall))}
+        onNeuesSpiel={() => setSpiel(spielStarten(spielSongs, zufall))}
         onRadSteht={songStarten}
+        onJahrKorrigieren={onJahrKorrigiert && jahrKorrigiert}
         musik={
           musik
             ? { ...musik, onNochmal: nochmal, onWeiterhoeren: weiterhoeren }

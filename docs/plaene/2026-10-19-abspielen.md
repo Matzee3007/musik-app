@@ -289,7 +289,7 @@ Ein Laufzeitfehler unterwegs (`hatBingo(neu)` statt `hatBingo(neu.karte)`) war m
 - Liefert: `SpielAnsicht` bekommt `onJahrKorrigiert?: (songId: string, jahr: number) => void`, `Tisch` bekommt
   `onJahrKorrigieren?: (jahr: number) => void`. Nur wenn es gesetzt ist, zeigt die Auflösung „Jahr korrigieren“.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("die Auflösung zeigt das Cover", …);   // img mit alt „Cover von Bohemian Rhapsody“, src = song.cover
@@ -302,11 +302,16 @@ test("ungültiges Jahr wird nicht gespeichert", …);   // „75“ → onJahrKo
 test("nach Von vorn kommt der Song mit dem korrigierten Jahr wieder", …); // ein Song, korrigieren, Von vorn, Runde, Lösung → 1974
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
-- [ ] **Schritt 3: Cover und „Jahr korrigieren“ im `Tisch`, in `SpielAnsicht` `jahrKorrigieren` auf das Spiel und auf
+Bei der Umsetzung: Tests in eigener Datei `__tests__/ui/spiel-aufloesung.test.tsx` (ohne Abspieler und Uhr). Ergänzt:
+Die Demo hat kein „Jahr korrigieren“ (sofort grün, angekündigt), ein offenes, nicht gespeichertes Feld schließt sich
+bei der nächsten Runde (war rot). Cover als `<img>` statt `next/image`, weil sonst die Bildadresse von Spotify in der
+Next.js-Konfiguration freigegeben werden müsste; ESLint-Hinweis an der Stelle begründet abgeschaltet.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: Cover und „Jahr korrigieren“ im `Tisch`, in `SpielAnsicht` `jahrKorrigieren` auf das Spiel und auf
   die eigene Songliste für „Von vorn“ anwenden** (`songs` als Startwert eines eigenen `useState`)
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Show cover and correct the year in the reveal"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Show cover and correct the year in the reveal"`
 
 ### Aufgabe 7: Player beim Spielstart und Abbruch bei „Zurück“
 
