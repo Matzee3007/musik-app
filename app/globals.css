@@ -24,3 +24,44 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Musikspur am Tisch: springende Balken und Fortschritt des Ausschnitts. */
+@keyframes musikspur-springen {
+  from {
+    transform: scaleY(0.2);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes musikspur-fortschritt {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.musikspur-balken {
+  transform-origin: bottom;
+  animation: musikspur-springen ease-in-out infinite alternate;
+}
+
+.musikspur-fortschritt {
+  width: 0;
+  animation: musikspur-fortschritt linear forwards;
+}
+
+.musikspur-steht .musikspur-balken,
+.musikspur-steht .musikspur-fortschritt {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .musikspur-balken {
+    animation: none;
+    transform: scaleY(0.6);
+  }
+}

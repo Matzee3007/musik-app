@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Musikspur from "@/app/ui/musikspur";
 import RadAnsicht from "@/app/ui/rad-ansicht";
 import { KATEGORIEN } from "@/lib/kategorien";
 import type { Runde } from "@/lib/spiel";
@@ -13,6 +14,8 @@ export default function Tisch({
   onLoesungAnzeigen,
   onVonVorn,
   onNeuesSpiel,
+  onRadSteht,
+  musik,
 }: {
   runde: Runde | null;
   stapelLeer: boolean;
@@ -21,6 +24,19 @@ export default function Tisch({
   onLoesungAnzeigen: () => void;
   onVonVorn: () => void;
   onNeuesSpiel: () => void;
+  // Nur mit Spotify: Das Rad steht, jetzt soll der Song laufen.
+  onRadSteht?: () => void;
+  // Nur mit Spotify, sonst steht dort wie in der Demo "Song läuft".
+  musik?: {
+    laeuft: boolean;
+    // Der Ausschnitt ist zu Ende, der Song pausiert.
+    vorbei: boolean;
+    dauerMs: number | null;
+    // Neuer Wert: Musikspur beginnt von vorn.
+    start: number;
+    onNochmal: () => void;
+    onWeiterhoeren: () => void;
+  };
 }) {
   // Kategorie und Knöpfe erst zeigen, wenn das Rad steht.
   const [dreht, setDreht] = useState(false);
@@ -43,7 +59,13 @@ export default function Tisch({
       )}
 
       {!runde?.aufgeloest && (
-        <RadAnsicht runde={runde} onStillstand={() => setDreht(false)} />
+        <RadAnsicht
+          runde={runde}
+          onStillstand={() => {
+            setDreht(false);
+            onRadSteht?.();
+          }}
+        />
       )}
 
       {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
@@ -65,7 +87,24 @@ export default function Tisch({
 
       {runde && !runde.aufgeloest && !dreht && (
         <>
-          <p className="text-lg">Song läuft</p>
+          {musik ? (
+            <>
+              <Musikspur
+                key={musik.start}
+                farbe={runde.kategorie.farbe}
+                laeuft={musik.laeuft}
+                dauerMs={musik.dauerMs}
+              />
+              {musik.vorbei && (
+                <div className="flex gap-2">
+                  <Knopf onClick={musik.onNochmal}>Nochmal</Knopf>
+                  <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-lg">Song läuft</p>
+          )}
           <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
         </>
       )}

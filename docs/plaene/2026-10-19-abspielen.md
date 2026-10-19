@@ -245,7 +245,7 @@ Verhalten: Mit `abspieler` zeigt `SpielAnsicht` über dem Tisch das Auswahlfeld 
 Zeitgeber). Ein neuer Song löscht den alten Zeitgeber, Bingo pausiert. Ohne `abspieler` zeigt der Tisch wie bisher
 „Song läuft“.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (nachgebauter `abspieler` aus `vi.fn`, `vi.useFakeTimers()`,
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (nachgebauter `abspieler` aus `vi.fn`, `vi.useFakeTimers()`,
   Rad mit `fireEvent.transitionEnd` anhalten wie in `spiel-ansicht.test.tsx`)
 
 ```ts
@@ -268,12 +268,17 @@ test("ganzer Song: keine Pause", …);
 test("ohne Abspieler bleibt alles wie in der Demo", …);                     // „Song läuft“, kein Auswahlfeld
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen** (`npx vitest run __tests__/ui/spiel-musik.test.tsx`)
-- [ ] **Schritt 3: `Musikspur`, Animation in `globals.css` (Balken mit `@keyframes`, angehalten über
+Bei der Umsetzung ergänzt: Test „Bingo hält die Musik an“. Die Musik-Angaben für den Tisch zählen jeden Start
+(`start`), die Musikspur bekommt ihn als React-`key`, damit der Fortschritt bei „Nochmal“ und beim nächsten Song bei
+null beginnt. Sofort grün und vorher angekündigt: „ganzer Song“ (nutzt denselben Weg wie „Weiterhören“) und die Demo.
+Ein Laufzeitfehler unterwegs (`hatBingo(neu)` statt `hatBingo(neu.karte)`) war mein Fehler, Vitest prüft keine Typen.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen** (`npx vitest run __tests__/ui/spiel-musik.test.tsx`)
+- [x] **Schritt 3: `Musikspur`, Animation in `globals.css` (Balken mit `@keyframes`, angehalten über
   `animation-play-state: paused`, Fortschritt als `transition` der Breite über `dauerMs`), Erweiterungen von `Tisch`
   und `SpielAnsicht`**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test` (alte Tests der Spiel-Ansicht)
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Play each round with snippet and music track"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test` (alte Tests der Spiel-Ansicht)
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Play each round with snippet and music track"`
 
 ### Aufgabe 6: Cover und Jahr korrigieren in der Auflösung
 
