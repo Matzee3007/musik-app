@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Spiellogik"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-19
 tags: [plan, spiellogik, tdd, phase-1]
 ---
