@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Spotify-Anmeldung und Playlists"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-19
 tags: [plan, spotify, oauth, phase-2]
 ---
@@ -418,10 +418,13 @@ Redirect-URI `http://127.0.0.1:3000/callback`, APIs „Web API“ und „Web Pla
 - [x] **Schritt 2: Tool-Notiz `Spotify Web API.md`** nach dem Aufbau aus `Tools Übersicht.md` (Was, wofür, Begriffe
   Client-ID, Redirect-URI, Scope, Token, Einrichtung im Dashboard, Development Mode mit 5 Konten, Fehler) und Zeile in
   „Im Einsatz“.
-- [ ] **Schritt 3: Echt prüfen.** `npm run dev`, `http://127.0.0.1:3000` öffnen, anmelden, Rechte bestätigen.
+- [x] **Schritt 3: Echt prüfen.** `npm run dev`, `http://127.0.0.1:3000` öffnen, anmelden, Rechte bestätigen.
   Erwartet: zurück auf der Startseite, „Deine Playlists“ mit deinen eigenen Playlists und Anzahl Songs. Seite neu
   laden: weiter angemeldet. „Abmelden“: wieder „Mit Spotify anmelden“. Einmal bei Spotify „Abbrechen“: Meldung
   „Anmeldung abgebrochen“. Auffälligkeiten als Fehler in die Tool-Notiz.
-- [ ] **Schritt 4: Prüfen und committen:** `npm run check`, `npm run build`,
+Ergebnis 2026-10-19: Anmelden, Neuladen, Abmelden und Abbrechen funktionieren mit der echten Spotify-App, im
+Server-Log keine Fehler. Spotify hängt an `/callback` zusätzlich einen Parameter `ubi` an, die App ignoriert ihn.
+
+- [x] **Schritt 4: Prüfen und committen:** `npm run check`, `npm run build`,
   `git commit -m "Run dev server on 127.0.0.1 and document Spotify setup"`
-- [ ] **Schritt 5: Plan abschließen:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
+- [x] **Schritt 5: Plan abschließen:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
