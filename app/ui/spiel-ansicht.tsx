@@ -102,6 +102,16 @@ export default function SpielAnsicht({
     onJahrKorrigiert?.(songId, jahr);
   }
 
+  // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
+  function loesungZeigen() {
+    if (!spiel) return;
+    setSpiel(loesungAnzeigen(spiel));
+    if (!musik?.laeuft) return;
+    if (zeitgeber.current) clearTimeout(zeitgeber.current);
+    abspieler?.pausieren();
+    setMusik({ ...musik, laeuft: false, vorbei: true });
+  }
+
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
   function musikAnhalten() {
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
@@ -137,7 +147,7 @@ export default function SpielAnsicht({
         stapelLeer={spiel.stapel.length === 0}
         bingo={hatBingo(spiel.karte)}
         onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
-        onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
+        onLoesungAnzeigen={loesungZeigen}
         onVonVorn={() => setSpiel(stapelNeuMischen(spiel, spielSongs, zufall))}
         onNeuesSpiel={() => setSpiel(spielStarten(spielSongs, zufall))}
         onRadSteht={songStarten}

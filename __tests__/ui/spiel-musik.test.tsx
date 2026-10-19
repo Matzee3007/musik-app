@@ -131,11 +131,13 @@ test("die nächste Runde vor Ende des Ausschnitts hält den neuen Song nicht an"
   starten();
   await vergehen(20_000);
   naechsteRunde();
-  await vergehen(15_000);
-  expect(abspieler.pausieren).not.toHaveBeenCalled();
-  expect(screen.getByRole("img", { name: "Musikspur läuft" })).toBeDefined();
+  // Einmal angehalten hat die Lösung, der alte Zeitgeber darf nicht noch einmal.
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
   await vergehen(15_000);
   expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole("img", { name: "Musikspur läuft" })).toBeDefined();
+  await vergehen(15_000);
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
 });
 
 test("ganzer Song: keine Pause", async () => {
@@ -168,13 +170,16 @@ test("Bingo hält die Musik an", () => {
   for (let runde = 0; runde < 5; runde++) {
     drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
     klick("Lösung anzeigen");
+    // In der letzten Auflösung läuft die Musik weiter, das Bingo soll sie anhalten.
+    if (runde === 4) klick("Weiterhören");
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
     );
   }
   expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
   expect(abspieler.abspielen).toHaveBeenCalledTimes(5);
-  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  // 5-mal beim Aufdecken, einmal beim Bingo.
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(6);
 });
 
 test("ohne Abspieler bleibt alles wie in der Demo", () => {
@@ -183,4 +188,31 @@ test("ohne Abspieler bleibt alles wie in der Demo", () => {
   expect(screen.getByText("Song läuft")).toBeDefined();
   expect(screen.queryByRole("combobox", { name: "Ausschnitt" })).toBeNull();
   expect(screen.queryByRole("img", { name: /Musikspur/ })).toBeNull();
+});
+
+test("Lösung anzeigen stoppt den Song, Weiterhören in der Auflösung spielt ohne Ende weiter", async () => {
+  starten();
+  await vergehen(10_000);
+  klick("Lösung anzeigen");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  klick("Weiterhören");
+  expect(abspieler.fortsetzen).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
+  await vergehen(120_000);
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+});
+
+test("ist der Ausschnitt schon vorbei, pausiert die Lösung nicht doppelt", async () => {
+  starten();
+  await vergehen(30_000);
+  klick("Lösung anzeigen");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole("button", { name: "Weiterhören" })).toBeDefined();
+});
+
+test("in der Demo gibt es in der Auflösung kein Weiterhören", () => {
+  render(<SpielAnsicht songs={SONGS} zufall={() => 0} sofort />);
+  drehen("Rad drehen");
+  klick("Lösung anzeigen");
+  expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
 });

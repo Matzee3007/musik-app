@@ -39,7 +39,8 @@ Musikspur, Korrigieren, Fertig-Kriterium); baut auf [[2026-10-19-spotify-anmeldu
   Standard 30. Sie gilt ab dem nächsten Song und wird nicht gespeichert, ein neues Spiel beginnt wieder mit 30.
 - **Am Ende des Ausschnitts** pausiert die Musik, die Musikspur steht still, der Tisch zeigt „Nochmal“ (Ausschnitt
   von vorn) und „Weiterhören“ (Song läuft ab der Stelle weiter, ohne neues Ende). „Lösung anzeigen“ hält die Musik
-  nicht an, „Nächste Runde“ startet den nächsten Song, Bingo hält an.
+  an (**geändert am 2026-10-19 auf Wunsch des Entwicklers**, zuerst lief sie weiter), in der Auflösung spielt
+  „Weiterhören“ den Song ohne Ende weiter. „Nächste Runde“ startet den nächsten Song, Bingo hält an.
 - **Musikspur:** 5 Balken, die in der Farbe der Kategorie auf und ab springen, darunter ein Fortschrittsbalken über die
   Länge des Ausschnitts. Beim ganzen Song und nach „Weiterhören“ nur die Balken.
 - **Cover:** das größte Bild des Albums (`album.images[0]`), in der Auflösung neben Titel und Interpret.
