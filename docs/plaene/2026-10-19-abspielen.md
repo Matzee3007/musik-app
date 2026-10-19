@@ -331,7 +331,7 @@ Klick und zeigt `SpielAnsicht` mit `abspieler` und `onJahrKorrigiert={korrekturS
 wird der Player getrennt und ein laufendes Vorbereiten abgebrochen (ein `useRef`, der im Aufräumen eines eigenen
 Effekts auf „verlassen“ springt; StrictMode setzt ihn beim zweiten Einhängen zurück).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("vorbereiten hört auf, sobald abgebrochen meldet", async () => { … });   // nach Song 1 abgebrochen → Song 2 nicht gefragt
@@ -340,10 +340,15 @@ test("ohne Premium: Meldung, das Spiel startet trotzdem ohne Musik", …);    //
 test("Zurück während des Vorbereitens: keine weitere Anfrage", …);          // unmount nach erster Antwort, dann keine Anfrage mehr
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
-- [ ] **Schritt 3: Abbruch in `vorbereiten`, Player in `VorbereitenAnsicht`**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test`
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Connect player at game start and stop preparing on back"`
+Bei der Umsetzung ergänzt: eine Statuszeile über der Songliste („Musik wird verbunden …“, „Musik bereit“, „Musik nicht
+verfügbar: …“), damit der DJ vor dem Spielstart sieht, ob Musik kommt; Test „beim Verlassen wird der Player getrennt“.
+Das Abfangen des Player-Fehlers stand schon in Runde 2, der Premium-Test war deshalb sofort grün, Rot-Grün durch
+Ausbauen belegt.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: Abbruch in `vorbereiten`, Player in `VorbereitenAnsicht`**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**, dann `npm test`
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Connect player at game start and stop preparing on back"`
 
 ### Aufgabe 8: Echt prüfen und Phase 2 abschließen
 

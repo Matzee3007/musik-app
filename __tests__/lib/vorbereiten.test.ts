@@ -177,3 +177,18 @@ test("spielSongs reicht das Cover weiter, Songs ohne Cover haben keins", () => {
   );
   expect(spielSongs([song("t1")], {})[0]).not.toHaveProperty("cover");
 });
+
+test("vorbereiten hört auf, sobald abgebrochen meldet, ohne Fehler", async () => {
+  let abgebrochen = false;
+  const jahrAbfragen = vi.fn(async () => {
+    abgebrochen = true;
+    return 1975;
+  });
+  await vorbereiten([song("t1"), song("t2"), song("t3")], {
+    jahrAbfragen,
+    warten: ohnePause,
+    abgebrochen: () => abgebrochen,
+  });
+  expect(jahrAbfragen.mock.calls).toEqual([["ISRCt1"]]);
+  expect(Object.keys(gespeicherteJahre())).toEqual(["t1"]);
+});
