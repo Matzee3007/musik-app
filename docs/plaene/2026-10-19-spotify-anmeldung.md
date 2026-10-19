@@ -301,7 +301,7 @@ test("abgelaufenes Token ergibt SpotifyFehler 401", async () => {
 - Liefert: `clientId(): string | undefined` (liest `process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID` bei jedem Aufruf, leer
   gilt als fehlend), Komponente `Rueckruf({ onFertig }: { onFertig: () => void })`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (Adresse setzen mit
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (Adresse setzen mit
   `window.history.replaceState({}, "", "/callback?…")`, `fetch` ersetzen mit `vi.stubGlobal`, Client-ID mit
   `vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc")`)
 
@@ -326,14 +326,14 @@ test("zeigt „Anmeldung abgebrochen“ und einen Weg zurück", async () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/ui/rueckruf.test.tsx`)
-- [ ] **Schritt 3: `konfig.ts`, `Rueckruf` und `app/callback/page.tsx` schreiben.** `Rueckruf` ist eine
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/ui/rueckruf.test.tsx`)
+- [x] **Schritt 3: `konfig.ts`, `Rueckruf` und `app/callback/page.tsx` schreiben.** `Rueckruf` ist eine
   Client-Komponente: Ein `useRef` verhindert den zweiten Start im StrictMode, der Effekt liest
   `new URLSearchParams(window.location.search)`. Während des Tauschs steht „Anmeldung läuft …“ da, bei `AnmeldeFehler`
   dessen Meldung mit dem Link. Die Seite ist eine Client-Komponente und gibt `onFertig={() => router.replace("/")}`
   (`useRouter` aus `next/navigation`).
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify callback page"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify callback page"`
 
 ### Aufgabe 6: Startseite
 
