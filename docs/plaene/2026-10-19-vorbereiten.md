@@ -353,7 +353,7 @@ Spotify, MusicBrainz („–“ ohne Jahr), Jahr (Eingabefeld mit der Korrektur,
 `gueltigesJahr` sie annimmt; ein leeres Feld nimmt sie zurück. Ohne Songs: „Keine spielbaren Songs“ statt
 „Spiel starten“.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 // gespeichert vorher: t1 → MusicBrainz 1975, t2 → nicht gefunden
@@ -391,13 +391,17 @@ test("ohne spielbare Songs kein Spiel", () => {
 In `__tests__/ui/spiel-ansicht.test.tsx`: `render(<SpielAnsicht songs={FUENF_SONGS} sofort />)` zeigt sofort „Rad drehen“
 und keinen Knopf „Spiel starten“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+Bei der Umsetzung ergänzt: Nach abgelehntem Unsinn zeigt das Feld wieder den gespeicherten Wert (Rot-Grün durch
+Ausbauen belegt), ein leeres Feld nimmt die Korrektur zurück und die Markierung kommt wieder. „Spiel starten“ übergibt
+die Songs in der Reihenfolge der Playlist. Die Einzahl „1 Song bereit“ verlangt erst der Test in Aufgabe 7.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
   (`npx vitest run __tests__/ui/songliste.test.tsx __tests__/ui/spiel-ansicht.test.tsx`)
-- [ ] **Schritt 3: `Songliste` schreiben, `SpielAnsicht` um `sofort` ergänzen.** `sofort` startet über den
+- [x] **Schritt 3: `Songliste` schreiben, `SpielAnsicht` um `sofort` ergänzen.** `sofort` startet über den
   Startwert von `useState` (`() => sofort ? spielStarten(songs, zufall) : null`). Das ist sicher, weil `SpielAnsicht`
   mit `sofort` nur nach einem Klick erscheint, nie beim ersten Rendern auf dem Server.
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add song list with year corrections"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add song list with year corrections"`
 
 ### Aufgabe 7: Vorbereiten-Ansicht und anklickbare Playlists
 
