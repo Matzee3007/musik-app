@@ -102,6 +102,13 @@ export default function SpielAnsicht({
     onJahrKorrigiert?.(songId, jahr);
   }
 
+  // Beim Drehen hört ein noch laufender Song sofort auf, der nächste startet, wenn das Rad steht.
+  function radDrehen() {
+    if (!spiel) return;
+    setSpiel(rundeStarten(spiel, zufall));
+    if (musik?.laeuft) musikAnhalten();
+  }
+
   // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
   function loesungZeigen() {
     if (!spiel) return;
@@ -146,7 +153,7 @@ export default function SpielAnsicht({
         runde={spiel.runde}
         stapelLeer={spiel.stapel.length === 0}
         bingo={hatBingo(spiel.karte)}
-        onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
+        onRadDrehen={radDrehen}
         onLoesungAnzeigen={loesungZeigen}
         onVonVorn={() => setSpiel(stapelNeuMischen(spiel, spielSongs, zufall))}
         onNeuesSpiel={() => setSpiel(spielStarten(spielSongs, zufall))}

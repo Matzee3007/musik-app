@@ -216,3 +216,15 @@ test("in der Demo gibt es in der Auflösung kein Weiterhören", () => {
   klick("Lösung anzeigen");
   expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
 });
+
+test("Nächste Runde stoppt einen weiterlaufenden Song sofort, nicht erst wenn das Rad steht", () => {
+  starten();
+  klick("Lösung anzeigen");
+  klick("Weiterhören");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  klick("Nächste Runde");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(1);
+  fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+});
