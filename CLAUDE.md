@@ -27,7 +27,7 @@ Schritt eine funktionierende App entwickeln.
 - **Daten und Echtzeit:** Supabase (Postgres, Realtime-Kanäle für die Spielräume), ab Phase 3
 - **Hosting:** Vercel, ab Phase 3
 - **Qualität:** ESLint, Prettier, Vitest (später Playwright für Browser-Tests)
-- **Musik:** Spotify Web API und Web Playback SDK (Premium des Entwicklers), MusicBrainz für das Original-Jahr
+- **Musik:** Spotify Web API und Web Playback SDK (Premium des Entwicklers), MusicBrainz für das Erscheinungsjahr
 
 Begründung und Alternativen: `docs/adr/0001-stack.md`.
 

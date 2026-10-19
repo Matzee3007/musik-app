@@ -105,7 +105,7 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
   Bingo-Erkennung, testgetrieben. Tisch und Karte nebeneinander am Laptop, feste Songliste, noch ohne Spotify.
   Dazu ein grafisches Rad (abgeschlossen 2026-10-19, PRs #10 und #11)
 - [ ] **Phase 2 – Spotify:** Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
-  Original-Jahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch
+  Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch
 - [ ] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
   Realtime, Deployment auf Vercel
 - [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy
@@ -133,3 +133,30 @@ Mit `/grill-with-docs` am 2026-10-18 geklärt:
 - **Bonusregel und Timer von 25 Sekunden?** Keine Bonusregel (gibt es im Original nur auf Seite A). Kein Timer fürs
   Aufschreiben, die 25 Sekunden des Originals sind kein Ausschnitt. Der Ausschnitt dauert standardmäßig 30 Sekunden.
 - **Welche eigenen Kategorien?** Siehe „Eigene Ideen“, kommen in Phase 4.
+
+Mit `/grill-with-docs` am 2026-10-19 für **Phase 2 – Spotify** geklärt:
+
+- **Anmeldung:** OAuth mit PKCE nur im Browser, ohne Client-Secret ([[0003-spotify-anmeldung-nur-im-browser|ADR 0003]]).
+  Der DJ bleibt angemeldet (Refresh-Token im Browser), ein Knopf „Abmelden“ löscht alles.
+- **Ablauf am Tisch:** Startseite mit „Mit Spotify anmelden“ oder „Demo starten“ → Liste der eigenen und
+  kollaborativen Playlists → Vorbereiten mit Fortschrittsbalken (entfällt, wenn schon vorbereitet) → Songliste prüfen
+  → „Spiel starten“. Gespielt wird wie in Phase 1, Tisch und Karte nebeneinander am Laptop.
+- **Speichern bis Phase 3:** im `localStorage` des Browsers, Schlüssel ist die Spotify-Track-ID. Ab Phase 3 Supabase.
+- **Vorbereiten:** Songs über `/playlists/{id}/items` laden, Podcast-Folgen, lokale und nicht abspielbare Songs still
+  überspringen und zählen („98 Songs bereit, 2 übersprungen“). Erscheinungsjahr über den ISRC aus MusicBrainz
+  (1 Anfrage pro Sekunde, über den Next.js-Server). Kein Treffer: Spotify-Jahr, markiert als „unsicher“, keine Suche
+  nach Titel.
+- **Korrigieren:** in der Songliste vor dem Spiel und in der Auflösung („Jahr korrigieren“). Die Songliste zeigt
+  Spotify- und MusicBrainz-Jahr nebeneinander und markiert „nicht gefunden“ sowie „MusicBrainz-Jahr später als
+  Spotify-Jahr“.
+- **Ausschnitt:** ab Songanfang, 15, 30 (Standard), 45 oder 60 Sekunden oder ganz, jederzeit einstellbar, gilt ab dem
+  nächsten Song. Am Ende pausiert die Musik, Knöpfe „Nochmal“ und „Weiterhören“.
+- **Musikspur:** animierte Equalizer-Balken in der Farbe der gedrehten Kategorie und ein Fortschrittsbalken. Keine
+  echte Wellenform, die Audio-Analyse von Spotify gibt es für neue Apps nicht mehr. Das Cover erst in der Auflösung.
+- **Demo:** Die feste Songliste aus Phase 1 bleibt als Spiel ohne Anmeldung und ohne Musik.
+- **Fertig, wenn:** am Laptop ein komplettes Spiel mit eigener Playlist bis zum Bingo läuft, mit Musik, richtigen
+  und einmal korrigierten Erscheinungsjahren, Musikspur und Cover. Die Auswahl des Erscheinungsjahrs ist eine reine
+  Funktion (TDD), Spotify und MusicBrainz werden in Tests mit nachgebauten Antworten ersetzt.
+- **Spotify-API, Stand Oktober 2026:** `external_ids` (ISRC) wurde im Februar 2026 für den Development Mode gestrichen,
+  im März aber wieder eingeführt. Playlist-Songs kommen über `/items` statt `/tracks` und nur für eigene oder
+  kollaborative Playlists, die Suche liefert höchstens 10 Treffer.
