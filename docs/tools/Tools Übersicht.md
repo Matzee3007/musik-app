@@ -24,14 +24,14 @@ alle benutzten Befehle, Fehler.
 | [[Next.js.md\|Next.js]] (mit Node.js 24, npm, TypeScript, React) | 2026-10-18 | Oberfläche und Server-Teil der App |
 | [[Vitest, ESLint und Prettier]] | 2026-10-18 | Tests, Code prüfen, einheitlich formatieren |
 | [[projects/musik-app/docs/tools/GitHub Actions - Einrichtung\|GitHub Actions]] | 2026-10-18 | prüft jeden PR automatisch (CI) |
-| [[Spotify Web API]] | 2026-10-19 | Anmeldung des DJs und seine Playlists |
+| [[Spotify Web API]] | 2026-10-19 | Anmeldung des DJs, seine Playlists und ihre Songs |
+| [[MusicBrainz]] | 2026-10-19 | Erscheinungsjahr eines Songs über den ISRC |
 
 ## Geplant
 
 | Werkzeug | Phase | Wofür in einem Satz |
 |---|---|---|
 | Web Playback SDK | 2 | Songs im Browser abspielen (Plan C) |
-| MusicBrainz | 2 | Erscheinungsjahr eines Songs |
 | Supabase | 3 | Datenbank und Live-Abgleich zwischen den Geräten |
 | Vercel | 3 | App ins Internet bringen |
 | Playwright | später | Tests im echten Browser |

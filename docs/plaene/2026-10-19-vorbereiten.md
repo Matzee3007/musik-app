@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Vorbereiten und Erscheinungsjahr"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-19
 tags: [plan, spotify, musicbrainz, phase-2]
 ---
@@ -461,13 +461,19 @@ die Songliste sagt bei einem Song „1 Song bereit“.
 
 **Dateien:** Neu `docs/tools/MusicBrainz.md`, Ändern `docs/tools/Tools Übersicht.md`
 
-- [ ] **Schritt 1: Tool-Notiz `MusicBrainz.md`** (Aufbau wie `Spotify Web API.md`: ISRC-Abfrage, `first-release-date`,
+- [x] **Schritt 1: Tool-Notiz `MusicBrainz.md`** (Aufbau wie `Spotify Web API.md`: ISRC-Abfrage, `first-release-date`,
   User-Agent, 1 Anfrage pro Sekunde, 503) und Zeile in „Im Einsatz“ statt „Geplant“.
-- [ ] **Schritt 2: Echt prüfen.** `npm run dev`, `http://127.0.0.1:3000`, anmelden, eine eigene Playlist anklicken.
+- [x] **Schritt 2: Echt prüfen.** `npm run dev`, `http://127.0.0.1:3000`, anmelden, eine eigene Playlist anklicken.
   Erwartet: Fortschritt zählt hoch (etwa 1 Song pro Sekunde), dann die Songliste mit „… Songs bereit, …
   übersprungen“. Mindestens einen bekannten Remaster prüfen (MusicBrainz-Jahr älter als Spotify-Jahr, nicht
   markiert). Einen markierten Song korrigieren, „Zurück“ und dieselbe Playlist wieder öffnen: keine Wartezeit, die
   Korrektur ist noch da. „Spiel starten“: Spiel mit deinen Songs, die Auflösung zeigt das richtige Jahr.
-- [ ] **Schritt 3: Prüfen und committen:** `npm run check`, `npm run build`,
+Ergebnis 2026-10-19: Der erste echte Test brach bei jeder Playlist mit „MusicBrainz ist gerade überlastet.“ ab.
+Ursache und Fix stehen unter „Annahmen“ (Wiederholung nach 1 s statt 2 s, 5 statt 3 Versuche) und in der Tool-Notiz
+[[MusicBrainz]]. Danach funktionierten Vorbereiten, Songliste, Korrektur, erneutes Öffnen ohne Wartezeit und das Spiel
+mit den eigenen Songs. Offen für später: „Zurück“ stoppt ein laufendes Vorbereiten nicht, zwei Playlists nacheinander
+fragen dann gleichzeitig.
+
+- [x] **Schritt 3: Prüfen und committen:** `npm run check`, `npm run build`,
   `git commit -m "Document MusicBrainz"`
-- [ ] **Schritt 4: Plan abschließen:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
+- [x] **Schritt 4: Plan abschließen:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
