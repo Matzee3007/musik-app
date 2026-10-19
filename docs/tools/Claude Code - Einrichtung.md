@@ -30,6 +30,11 @@ Läuft automatisch, nachdem Claude eine Datei geändert hat:
 - **ESLint** prüft Code-Dateien ohne `--fix`. Fehler gehen an Claude, Warnungen (z. B. unbenutzte Variable) nicht,
   weil ESLint bei Warnungen mit Exit-Code 0 endet.
 
+Der Hook greift nur bei den Werkzeugen Write und Edit. Dateien, die Claude per Shell schreibt (`cat <<EOF`), bleiben
+unformatiert, bis `npx prettier --write <datei>` läuft (2026-10-19, `npm run check` fand es). Weil er nach jeder
+einzelnen Änderung prüft, meldet ESLint auch Zwischenstände, z. B. eine Komponente, deren Import erst mit der nächsten
+Änderung kommt.
+
 Die Änderung an `settings.json` wirkte sofort, ohne Neustart von Claude Code. Ansehen oder abschalten: `/hooks`.
 
 ### Hook von Hand testen

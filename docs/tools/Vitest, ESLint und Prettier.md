@@ -31,6 +31,11 @@ Spiellogik testgetrieben bauen (ab Phase 1), Oberfläche prüfen, einheitlicher 
 | Flat Config | neues Format der ESLint-Konfiguration: eine Liste in `eslint.config.mjs` |
 | `eslint-config-prettier` | schaltet ESLint-Regeln ab, die Prettier widersprechen, muss als Letztes in der Liste stehen |
 | `.prettierignore` | was Prettier nicht anfasst, bei uns Markdown und `package-lock.json` |
+| Testing Library | rendert Komponenten im Test und sucht wie ein Nutzer: `getByRole("button", { name })`, `getByText` |
+| `within(element)` | sucht nur in einem Bereich, z. B. `within(screen.getByRole("region", { name: "Tisch" }))` |
+| `fireEvent` | löst Ereignisse aus: `click`, `transitionEnd` (jsdom spielt keine CSS-Übergänge ab) |
+| `cleanup()` | räumt gerenderte Komponenten weg; in Vitest nicht automatisch, deshalb in `afterEach` |
+| `vi.spyOn` | ersetzt eine Funktion im Test, z. B. `vi.spyOn(window, "confirm").mockReturnValue(true)` |
 
 ## Wie haben wir es eingerichtet?
 
@@ -59,6 +64,8 @@ npm run check        # vor jedem Commit
 | Befehl | Bedeutung |
 |---|---|
 | `npm test` | Vitest einmal ausführen |
+| `npx vitest run <datei>` | nur die Tests einer Datei, in der Rot-Grün-Schleife |
+| `npx prettier --write <datei>` | eine Datei formatieren, z. B. nach dem Schreiben per Shell |
 | `npm run test:watch` | Vitest im Beobachtungsmodus |
 | `npm run lint` | ESLint |
 | `npm run format` / `npm run format:check` | Prettier formatieren / nur prüfen |
@@ -67,3 +74,5 @@ npm run check        # vor jedem Commit
 ## Fehler, die uns passiert sind
 
 - Konflikt bei der Installation von Vitest (`ERESOLVE`): siehe [[Next.js.md|Next.js]], Abschnitt „Fehler“.
+- `Found multiple elements with the text: Titel` und `[warn] Code style issues found` (2026-10-19): siehe
+  [[Lernjournal Phase 1 - Spiel auf einem Gerät]], Abschnitt „Fehler und Lösungen“.
