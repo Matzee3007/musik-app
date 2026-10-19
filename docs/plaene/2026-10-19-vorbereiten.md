@@ -217,7 +217,7 @@ ohne `isrc`. `npm run build` zeigt die Route als dynamisch (ƒ), wie die Doku zu
   `playlistSongs(playlistId: string, accessToken: string, abruf?: Abruf): Promise<{ songs: PlaylistSong[]; uebersprungen: number }>`
   (beginnt bei `https://api.spotify.com/v1/playlists/<id>/items?limit=50&market=from_token`, folgt `next`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const track = (id: string, extra: object = {}) => ({
@@ -247,10 +247,12 @@ test("überspringt lokale Dateien, Podcast-Folgen und nicht spielbare Songs und 
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/playlist-songs.test.ts`)
-- [ ] **Schritt 3: `playlist-songs.ts` schreiben.** Spotify-Jahr = erste vier Zeichen von `album.release_date`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add loading songs of a playlist"`
+Bei der Umsetzung ergänzt: abgelaufenes Token ergibt `SpotifyFehler` 401, `is_playable: true` bleibt dabei.
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/playlist-songs.test.ts`)
+- [x] **Schritt 3: `playlist-songs.ts` schreiben.** Spotify-Jahr = erste vier Zeichen von `album.release_date`.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add loading songs of a playlist"`
 
 ### Aufgabe 5: Vorbereiten und Jahre speichern
 
