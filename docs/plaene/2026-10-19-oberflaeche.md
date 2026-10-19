@@ -77,7 +77,8 @@ Gemeinsame Testdaten in `spiel-ansicht.test.tsx`: `FUENF_SONGS = SONGLISTE.slice
 - Liefert:
   - `SpielAnsicht({ songs, zufall }: { songs: readonly Song[]; zufall?: Zufall })` (Default-Export)
   - `Tisch(props: { runde: Runde | null; stapelLeer: boolean; bingo: boolean; onRadDrehen: () => void;
-    onLoesungAnzeigen: () => void; onVonVorn: () => void })`
+    onLoesungAnzeigen: () => void; onVonVorn: () => void; onNeuesSpiel: () => void })` (`onNeuesSpiel` kam bei der
+    Umsetzung von Aufgabe 5 dazu)
   - `KarteAnsicht(props: { karte: Karte; onFeldKlick: (index: number) => void })`. Jedes Feld ist ein `<button>` mit
     `aria-label="Feld <Kategorie-Name>"` und `aria-pressed={abgehakt}`.
 
@@ -231,7 +232,7 @@ test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () =
 **Schnittstellen:**
 - Nutzt: `hatBingo`, `spielStarten`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben.** Mit Zufall `() => 0.999` tauscht das Mischen nichts: Die Karte
+- [x] **Schritt 1: Fehlschlagende Tests schreiben.** Mit Zufall `() => 0.999` tauscht das Mischen nichts: Die Karte
   liegt in der Reihenfolge der Kategorien, die letzte Zeile (Felder 20 bis 24) ist ganz „Jahr ±3“, und das Rad wählt
   immer „Jahr ±3“. Fünf Runden mit je einem Häkchen in dieser Zeile ergeben Bingo.
 
@@ -246,17 +247,17 @@ test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () 
   expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
   expect(screen.queryByRole("button", { name: "Nächste Runde" })).toBeNull();
   klick("Neues Spiel");
-  expect(screen.getAllByRole("button", { name: /^Feld /, pressed: true })).toHaveLength(0);
+  expect(screen.queryAllByRole("button", { name: /^Feld /, pressed: true })).toHaveLength(0);
   expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: Bingo anzeigen.** `SpielAnsicht` berechnet `hatBingo(spiel.karte)` und gibt es als `bingo` an den
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: Bingo anzeigen.** `SpielAnsicht` berechnet `hatBingo(spiel.karte)` und gibt es als `bingo` an den
   Tisch. Bei Bingo zeigt der Tisch `<h2>Bingo!</h2>` und nur den Knopf „Neues Spiel“, der `spielStarten(songs, zufall)`
   aufruft. Die Auflösung der letzten Runde bleibt darunter sichtbar.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add bingo screen and new game"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add bingo screen and new game"`
 
 ### Aufgabe 6: Im Browser spielen
 

@@ -113,3 +113,23 @@ test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () =
     screen.getAllByRole("button", { name: "Feld Titel", pressed: true }),
   ).toHaveLength(1);
 });
+
+// Mit Zufall 0.999 tauscht das Mischen nichts: Die letzte Zeile der Karte
+// (Felder 20 bis 24) ist ganz „Jahr ±3“, und das Rad wählt immer „Jahr ±3“.
+test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () => {
+  starten(FUENF_SONGS, () => 0.999);
+  for (let runde = 0; runde < 5; runde++) {
+    klick(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    klick("Lösung anzeigen");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
+    );
+  }
+  expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Nächste Runde" })).toBeNull();
+  klick("Neues Spiel");
+  expect(
+    screen.queryAllByRole("button", { name: /^Feld /, pressed: true }),
+  ).toHaveLength(0);
+  expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
+});

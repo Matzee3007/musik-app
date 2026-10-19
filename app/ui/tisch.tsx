@@ -6,21 +6,32 @@ const jahrzehnt = KATEGORIEN.find((k) => k.id === "jahrzehnt")!;
 export default function Tisch({
   runde,
   stapelLeer,
+  bingo,
   onRadDrehen,
   onLoesungAnzeigen,
   onVonVorn,
+  onNeuesSpiel,
 }: {
   runde: Runde | null;
   stapelLeer: boolean;
+  bingo: boolean;
   onRadDrehen: () => void;
   onLoesungAnzeigen: () => void;
   onVonVorn: () => void;
+  onNeuesSpiel: () => void;
 }) {
   return (
     <section
       aria-label="Tisch"
       className="flex flex-col items-center gap-4 rounded-xl border border-zinc-300 p-6 dark:border-zinc-700"
     >
+      {bingo && (
+        <>
+          <h2 className="text-5xl font-bold">Bingo!</h2>
+          <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
+        </>
+      )}
+
       {!runde && <Knopf onClick={onRadDrehen}>Rad drehen</Knopf>}
 
       {runde && (
@@ -59,8 +70,8 @@ export default function Tisch({
             <dt className="text-zinc-600 dark:text-zinc-400">Jahrzehnt</dt>
             <dd>{jahrzehnt.loesung(runde.song)}</dd>
           </dl>
-          <p>Richtig? Hake ein Feld {runde.kategorie.name} ab.</p>
-          {stapelLeer ? (
+          {!bingo && <p>Richtig? Hake ein Feld {runde.kategorie.name} ab.</p>}
+          {bingo ? null : stapelLeer ? (
             <>
               <p className="font-semibold">Alle Songs gespielt</p>
               <Knopf onClick={onVonVorn}>Von vorn</Knopf>

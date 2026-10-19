@@ -3,6 +3,7 @@
 import { useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
+import { hatBingo } from "@/lib/bingo";
 import type { Song } from "@/lib/song";
 import {
   abhakenZuruecknehmen,
@@ -42,9 +43,11 @@ export default function SpielAnsicht({
       <Tisch
         runde={spiel.runde}
         stapelLeer={spiel.stapel.length === 0}
+        bingo={hatBingo(spiel.karte)}
         onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
         onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
         onVonVorn={() => setSpiel(stapelNeuMischen(spiel, songs, zufall))}
+        onNeuesSpiel={() => setSpiel(spielStarten(songs, zufall))}
       />
       <KarteAnsicht
         karte={spiel.karte}
