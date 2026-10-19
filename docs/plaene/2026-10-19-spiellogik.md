@@ -174,7 +174,7 @@ test("Zufall knapp unter 1 wählt die letzte Kategorie", () => {
   Index = Zeile × 5 + Spalte), `karteAusteilen(kategorien: readonly KategorieId[], zufall: Zufall = Math.random): Karte`,
   `feldSetzen(karte: Karte, index: number, abgehakt: boolean): Karte`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 const ids = KATEGORIEN.map((k) => k.id);
@@ -197,11 +197,11 @@ test("feldSetzen hakt ein Feld ab und lässt die alte Karte unverändert", () =>
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: `karteAusteilen` und `feldSetzen` schreiben**: jede Id fünfmal in eine Liste, mit `mischen`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: `karteAusteilen` und `feldSetzen` schreiben**: jede Id fünfmal in eine Liste, mit `mischen`
   durchmischen, in Felder umwandeln.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add card dealing and field marking"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add card dealing and field marking"`
 
 ### Aufgabe 5: Bingo-Erkennung
 
