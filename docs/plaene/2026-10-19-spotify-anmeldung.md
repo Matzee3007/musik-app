@@ -142,7 +142,7 @@ test("anmeldeUrl führt zu Spotify mit PKCE und allen Scopes", () => {
   `tokenErneuern(refreshToken: string, clientId: string, abruf?: Abruf, jetzt?: number): Promise<Token>`,
   `istAbgelaufen(token: Token, jetzt?: number): boolean` (60 Sekunden Puffer).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("codeTauschen schickt Code und Verifier und rechnet den Ablauf aus", async () => {
@@ -172,11 +172,11 @@ test("istAbgelaufen gilt schon 60 Sekunden vor dem Ablauf", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/token.test.ts`)
-- [ ] **Schritt 3: `abruf.ts` und `token.ts` schreiben.** POST mit
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/token.test.ts`)
+- [x] **Schritt 3: `abruf.ts` und `token.ts` schreiben.** POST mit
   `Content-Type: application/x-www-form-urlencoded`, Body als `URLSearchParams(...).toString()`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify token exchange and refresh"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify token exchange and refresh"`
 
 ### Aufgabe 3: Sitzung im Browser
 
