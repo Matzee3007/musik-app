@@ -81,7 +81,7 @@ Detail“; Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]; [[0002-spiel
   `mischen<T>(liste: readonly T[], zufall: Zufall = Math.random): T[]`,
   Testhilfe `zufallsfolge(...werte: number[]): Zufall` (gibt die Werte der Reihe nach zurück, danach von vorn).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("mischen mit Zufall 0 ergibt die Fisher-Yates-Reihenfolge", () => {
@@ -95,12 +95,12 @@ test("mischen behält alle Elemente und ändert die Eingabe nicht", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
   `npx vitest run __tests__/lib/zufall.test.ts`, erwartet: FAIL, Import `@/lib/zufall` lässt sich nicht auflösen.
-- [ ] **Schritt 3: `zufallsfolge` und `mischen` schreiben.** Fisher-Yates auf einer Kopie: `i` von hinten nach vorn,
+- [x] **Schritt 3: `zufallsfolge` und `mischen` schreiben.** Fisher-Yates auf einer Kopie: `i` von hinten nach vorn,
   `j = Math.floor(zufall() * (i + 1))`, tauschen.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen** (gleicher Befehl, PASS).
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add shuffle with injectable randomness"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen** (gleicher Befehl, PASS).
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add shuffle with injectable randomness"`
 
 ### Aufgabe 2: Song und Kategorien
 
