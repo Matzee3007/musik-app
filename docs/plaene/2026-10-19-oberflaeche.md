@@ -112,7 +112,7 @@ test("nach „Spiel starten“ gibt es eine Karte mit 25 freien Feldern und „R
 **Schnittstellen:**
 - Nutzt: `rundeStarten`, `loesungAnzeigen`; `Kategorie.loesung`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (Zufall `() => 0`: Rad wählt Titel)
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (Zufall `() => 0`: Rad wählt Titel)
 
 ```tsx
 test("Rad drehen zeigt Runde und Kategorie, verrät den Song aber nicht", () => {
@@ -144,15 +144,15 @@ test("nach der Auflösung startet „Nächste Runde“ Runde 2", () => {
 `tisch()` = `within(screen.getByRole("region", { name: "Tisch" }))`: Die Karten-Felder zeigen den Kategorie-Namen
 ebenfalls als Text, deshalb sucht der Test „Titel“ nur im Tisch.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
-- [ ] **Schritt 3: Tisch ausbauen.** Der Tisch ist `<section aria-label="Tisch">`. Ohne Runde: „Rad drehen“. Laufende Runde: „Runde N“, Kategorie-Name in einem
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: Tisch ausbauen.** Der Tisch ist `<section aria-label="Tisch">`. Ohne Runde: „Rad drehen“. Laufende Runde: „Runde N“, Kategorie-Name in einem
   Kasten in ihrer Farbe, „Song läuft“, Knopf „Lösung anzeigen“. Aufgelöst: Kategorie, `<h2>` mit
   `kategorie.loesung(song)`, darunter Titel, Interpret, Jahr, Jahrzehnt (Jahrzehnt über die Lösung der Kategorie
   `jahrzehnt` aus `KATEGORIEN`, keine zweite Rechnung), Hinweis „Richtig? Hake ein Feld <Kategorie> ab.“, Knopf
   „Nächste Runde“. Die Angaben zum Song als Liste `<dl>` mit Bezeichnung (`<dt>Interpret</dt>`) und Wert
   (`<dd>Queen</dd>`), auch die schon groß gezeigte, weil die Spieler daran prüfen.
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add round and reveal to the table"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add round and reveal to the table"`
 
 ### Aufgabe 3: Abhaken und Zurücknehmen
 

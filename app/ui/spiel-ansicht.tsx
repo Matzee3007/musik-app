@@ -4,7 +4,12 @@ import { useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
 import type { Song } from "@/lib/song";
-import { spielStarten, type Spiel } from "@/lib/spiel";
+import {
+  loesungAnzeigen,
+  rundeStarten,
+  spielStarten,
+  type Spiel,
+} from "@/lib/spiel";
 import type { Zufall } from "@/lib/zufall";
 
 export default function SpielAnsicht({
@@ -31,7 +36,11 @@ export default function SpielAnsicht({
 
   return (
     <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
-      <Tisch onRadDrehen={() => {}} />
+      <Tisch
+        runde={spiel.runde}
+        onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
+        onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
+      />
       <KarteAnsicht karte={spiel.karte} onFeldKlick={() => {}} />
     </div>
   );
