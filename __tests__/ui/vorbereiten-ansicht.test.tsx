@@ -90,7 +90,10 @@ test("bereitet auch im StrictMode nur einmal vor", async () => {
 
 test("überlastetes MusicBrainz zeigt die Meldung, Nochmal versuchen setzt fort", async () => {
   const beschaeftigt = () => antwort({ fehler: "beschäftigt" }, 503);
-  netz(beschaeftigt, beschaeftigt, beschaeftigt, () => antwort({ jahr: 1975 }));
+  // Fünf Versuche schlagen fehl (siehe lib/vorbereiten.ts), erst danach die Meldung.
+  netz(...Array<() => Response>(5).fill(beschaeftigt), () =>
+    antwort({ jahr: 1975 }),
+  );
   ansicht();
   expect(
     await screen.findByText("MusicBrainz ist gerade überlastet."),

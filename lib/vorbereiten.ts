@@ -9,9 +9,11 @@ import type { PlaylistSong } from "@/lib/spotify/playlist-songs";
 const JAHRE = "musik-app:jahre";
 // MusicBrainz erlaubt 1 Anfrage pro Sekunde, etwas Abstand schadet nicht.
 const PAUSE_MS = 1100;
-// Ist MusicBrainz überlastet (503), kurz warten und neu fragen, höchstens VERSUCHE-mal.
-const PAUSE_BESCHAEFTIGT_MS = 2000;
-const VERSUCHE = 3;
+// Ist MusicBrainz überlastet (503), kurz warten und neu fragen, höchstens VERSUCHE-mal. Etwa jede fünfte
+// Anfrage bekommt 503, weil der gemeinsame Topf aller Nutzer kurz vor dem Auffüllen (alle 2 s) leer ist.
+// Nicht 2 s warten: Das trifft immer wieder dieselbe leere Phase. MusicBrainz sendet Retry-After: 0.
+const PAUSE_BESCHAEFTIGT_MS = 1000;
+const VERSUCHE = 5;
 
 export type GespeicherteJahre = {
   musicbrainz: number | null;

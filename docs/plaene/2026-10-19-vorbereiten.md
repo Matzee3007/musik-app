@@ -38,8 +38,13 @@ Erscheinungsjahr); baut auf [[2026-10-19-spotify-anmeldung|Plan A]] auf.
   `musik-app/0.1 ( https://github.com/Matzee3007/musik-app )`. Vom Entwickler am 2026-10-19 bestätigt, keine E-Mail.
 - **Jahr aus MusicBrainz:** das früheste Jahr aus `first-release-date` aller Aufnahmen zum ISRC. Kein Datum oder ISRC
   unbekannt (404): kein Jahr, der Song gilt als „nicht gefunden“.
-- **MusicBrainz überlastet (503):** bis zu 3 Versuche mit 2 Sekunden Pause, dann bricht das Vorbereiten mit einer
-  Meldung ab. Was schon ermittelt ist, bleibt gespeichert, „Nochmal versuchen“ setzt dort fort.
+- **MusicBrainz überlastet (503):** bis zu 5 Versuche mit 1 Sekunde Pause, dann bricht das Vorbereiten mit einer
+  Meldung ab. Was schon ermittelt ist, bleibt gespeichert, „Nochmal versuchen“ setzt dort fort. **Korrektur bei
+  Aufgabe 8:** Zuerst waren es 3 Versuche mit 2 Sekunden. Beim echten Test brach jede Playlist ab. Messung: Etwa jede
+  fünfte Anfrage bekommt 503, weil der gemeinsame Topf aller Nutzer (`x-ratelimit-limit: 1900`) alle 2 Sekunden neu
+  gefüllt wird und kurz davor leer ist. Eine Pause von genau 2 Sekunden trifft immer wieder diese leere Phase (neuer
+  Versuch nach 2 s 3 von 5, nach 1 s 5 von 5 erfolgreich). Mit der neuen Regel liefen 60 Songs gegen das echte
+  MusicBrainz ohne Abbruch durch (13 Mal 503, höchstens 2 Versuche).
 - **Tempo:** 1,1 Sekunden Pause zwischen zwei Anfragen an MusicBrainz (erlaubt ist 1 pro Sekunde).
 - **Übersprungen:** lokale Dateien, Podcast-Folgen und Songs mit `is_playable: false`. Fehlt `is_playable`, gilt der
   Song als spielbar.

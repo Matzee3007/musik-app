@@ -77,7 +77,9 @@ test("ohne ISRC keine Anfrage, der Song gilt als nicht gefunden", async () => {
   });
 });
 
-test("überlastetes MusicBrainz: drei Versuche, dann Fehler, Fertiges bleibt gespeichert", async () => {
+// MusicBrainz füllt seinen gemeinsamen Topf alle 2 Sekunden. Eine Pause von genau 2 s trifft immer wieder
+// die leere Phase (gemessen 2026-10-19: neuer Versuch nach 2 s 3 von 5, nach 1 s 5 von 5 erfolgreich).
+test("überlastetes MusicBrainz: fünf Versuche mit 1 s Pause, dann Fehler, Fertiges bleibt gespeichert", async () => {
   const jahrAbfragen = vi.fn(async (isrc: string) => {
     if (isrc === "ISRCt2") throw new MusicBrainzBeschaeftigt();
     return 1975;
@@ -90,8 +92,16 @@ test("überlastetes MusicBrainz: drei Versuche, dann Fehler, Fertiges bleibt ges
     ["ISRCt2"],
     ["ISRCt2"],
     ["ISRCt2"],
+    ["ISRCt2"],
+    ["ISRCt2"],
   ]);
-  expect(ohnePause.mock.calls).toEqual([[1100], [2000], [2000]]);
+  expect(ohnePause.mock.calls).toEqual([
+    [1100],
+    [1000],
+    [1000],
+    [1000],
+    [1000],
+  ]);
   expect(Object.keys(gespeicherteJahre())).toEqual(["t1"]);
 });
 
