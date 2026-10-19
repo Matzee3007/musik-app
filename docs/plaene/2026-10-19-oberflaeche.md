@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Oberfläche Phase 1"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-19
 tags: [plan, oberflaeche, react, phase-1]
 ---
@@ -263,11 +263,11 @@ test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () 
 
 **Dateien:** keine
 
-- [ ] **Schritt 1:** `npm run build` muss ohne Fehler durchlaufen (Produktionsfassung, findet Fehler, die Tests nicht
+- [x] **Schritt 1:** `npm run build` muss ohne Fehler durchlaufen (Produktionsfassung, findet Fehler, die Tests nicht
   sehen, z. B. falsche Server/Client-Grenze).
-- [ ] **Schritt 2:** `npm run dev`, Seite unter http://localhost:3000 mit `curl -s localhost:3000 | grep "Spiel starten"`
+- [x] **Schritt 2:** `npm run dev`, Seite unter http://localhost:3000 mit `curl -s localhost:3000 | grep "Spiel starten"`
   prüfen, dann spielt der Entwickler selbst ein paar Runden im Browser (Laptop- und schmale Fensterbreite).
-- [ ] **Schritt 3:** Was ihm auffällt, als eigene kleine Commits auf diesem Branch, jeweils mit `npm run check`.
+- [x] **Schritt 3:** Was ihm auffällt, als eigene kleine Commits auf diesem Branch, jeweils mit `npm run check`.
 
 ### Aufgabe 7: Grafisches Rad
 
