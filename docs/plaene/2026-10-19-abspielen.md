@@ -148,7 +148,7 @@ Die vorhandenen Erwartungen mit ganzen `PlaylistSong`-Objekten bekommen `cover: 
 - Liefert: `jahrKorrigieren(spiel: Spiel, songId: string, jahr: number): Spiel` ändert das Jahr des Songs in der
   laufenden Runde und im Stapel, alles andere bleibt gleich.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("jahrKorrigieren ändert das Jahr in der Runde und lässt den Rest gleich", () => {
@@ -165,10 +165,10 @@ test("jahrKorrigieren ändert auch den Song im Stapel", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spiel.test.ts`)
-- [ ] **Schritt 3: `jahrKorrigieren` schreiben**
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add correcting the year during a game"`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spiel.test.ts`)
+- [x] **Schritt 3: `jahrKorrigieren` schreiben**
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add correcting the year during a game"`
 
 ### Aufgabe 4: Song auf dem Gerät starten und SDK anbinden
 
