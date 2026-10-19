@@ -137,7 +137,7 @@ Mit `/grill-with-docs` am 2026-10-18 geklärt:
 Mit `/grill-with-docs` am 2026-10-19 für **Phase 2 – Spotify** geklärt:
 
 Umsetzung in drei Plänen mit je einem PR: A [[2026-10-19-spotify-anmeldung|Anmeldung und Playlists]],
-B [[2026-10-19-vorbereiten|Vorbereiten und Erscheinungsjahr]], C Abspielen.
+B [[2026-10-19-vorbereiten|Vorbereiten und Erscheinungsjahr]], C [[2026-10-19-abspielen|Abspielen]].
 
 - **Anmeldung:** OAuth mit PKCE nur im Browser, ohne Client-Secret ([[0003-spotify-anmeldung-nur-im-browser|ADR 0003]]).
   Der DJ bleibt angemeldet (Refresh-Token im Browser), ein Knopf „Abmelden“ löscht alles.
