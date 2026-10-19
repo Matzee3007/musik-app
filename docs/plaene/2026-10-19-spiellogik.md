@@ -211,7 +211,7 @@ test("feldSetzen hakt ein Feld ab und lässt die alte Karte unverändert", () =>
 - Nutzt: `Karte`, `feldSetzen`, `karteAusteilen`
 - Liefert: `hatBingo(karte: Karte): boolean`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** mit einer Hilfe
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** mit einer Hilfe
   `abgehakt(...indizes: number[]): Karte` (frische Karte, die genannten Felder per `feldSetzen` abgehakt):
 
 ```ts
@@ -224,11 +224,11 @@ test("vier in einer Reihe sind kein Bingo", () => expect(hatBingo(abgehakt(0, 1,
 test("Reihe über den Zeilenumbruch ist kein Bingo", () => expect(hatBingo(abgehakt(3, 4, 5, 6, 7))).toBe(false));
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: `hatBingo` schreiben**: die 12 Linien (5 Zeilen, 5 Spalten, 2 Diagonalen) als Index-Listen,
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: `hatBingo` schreiben**: die 12 Linien (5 Zeilen, 5 Spalten, 2 Diagonalen) als Index-Listen,
   Bingo, wenn bei einer alle Felder abgehakt sind.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add bingo detection"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add bingo detection"`
 
 ### Aufgabe 6: Feste Songliste
 
