@@ -1,3 +1,5 @@
+import { useState } from "react";
+import RadAnsicht from "@/app/ui/rad-ansicht";
 import { KATEGORIEN } from "@/lib/kategorien";
 import type { Runde } from "@/lib/spiel";
 
@@ -20,6 +22,14 @@ export default function Tisch({
   onVonVorn: () => void;
   onNeuesSpiel: () => void;
 }) {
+  // Kategorie und Knöpfe erst zeigen, wenn das Rad steht.
+  const [dreht, setDreht] = useState(false);
+
+  function drehen() {
+    setDreht(true);
+    onRadDrehen();
+  }
+
   return (
     <section
       aria-label="Tisch"
@@ -32,14 +42,19 @@ export default function Tisch({
         </>
       )}
 
-      {!runde && <Knopf onClick={onRadDrehen}>Rad drehen</Knopf>}
+      {!runde?.aufgeloest && (
+        <RadAnsicht runde={runde} onStillstand={() => setDreht(false)} />
+      )}
 
-      {runde && (
+      {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
+
+      {runde && !dreht && (
         <>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Runde {runde.nummer}
           </p>
           <p
+            role="status"
             style={{ backgroundColor: runde.kategorie.farbe }}
             className="rounded-lg px-6 py-3 text-2xl font-bold text-zinc-950"
           >
@@ -48,7 +63,7 @@ export default function Tisch({
         </>
       )}
 
-      {runde && !runde.aufgeloest && (
+      {runde && !runde.aufgeloest && !dreht && (
         <>
           <p className="text-lg">Song läuft</p>
           <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
@@ -77,7 +92,7 @@ export default function Tisch({
               <Knopf onClick={onVonVorn}>Von vorn</Knopf>
             </>
           ) : (
-            <Knopf onClick={onRadDrehen}>Nächste Runde</Knopf>
+            <Knopf onClick={drehen}>Nächste Runde</Knopf>
           )}
         </>
       )}

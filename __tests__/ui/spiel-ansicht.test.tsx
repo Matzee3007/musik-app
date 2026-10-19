@@ -28,6 +28,12 @@ function klick(name: string) {
   fireEvent.click(screen.getByRole("button", { name }));
 }
 
+// Klickt den Knopf und meldet, dass das Rad steht (jsdom spielt keine Übergänge ab).
+function drehen(knopf: string) {
+  klick(knopf);
+  fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
+}
+
 // Die Karten-Felder zeigen den Kategorie-Namen auch, deshalb nur im Tisch suchen.
 function tisch() {
   return within(screen.getByRole("region", { name: "Tisch" }));
@@ -45,16 +51,26 @@ test("nach „Spiel starten“ gibt es eine Karte mit 25 freien Feldern und „R
 
 test("Rad drehen zeigt Runde und Kategorie, verrät den Song aber nicht", () => {
   starten([bohemian], () => 0);
-  klick("Rad drehen");
+  drehen("Rad drehen");
   expect(tisch().getByText("Runde 1")).toBeDefined();
-  expect(tisch().getByText("Titel")).toBeDefined();
+  expect(tisch().getByRole("status").textContent).toBe("Titel");
   expect(tisch().getByText("Song läuft")).toBeDefined();
   expect(screen.queryByText(/Bohemian Rhapsody|Queen|1975/)).toBeNull();
 });
 
-test("Lösung anzeigen zeigt die Lösung groß und alle Angaben zum Song", () => {
+test("Kategorie und „Lösung anzeigen“ erscheinen erst, wenn das Rad steht", () => {
   starten([bohemian], () => 0);
   klick("Rad drehen");
+  expect(tisch().queryByText("Song läuft")).toBeNull();
+  expect(screen.queryByRole("button", { name: "Lösung anzeigen" })).toBeNull();
+  fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
+  expect(tisch().getByText("Song läuft")).toBeDefined();
+  expect(screen.getByRole("button", { name: "Lösung anzeigen" })).toBeDefined();
+});
+
+test("Lösung anzeigen zeigt die Lösung groß und alle Angaben zum Song", () => {
+  starten([bohemian], () => 0);
+  drehen("Rad drehen");
   klick("Lösung anzeigen");
   expect(
     screen.getByRole("heading", { level: 2, name: "Bohemian Rhapsody" }),
@@ -67,15 +83,15 @@ test("Lösung anzeigen zeigt die Lösung groß und alle Angaben zum Song", () =>
 
 test("nach der Auflösung startet „Nächste Runde“ Runde 2", () => {
   starten(FUENF_SONGS, () => 0);
-  klick("Rad drehen");
+  drehen("Rad drehen");
   klick("Lösung anzeigen");
-  klick("Nächste Runde");
+  drehen("Nächste Runde");
   expect(tisch().getByText("Runde 2")).toBeDefined();
 });
 
 function aufgeloest() {
   starten(FUENF_SONGS, () => 0);
-  klick("Rad drehen");
+  drehen("Rad drehen");
   klick("Lösung anzeigen");
 }
 
@@ -101,13 +117,13 @@ test("Zurücknehmen nur nach Bestätigung", () => {
 
 test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () => {
   starten([bohemian], () => 0);
-  klick("Rad drehen");
+  drehen("Rad drehen");
   klick("Lösung anzeigen");
   fireEvent.click(screen.getAllByRole("button", { name: "Feld Titel" })[0]);
   expect(tisch().getByText("Alle Songs gespielt")).toBeDefined();
   expect(screen.queryByRole("button", { name: "Nächste Runde" })).toBeNull();
   klick("Von vorn");
-  klick("Nächste Runde");
+  drehen("Nächste Runde");
   expect(tisch().getByText("Runde 2")).toBeDefined();
   expect(
     screen.getAllByRole("button", { name: "Feld Titel", pressed: true }),
@@ -119,7 +135,7 @@ test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () =
 test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () => {
   starten(FUENF_SONGS, () => 0.999);
   for (let runde = 0; runde < 5; runde++) {
-    klick(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
     klick("Lösung anzeigen");
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Feld / })[20 + runde],

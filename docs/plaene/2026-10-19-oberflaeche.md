@@ -22,8 +22,8 @@ Spielzüge aus [[2026-10-19-spiellogik|Plan Spiellogik]]; Entscheidungen der Ses
 
 ## Annahmen (bitte prüfen)
 
-- **Keine Rad-Animation, keine Musikspur** in Phase 1: Nach „Rad drehen“ steht die Kategorie sofort da. Animation und
-  Musikspur kommen mit der Musik in Phase 2.
+- **Keine Musikspur** in Phase 1, sie kommt mit der Musik in Phase 2. Das grafische Rad kam nach dem ersten Test im
+  Browser als Aufgabe 7 dazu (Wunsch des Entwicklers, Vorbild spinthewheel.io).
 - **Rückfrage beim Zurücknehmen** mit dem Browser-Dialog `window.confirm("Abhaken zurücknehmen?")`, kein eigenes Fenster.
 - Felder zeigen Kategorie-Farbe als Hintergrund, Kategorie-Name in dunkler Schrift (lesbar auf allen fünf Farben),
   abgehakt zusätzlich ein großes „✓“.
@@ -268,6 +268,47 @@ test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () 
 - [ ] **Schritt 2:** `npm run dev`, Seite unter http://localhost:3000 mit `curl -s localhost:3000 | grep "Spiel starten"`
   prüfen, dann spielt der Entwickler selbst ein paar Runden im Browser (Laptop- und schmale Fensterbreite).
 - [ ] **Schritt 3:** Was ihm auffällt, als eigene kleine Commits auf diesem Branch, jeweils mit `npm run check`.
+
+### Aufgabe 7: Grafisches Rad
+
+**Dateien:** Neu `app/ui/rad-ansicht.tsx`, Test `__tests__/ui/rad-ansicht.test.ts`; Ändern `app/ui/tisch.tsx`,
+`__tests__/ui/spiel-ansicht.test.tsx`
+
+**Schnittstellen:**
+- Nutzt: `KATEGORIEN`, `Runde`
+- Liefert:
+  - `radWinkel(nummer: number, index: number, anzahl: number): number`: Drehwinkel in Grad im Uhrzeigersinn, bei dem
+    Segment `index` unter dem Zeiger oben steht; pro Runde fünf volle Umdrehungen (`nummer × 1800`), damit das Rad bei
+    jeder Runde vorwärts dreht.
+  - `RadAnsicht({ runde, onStillstand }: { runde: Runde | null; onStillstand: () => void })`: SVG mit
+    `role="img"` und `aria-label="Rad"`, Segment `i` von `i × 360/anzahl` bis `(i+1) × 360/anzahl` Grad ab oben im
+    Uhrzeigersinn, in Kategorie-Farbe mit Namen; Zeiger oben. Drehung per `transform: rotate()` mit 4 s Übergang;
+    `onTransitionEnd` ruft `onStillstand`.
+
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
+
+```ts
+test("nach der Drehung steht die gewählte Kategorie unter dem Zeiger", () => {
+  for (const nummer of [1, 2, 3])
+    for (const index of [0, 1, 2, 3, 4])
+      expect((radWinkel(nummer, index, 5) + index * 72 + 36) % 360).toBe(0);
+});
+test("das Rad dreht jede Runde vorwärts, mindestens vier Umdrehungen", () => {
+  expect(radWinkel(2, 0, 5) - radWinkel(1, 4, 5)).toBeGreaterThanOrEqual(1440);
+});
+```
+
+In `spiel-ansicht.test.tsx` neu: „Kategorie und ‚Lösung anzeigen' erscheinen erst, wenn das Rad steht“ (nach Klick
+auf „Rad drehen“ ist `tisch().queryByText("Song läuft")` `null`, nach `fireEvent.transitionEnd(Rad)` da). Die
+bestehenden Tests drehen über eine Hilfe `drehen(knopf)`: Klick plus `transitionEnd`.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: `radWinkel` und `RadAnsicht` schreiben, Tisch umbauen.** Tisch merkt sich in `useState`, ob das
+  Rad dreht (Klick auf „Rad drehen“ oder „Nächste Runde“ → dreht, `onStillstand` → steht). Das Rad ist sichtbar ohne
+  Runde und bis zur Auflösung; Runde, Kategorie, „Song läuft“ und „Lösung anzeigen“ erst, wenn es steht.
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `npm run build`, `git commit -m "Add animated wheel"`;
+  danach im Browser drehen.
 
 ## Abschluss
 
