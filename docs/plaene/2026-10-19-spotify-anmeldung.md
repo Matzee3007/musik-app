@@ -192,7 +192,7 @@ test("istAbgelaufen gilt schon 60 Sekunden vor dem Ablauf", () => {
   `gueltigesToken(clientId: string, abruf?: Abruf, jetzt?: number): Promise<Token | null>`,
   `abmelden(): void` (löscht `musik-app:spotify-token`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("anmeldungStarten merkt sich Verifier und State und gibt die Spotify-Adresse zurück", async () => {
@@ -241,12 +241,15 @@ test("ohne gespeichertes Token gibt es keins, abmelden löscht es", async () => 
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/sitzung.test.ts`)
-- [ ] **Schritt 3: `sitzung.ts` schreiben.** `anmeldungAbschliessen` löscht `musik-app:anmeldung`, bevor es tauscht,
+Bei der Umsetzung ergänzt: „gueltigesToken gibt ein gültiges Token ohne Anfrage zurück“ und „ohne Netz bleibt der DJ
+angemeldet und der Fehler kommt durch“ (Rot-Grün durch Ausbauen des Zweigs belegt).
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/spotify/sitzung.test.ts`)
+- [x] **Schritt 3: `sitzung.ts` schreiben.** `anmeldungAbschliessen` löscht `musik-app:anmeldung`, bevor es tauscht,
   damit ein zweiter Aufruf mit demselben Code als „ungültig“ endet statt bei Spotify. `gueltigesToken` meldet nur bei
   `SpotifyFehler` mit Status 400 ab, andere Fehler (z. B. kein Netz) wirft es weiter.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify session in browser storage"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify session in browser storage"`
 
 ### Aufgabe 4: Eigene Playlists laden
 
