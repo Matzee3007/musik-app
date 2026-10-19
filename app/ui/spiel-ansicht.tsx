@@ -5,6 +5,8 @@ import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
 import type { Song } from "@/lib/song";
 import {
+  abhakenZuruecknehmen,
+  feldAbhaken,
   loesungAnzeigen,
   rundeStarten,
   spielStarten,
@@ -41,7 +43,16 @@ export default function SpielAnsicht({
         onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
         onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
       />
-      <KarteAnsicht karte={spiel.karte} onFeldKlick={() => {}} />
+      <KarteAnsicht
+        karte={spiel.karte}
+        onFeldKlick={(index) => {
+          if (!spiel.karte[index].abgehakt) {
+            setSpiel(feldAbhaken(spiel, index));
+          } else if (window.confirm("Abhaken zurücknehmen?")) {
+            setSpiel(abhakenZuruecknehmen(spiel, index));
+          }
+        }}
+      />
     </div>
   );
 }

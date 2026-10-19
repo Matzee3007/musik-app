@@ -72,3 +72,29 @@ test("nach der Auflösung startet „Nächste Runde“ Runde 2", () => {
   klick("Nächste Runde");
   expect(tisch().getByText("Runde 2")).toBeDefined();
 });
+
+function aufgeloest() {
+  starten(FUENF_SONGS, () => 0);
+  klick("Rad drehen");
+  klick("Lösung anzeigen");
+}
+
+test("ein Titel-Feld lässt sich nach der Auflösung abhaken", () => {
+  aufgeloest();
+  const feld = screen.getAllByRole("button", { name: "Feld Titel" })[0];
+  fireEvent.click(feld);
+  expect(feld.getAttribute("aria-pressed")).toBe("true");
+});
+
+test("Zurücknehmen nur nach Bestätigung", () => {
+  aufgeloest();
+  const feld = screen.getAllByRole("button", { name: "Feld Titel" })[0];
+  fireEvent.click(feld);
+  const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+  fireEvent.click(feld);
+  expect(feld.getAttribute("aria-pressed")).toBe("true");
+  confirm.mockReturnValue(true);
+  fireEvent.click(feld);
+  expect(feld.getAttribute("aria-pressed")).toBe("false");
+  expect(confirm).toHaveBeenCalledWith("Abhaken zurücknehmen?");
+});

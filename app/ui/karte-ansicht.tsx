@@ -22,6 +22,11 @@ export default function KarteAnsicht({
             className="relative flex aspect-square items-center justify-center rounded-lg p-1 text-center text-xs font-semibold text-zinc-950 sm:text-sm"
           >
             {kategorie.name}
+            {feld.abgehakt && (
+              <span className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/40 text-4xl text-zinc-950">
+                ✓
+              </span>
+            )}
           </button>
         );
       })}

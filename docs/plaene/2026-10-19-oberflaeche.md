@@ -161,7 +161,7 @@ ebenfalls als Text, deshalb sucht der Test „Titel“ nur im Tisch.
 **Schnittstellen:**
 - Nutzt: `feldAbhaken`, `abhakenZuruecknehmen`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben** (Zufall `() => 0`, Runde aufgelöst, Kategorie Titel)
+- [x] **Schritt 1: Fehlschlagende Tests schreiben** (Zufall `() => 0`, Runde aufgelöst, Kategorie Titel)
 
 ```tsx
 test("ein Titel-Feld lässt sich nach der Auflösung abhaken", () => {
@@ -187,12 +187,12 @@ test("Zurücknehmen nur nach Bestätigung", () => {
 `aufgeloest()` = `starten(FUENF_SONGS, () => 0)`, „Rad drehen“, „Lösung anzeigen“. Nach jedem Test
 `vi.restoreAllMocks()`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
-- [ ] **Schritt 3: Klick auf ein Feld in `SpielAnsicht`:** abgehakt → `window.confirm("Abhaken zurücknehmen?")`, bei Ja
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: Klick auf ein Feld in `SpielAnsicht`:** abgehakt → `window.confirm("Abhaken zurücknehmen?")`, bei Ja
   `abhakenZuruecknehmen`; frei → `feldAbhaken`. `KarteAnsicht`: 5×5-Raster (`grid grid-cols-5`), Feld mit
   Kategorie-Farbe als Hintergrund, Name in dunkler Schrift, abgehakt zusätzlich „✓“.
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add marking and unmarking fields"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add marking and unmarking fields"`
 
 ### Aufgabe 4: Stapel leer
 
