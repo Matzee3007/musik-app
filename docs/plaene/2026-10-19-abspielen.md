@@ -91,7 +91,7 @@ Musikspur, Korrigieren, Fertig-Kriterium); baut auf [[2026-10-19-spotify-anmeldu
   Reihenfolge), `STANDARD_AUSSCHNITT: Ausschnitt` (30), `ausschnittMs(a: Ausschnitt): number | null` (`null` bei
   „ganz“), `ausschnittName(a: Ausschnitt): string` („30 Sekunden“, „ganzer Song“).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("Ausschnitte von 15 Sekunden bis ganz, Standard 30", () => {
@@ -106,10 +106,10 @@ test("Länge in Millisekunden und Name", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/ausschnitt.test.ts`)
-- [ ] **Schritt 3: `lib/ausschnitt.ts` schreiben**
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add snippet lengths"`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/lib/ausschnitt.test.ts`)
+- [x] **Schritt 3: `lib/ausschnitt.ts` schreiben**
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add snippet lengths"`
 
 ### Aufgabe 2: Cover bis in den Song fürs Spiel
 
