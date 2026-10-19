@@ -201,7 +201,7 @@ test("Zurücknehmen nur nach Bestätigung", () => {
 **Schnittstellen:**
 - Nutzt: `stapelNeuMischen`
 
-- [ ] **Schritt 1: Fehlschlagender Test**
+- [x] **Schritt 1: Fehlschlagender Test**
 
 ```tsx
 test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () => {
@@ -218,11 +218,11 @@ test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () =
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: Tisch:** aufgelöst und `stapelLeer` → „Alle Songs gespielt“ und Knopf „Von vorn“ statt „Nächste
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: Tisch:** aufgelöst und `stapelLeer` → „Alle Songs gespielt“ und Knopf „Von vorn“ statt „Nächste
   Runde“. `SpielAnsicht` ruft dafür `stapelNeuMischen(spiel, songs, zufall)`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add reshuffle when the deck is empty"`
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add reshuffle when the deck is empty"`
 
 ### Aufgabe 5: Bingo und neues Spiel
 

@@ -5,12 +5,16 @@ const jahrzehnt = KATEGORIEN.find((k) => k.id === "jahrzehnt")!;
 
 export default function Tisch({
   runde,
+  stapelLeer,
   onRadDrehen,
   onLoesungAnzeigen,
+  onVonVorn,
 }: {
   runde: Runde | null;
+  stapelLeer: boolean;
   onRadDrehen: () => void;
   onLoesungAnzeigen: () => void;
+  onVonVorn: () => void;
 }) {
   return (
     <section
@@ -56,7 +60,14 @@ export default function Tisch({
             <dd>{jahrzehnt.loesung(runde.song)}</dd>
           </dl>
           <p>Richtig? Hake ein Feld {runde.kategorie.name} ab.</p>
-          <Knopf onClick={onRadDrehen}>Nächste Runde</Knopf>
+          {stapelLeer ? (
+            <>
+              <p className="font-semibold">Alle Songs gespielt</p>
+              <Knopf onClick={onVonVorn}>Von vorn</Knopf>
+            </>
+          ) : (
+            <Knopf onClick={onRadDrehen}>Nächste Runde</Knopf>
+          )}
         </>
       )}
     </section>

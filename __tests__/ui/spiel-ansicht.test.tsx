@@ -98,3 +98,18 @@ test("Zurücknehmen nur nach Bestätigung", () => {
   expect(feld.getAttribute("aria-pressed")).toBe("false");
   expect(confirm).toHaveBeenCalledWith("Abhaken zurücknehmen?");
 });
+
+test("ist der Stapel leer, mischt „Von vorn“ neu und die Karte bleibt", () => {
+  starten([bohemian], () => 0);
+  klick("Rad drehen");
+  klick("Lösung anzeigen");
+  fireEvent.click(screen.getAllByRole("button", { name: "Feld Titel" })[0]);
+  expect(tisch().getByText("Alle Songs gespielt")).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Nächste Runde" })).toBeNull();
+  klick("Von vorn");
+  klick("Nächste Runde");
+  expect(tisch().getByText("Runde 2")).toBeDefined();
+  expect(
+    screen.getAllByRole("button", { name: "Feld Titel", pressed: true }),
+  ).toHaveLength(1);
+});

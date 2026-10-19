@@ -10,6 +10,7 @@ import {
   loesungAnzeigen,
   rundeStarten,
   spielStarten,
+  stapelNeuMischen,
   type Spiel,
 } from "@/lib/spiel";
 import type { Zufall } from "@/lib/zufall";
@@ -40,8 +41,10 @@ export default function SpielAnsicht({
     <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
       <Tisch
         runde={spiel.runde}
+        stapelLeer={spiel.stapel.length === 0}
         onRadDrehen={() => setSpiel(rundeStarten(spiel, zufall))}
         onLoesungAnzeigen={() => setSpiel(loesungAnzeigen(spiel))}
+        onVonVorn={() => setSpiel(stapelNeuMischen(spiel, songs, zufall))}
       />
       <KarteAnsicht
         karte={spiel.karte}
