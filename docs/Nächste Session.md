@@ -1,17 +1,17 @@
 ---
 titel: Nächste Session
 status: aktiv
-erstellt: 2026-10-18
+erstellt: 2026-10-19
 tags: [session, übergabe]
 ---
 
 # Nächste Session
 
-Stand vom 2026-10-18. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]].
+Stand vom 2026-10-19. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal: [[Lernjournal Phase 1 - Spiel auf einem Gerät]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #5)
+- **Branch:** `main` (nach dem Merge von PR #12)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts
 
@@ -26,17 +26,29 @@ Stand vom 2026-10-18. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Womit es weitergeht
 
-**Phase 0 – Fundament ist abgeschlossen** (PRs #3, #4, #5). Die nächste Session beginnt mit **Phase 1 – Spiel auf
-einem Gerät**.
+**Phase 1 – Spiel auf einem Gerät ist abgeschlossen** (PRs #10, #11, #12). Die nächste Session beginnt mit
+**Phase 2 – Spotify**: Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
+Original-Jahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch.
 
-1. **Claude fragt zuerst, ob etwas anderes ansteht.** Punkte fürs Ecosystem (Agents nach dem SDLC-Artikel,
-   Abkürzungen, Obsidian) stehen in der [[docs/Nächste Session|Übergabe des Ecosystems]].
-2. Danach [[projects/musik-app/docs/Tools für später|Tools für später]] auf Werkzeuge für Phase 1 prüfen.
-3. Den Plan für Phase 1 mit `plan-schreiben` schreiben. Grundlage: „Spielregeln im Detail“ und Roadmap in der
-   [[projects/musik-app/docs/Projektvision|Projektvision]], Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]. Spiellogik (Rad, Karte, Songauswahl, Bingo-Erkennung) als reine
-   Funktionen in `lib/`, Tisch und Karte nebeneinander am Laptop, feste Songliste.
+1. **Claude fragt zuerst, ob etwas anderes ansteht.** Vorschläge aus Phase 1 (offene Fragen im
+   [[Lernjournal Phase 1 - Spiel auf einem Gerät|Journal]]):
+   - Ein Klick auf ein Feld, das man gerade nicht abhaken darf, tut nichts. Braucht es einen Hinweis?
+   - Drehzeit des Rads (heute 4 Sekunden) anpassen?
+
+   Punkte fürs Ecosystem stehen in der [[docs/Nächste Session|Übergabe des Ecosystems]].
+2. [[projects/musik-app/docs/Tools für später|Tools für später]] und die
+   [[docs/Tools für später|Tools für später des Ecosystems]] auf Werkzeuge für Phase 2 prüfen.
+3. Phase 2 mit `/grill-with-docs` schärfen, bevor geplant wird. Offen ist z. B.: Wie wählt der DJ die Playlist, wo
+   werden Songs und korrigierte Jahre gespeichert (Supabase kommt laut Roadmap erst in Phase 3), wie lang ist der
+   Ausschnitt einstellbar. Stolpersteine zu Spotify und MusicBrainz stehen in der
+   [[projects/musik-app/docs/Projektvision|Projektvision]].
+4. **Vorbereitung, die nur du machen kannst:** eine App im Spotify Developer Dashboard anlegen (Client-ID, Redirect-URI
+   für `http://127.0.0.1:3000`). Claude erklärt die Schritte, wenn es so weit ist. Schlüssel kommen später in
+   `.env.local`, nie ins Repo.
+5. Danach den Plan für Phase 2 mit `plan-schreiben`.
 
 ## Passende Skills
 
-- `plan-schreiben`: Plan für Phase 1
-- `tdd`: Spiellogik testgetrieben bauen
+- `grill-with-docs`: offene Fragen zu Phase 2 klären, bevor geplant wird
+- `plan-schreiben`: Plan für Phase 2
+- `tdd`: z. B. Auswahl des Original-Jahres aus den MusicBrainz-Daten als reine Funktion

@@ -37,6 +37,9 @@ Server-Teil.
 | `devDependencies` | Pakete nur fürs Entwickeln (ESLint, Vitest), kommen nicht in die fertige App |
 | Peer Dependency | Ein Paket verlangt, dass ein anderes in passender Version schon da ist |
 | `AGENTS.md` | Anleitung von Next.js für KI-Agenten, in `CLAUDE.md` mit `@AGENTS.md` eingebunden |
+| Server-Komponente | Standard für Seiten: läuft auf dem Server, ohne Zustand und Klicks, z. B. `app/page.tsx` |
+| Client-Komponente | `"use client"` oben in der Datei: Zustand (`useState`) und Klicks; was sie importiert, gehört auch zum Client (bei uns `app/ui/spiel-ansicht.tsx`) |
+| Hydration | React hängt im Browser die Klicks an das vorgerenderte HTML; Zufall beim ersten Rendern macht Server und Browser ungleich |
 
 ## Wie haben wir es eingerichtet?
 
@@ -77,7 +80,8 @@ npm run check   # vor jedem Commit: lint, format:check, typecheck, test
 | `npm install-scripts ls` / `deny <paket>` | Installationsskripte anzeigen bzw. ablehnen (npm 11) |
 | `npx next typegen` | Typen von Next.js erzeugen (z. B. `LayoutProps`), steckt in `npm run typecheck` |
 | `npx tsc --noEmit` | TypeScript prüfen, ohne Dateien zu erzeugen |
-| `npm run build` | Produktionsfassung bauen, so wie später auf Vercel |
+| `npm run build` | Produktionsfassung bauen, so wie später auf Vercel; `○` heißt statisch vorgerendert |
+| `npm run dev` | Entwicklungsserver auf http://localhost:3000 |
 
 ## Fehler, die uns passiert sind
 
