@@ -7,7 +7,7 @@ tags: [skills, claude-code]
 
 # Skills
 
-Skills, die nur dieses Projekt nutzt. Gehört zu [[Projektvision]], Subagents stehen in [[Agents]].
+Skills, die nur dieses Projekt nutzt. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], Subagents stehen in [[projects/musik-app/docs/Agents|Agents]].
 Sie liegen in `.claude/skills/<name>/SKILL.md` und sind im Repo versioniert.
 
 ## Für alle Projekte

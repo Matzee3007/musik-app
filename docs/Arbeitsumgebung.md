@@ -7,7 +7,7 @@ tags: [arbeitsumgebung, einrichtung]
 
 # Arbeitsumgebung
 
-Was dieses Projekt auf dem Rechner braucht, um zu laufen. Gehört zu [[Projektvision]].
+Was dieses Projekt auf dem Rechner braucht, um zu laufen. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]].
 Die Einrichtung des Rechners für alle Projekte (Terminal, Statuszeile, `install.sh`) steht in [[Rechner]].
 
 ## Voraussetzungen

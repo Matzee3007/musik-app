@@ -7,7 +7,7 @@ tags: [tools, später]
 
 # Tools für später
 
-Werkzeuge, die für dieses Projekt interessant sind, aber jetzt noch nicht passen. Gehört zu [[Projektvision]].
+Werkzeuge, die für dieses Projekt interessant sind, aber jetzt noch nicht passen. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]].
 Beim Start jeder Phase prüfen (Regel der globalen `CLAUDE.md`). Werkzeuge für alle Projekte stehen in den
 [[docs/Tools für später|Tools für später des Ecosystems]].
 

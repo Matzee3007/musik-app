@@ -17,7 +17,7 @@ die CI rot macht. Der Hook übernimmt das Muster des ruff-Hooks aus sport-fantas
 **Technik:** GitHub Actions (`actions/checkout@v7`, `actions/setup-node@v7`), Hooks von Claude Code
 (`PostToolUse`), `jq`, Prettier 3.9, ESLint 9.
 
-**Anforderung:** [[Projektvision]] Roadmap Phase 0 („CI mit GitHub Actions“), [[Nächste Session]] Punkt 2.
+**Anforderung:** [[projects/musik-app/docs/Projektvision|Projektvision]] Roadmap Phase 0 („CI mit GitHub Actions“), [[projects/musik-app/docs/Nächste Session|Nächste Session]] Punkt 2.
 
 ## Feste Vorgaben
 

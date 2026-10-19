@@ -7,7 +7,7 @@ tags: [tools, nextjs, react, typescript, node, npm]
 
 # Next.js (mit Node.js, npm und TypeScript)
 
-Teil der [[Tools Übersicht]]. Begründung: [[0001-stack|ADR 0001]].
+Teil der [[projects/musik-app/docs/tools/Tools Übersicht|Tools Übersicht]]. Begründung: [[projects/musik-app/docs/adr/0001-stack|ADR 0001]].
 
 ## Was ist das?
 

@@ -7,7 +7,7 @@ tags: [session, übergabe]
 
 # Nächste Session
 
-Stand vom 2026-10-18. Gehört zu [[Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]].
+Stand vom 2026-10-18. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal: [[Lernjournal Phase 0 - Projektstart]].
 
 ## Stand bei Sessionende
 
@@ -40,9 +40,9 @@ einem Gerät**.
      `CLAUDE.md`“ für die globale `CLAUDE.md` prüfen.
    - **Obsidian:** `node_modules` ausblenden (Einstellungen → Dateien und Links → Ausgeschlossene Dateien), falls
      noch nicht geschehen.
-2. Danach [[Tools für später]] auf Werkzeuge für Phase 1 prüfen.
+2. Danach [[projects/musik-app/docs/Tools für später|Tools für später]] auf Werkzeuge für Phase 1 prüfen.
 3. Den Plan für Phase 1 mit `plan-schreiben` schreiben. Grundlage: „Spielregeln im Detail“ und Roadmap in der
-   [[Projektvision]], Begriffe im [[Glossar]]. Spiellogik (Rad, Karte, Songauswahl, Bingo-Erkennung) als reine
+   [[projects/musik-app/docs/Projektvision|Projektvision]], Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]. Spiellogik (Rad, Karte, Songauswahl, Bingo-Erkennung) als reine
    Funktionen in `lib/`, Tisch und Karte nebeneinander am Laptop, feste Songliste.
 
 ## Passende Skills
