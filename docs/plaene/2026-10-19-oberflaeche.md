@@ -81,7 +81,7 @@ Gemeinsame Testdaten in `spiel-ansicht.test.tsx`: `FUENF_SONGS = SONGLISTE.slice
   - `KarteAnsicht(props: { karte: Karte; onFeldKlick: (index: number) => void })`. Jedes Feld ist ein `<button>` mit
     `aria-label="Feld <Kategorie-Name>"` und `aria-pressed={abgehakt}`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 test("Startseite zeigt Überschrift und „Spiel starten“", () => { /* page.test.tsx */
@@ -98,12 +98,12 @@ test("nach „Spiel starten“ gibt es eine Karte mit 25 freien Feldern und „R
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen** (`npx vitest run __tests__/page.test.tsx __tests__/ui`)
-- [ ] **Schritt 3: Komponenten schreiben.** `SpielAnsicht`: `useState<Spiel | null>(null)`, ohne Spiel nur der Knopf
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen** (`npx vitest run __tests__/page.test.tsx __tests__/ui`)
+- [x] **Schritt 3: Komponenten schreiben.** `SpielAnsicht`: `useState<Spiel | null>(null)`, ohne Spiel nur der Knopf
   „Spiel starten“, sonst `<div className="grid gap-8 md:grid-cols-2">` mit `Tisch` und `KarteAnsicht`. `Tisch` zeigt in
   dieser Aufgabe nur „Rad drehen“. `page.tsx`: Satz „Kommt bald.“ ersetzen durch `<SpielAnsicht songs={SONGLISTE} />`.
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add start screen with card and table"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add start screen with card and table"`
 
 ### Aufgabe 2: Runde und Auflösung
 
