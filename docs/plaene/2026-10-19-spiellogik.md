@@ -148,7 +148,7 @@ test("fünf Kategorien mit eigener Id, eigenem Namen und eigener Farbe", () => {
 - Nutzt: `Kategorie`, `KATEGORIEN`, `Zufall`
 - Liefert: `radDrehen(kategorien: readonly Kategorie[], zufall: Zufall = Math.random): Kategorie`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("Zufall 0 wählt die erste Kategorie", () => {
@@ -159,10 +159,10 @@ test("Zufall knapp unter 1 wählt die letzte Kategorie", () => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
-- [ ] **Schritt 3: `radDrehen` schreiben**: Index `Math.floor(zufall() * kategorien.length)`.
-- [ ] **Schritt 4: Test laufen lassen, er muss bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add wheel spin"`
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 3: `radDrehen` schreiben**: Index `Math.floor(zufall() * kategorien.length)`.
+- [x] **Schritt 4: Test laufen lassen, er muss bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add wheel spin"`
 
 ### Aufgabe 4: Karte
 
