@@ -7,7 +7,7 @@ tags: [tools, claude-code, hooks, einrichtung]
 
 # Claude Code: Einrichtung in musik-app
 
-Teil der [[Tools Übersicht]]. Was Claude Code ist, die Begriffe (Hook, Skill, Plugin), Befehle und Fehler stehen in
+Teil der [[projects/musik-app/docs/tools/Tools Übersicht|Tools Übersicht]]. Was Claude Code ist, die Begriffe (Hook, Skill, Plugin), Befehle und Fehler stehen in
 der Werkzeug-Notiz des Ecosystems: [[Claude Code]]. Hier steht nur, wie es in diesem Projekt eingerichtet ist.
 
 ## Wie haben wir es eingerichtet?

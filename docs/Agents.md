@@ -7,7 +7,7 @@ tags: [agents, subagents, claude-code]
 
 # Agents
 
-Subagents, die nur dieses Projekt nutzt. Gehört zu [[Projektvision]], Gegenstück zu [[Skills]].
+Subagents, die nur dieses Projekt nutzt. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], Gegenstück zu [[projects/musik-app/docs/Skills|Skills]].
 Sie liegen in `.claude/agents/<name>.md` und sind im Repo versioniert.
 
 ## Für alle Projekte

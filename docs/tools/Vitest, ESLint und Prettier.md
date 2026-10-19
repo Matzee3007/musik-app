@@ -7,7 +7,7 @@ tags: [tools, vitest, eslint, prettier, tests, qualität]
 
 # Vitest, ESLint und Prettier
 
-Teil der [[Tools Übersicht]]. Gegenstück zu [[ruff und pytest]] für TypeScript. Begründung: [[0001-stack|ADR 0001]].
+Teil der [[projects/musik-app/docs/tools/Tools Übersicht|Tools Übersicht]]. Gegenstück zu [[ruff und pytest]] für TypeScript. Begründung: [[projects/musik-app/docs/adr/0001-stack|ADR 0001]].
 
 ## Was ist das?
 

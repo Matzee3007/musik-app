@@ -12,7 +12,7 @@ tags: [projektvision, roadmap, musik-app]
 Das Kartenspiel [Hitster Bingo](https://hitstergame.com/de-de/pages/spielregeln-bingo) als Web-App nachbauen, damit
 ich es mit meinen Freunden spielen kann, und eigene Ideen einbauen.
 
-So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im [[Glossar]]):
+So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]):
 
 1. Der DJ dreht am Tisch das Rad. Es wählt zufällig eine Kategorie: **Titel**, **Interpret**, **Jahrzehnt**,
    **genaues Erscheinungsjahr** oder **Jahr ±3**. Jede Kategorie hat eine eigene Farbe.
@@ -49,8 +49,8 @@ wählt dann je Spiel 5 Kategorien aus. Verworfen: Sprache (hört man), Genre und
 **Was es nicht ist:** kein Streamingdienst. Die App greift nur auf Spotify und eigene Playlists zu, um Songs
 abzuspielen. Kein öffentliches Produkt unter dem Namen oder Logo „Hitster“.
 
-Weitere Notizen: [[Arbeitsumgebung]] (was der Rechner braucht), [[Nächste Session]] (womit es weitergeht),
-[[Tools für später]] (vorgemerkte Werkzeuge).
+Weitere Notizen: [[projects/musik-app/docs/Arbeitsumgebung|Arbeitsumgebung]] (was der Rechner braucht), [[projects/musik-app/docs/Nächste Session|Nächste Session]] (womit es weitergeht),
+[[projects/musik-app/docs/Tools für später|Tools für später]] (vorgemerkte Werkzeuge).
 
 ## Lernziel
 
@@ -66,7 +66,7 @@ Arbeitsweise (aus der globalen `CLAUDE.md`):
 
 ## Stack
 
-Begründung und Alternativen: [[0001-stack|ADR 0001]].
+Begründung und Alternativen: [[projects/musik-app/docs/adr/0001-stack|ADR 0001]].
 
 | Aufgabe | Werkzeug |
 |---|---|

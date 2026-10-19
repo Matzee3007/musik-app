@@ -8,7 +8,7 @@ tags: [lernjournal, phase-0, projekt-starten, spotify, musicbrainz, nextjs, type
 
 # Lernjournal Phase 0: Projektstart
 
-Erstes Journal der Musik-App. Gehört zu [[Projektvision]]. Angelegt in einer Session im Ecosystem mit
+Erstes Journal der Musik-App. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]]. Angelegt in einer Session im Ecosystem mit
 `/projekt-starten Musik-App`, dort im Journal [[Lernjournal 2026-10-18 - Ecosystem aufbauen]].
 
 ## Erledigt
@@ -16,22 +16,22 @@ Erstes Journal der Musik-App. Gehört zu [[Projektvision]]. Angelegt in einer Se
 - [x] Projekt geklärt (Skill `projekt-starten`, Fragerunden): Name `musik-app`, Ziel Hitster Bingo als Web-App für
   Spieleabende mit Freunden, Lernziel TypeScript und Spotify, Laptop als „Tisch“, Handys für Karte und Antworten
 - [x] Spielregeln des Originals und die aktuelle Spotify-Doku gelesen, MusicBrainz mit einer echten Abfrage getestet
-- [x] Gerüst aus der Vorlage des Ecosystems ausgefüllt: [[Projektvision]], `CLAUDE.md`, [[0001-stack|ADR 0001]],
-  [[Arbeitsumgebung]]
+- [x] Gerüst aus der Vorlage des Ecosystems ausgefüllt: [[projects/musik-app/docs/Projektvision|Projektvision]], `CLAUDE.md`, [[projects/musik-app/docs/adr/0001-stack|ADR 0001]],
+  [[projects/musik-app/docs/Arbeitsumgebung|Arbeitsumgebung]]
 - [x] Node 24.22 über Homebrew, Next.js 16.4.2 mit React 19.3, TypeScript 5.9, Tailwind CSS 4, ESLint 9, Prettier 3.9,
   Vitest 5, siehe [[Next.js.md|Next.js]] und [[Vitest, ESLint und Prettier]]
 - [x] Erster Test (Startseite zeigt „Musik-App“) erst rot, dann grün, `npm run check` Exit 0, `npm run build` läuft
 - [x] Privates Repo `Matzee3007/musik-app`, erster Commit direkt auf `main`
 - [x] Links im Vault repariert und `node_modules/` von der Vault-Prüfung ausgeschlossen (PR #1)
-- [x] Projektvision mit `/grill-with-docs` geschärft (zweite Session am 2026-10-18, PR #3): [[Glossar]] mit
+- [x] Projektvision mit `/grill-with-docs` geschärft (zweite Session am 2026-10-18, PR #3): [[projects/musik-app/docs/Glossar|Glossar]] mit
   15 Begriffen, [[0002-spieler-pruefen-selbst|ADR 0002]] (die App prüft keine Antworten), Spielregeln im Detail in der
-  [[Projektvision]], Prinzipien 2, 3 und 5 in Vision und `CLAUDE.md` angepasst
+  [[projects/musik-app/docs/Projektvision|Projektvision]], Prinzipien 2, 3 und 5 in Vision und `CLAUDE.md` angepasst
 - [x] Plan [[2026-10-18-ci-und-prettier-hook|Plan: CI und Prettier-Hook]] mit `plan-schreiben` geschrieben und
   umgesetzt (PR #4)
 - [x] CI mit GitHub Actions: `.github/workflows/ci.yml` erst rot mit Probedatei, dann grün, Doku in
   [[GitHub Actions - Einrichtung]]
 - [x] Prettier- und ESLint-Hook nach jeder Änderung durch Claude, fünf Prüfaufrufe bestanden, Doku in
-  [[Claude Code - Einrichtung]]
+  [[projects/musik-app/docs/tools/Claude Code - Einrichtung|Claude Code - Einrichtung]]
 - [x] Roadmap-Punkt „Phasen 1 bis 3 geplant“ ersetzt: Jede Phase wird zu Beginn mit `plan-schreiben` geplant, für
   Phase 2 und 3 wäre ein Plan heute Raten
 - [x] Artikel „AI-native SDLC Playbook“ gegen das Ecosystem bewertet, Ergebnis unter „Neu gelernt“
@@ -289,7 +289,7 @@ Lernzeit. Faustregel aus dem Artikel: zweimal derselbe Fehler, dann in die `CLAU
   entfällt, die Spieler prüfen selbst ([[0002-spieler-pruefen-selbst|ADR 0002]])
 - Übernehmen wir Bonusregel und Timer von 25 Sekunden? → geklärt: keine Bonusregel, kein Timer fürs Aufschreiben,
   Ausschnitt standardmäßig 30 Sekunden
-- Welche eigenen Kategorien kommen dazu? → geklärt: Liste für Phase 4 in der [[Projektvision]]
+- Welche eigenen Kategorien kommen dazu? → geklärt: Liste für Phase 4 in der [[projects/musik-app/docs/Projektvision|Projektvision]]
 - `[[Projektvision]]` löst in diesem Projekt auf die Vorlage im Ecosystem auf statt auf die eigene Notiz. Wird in der
   nächsten Ecosystem-Session untersucht.
 

@@ -9,14 +9,14 @@ tags: [adr, architektur, spielregeln]
 
 ## Kontext
 
-Die erste Fassung der [[Projektvision]] sah vor, dass die App jede Antwort prüft: Jahr, Jahrzehnt und ±3 genau,
+Die erste Fassung der [[projects/musik-app/docs/Projektvision|Projektvision]] sah vor, dass die App jede Antwort prüft: Jahr, Jahrzehnt und ±3 genau,
 Titel und Interpret mit Toleranz für Tippfehler, „feat.“ und Zusätze wie „Remastered“. Beim Schärfen der Vision
 (2026-10-18) kam dazu, dass Spieler auch auf echtem Papier schreiben können sollen. Die App sieht deren Antworten
 dann gar nicht.
 
 ## Entscheidung
 
-Die App prüft keine Antworten. Spieler schreiben in eine freie [[Glossar|Notizfläche]] oder auf Papier. Nach der
+Die App prüft keine Antworten. Spieler schreiben in eine freie [[projects/musik-app/docs/Glossar|Notizfläche]] oder auf Papier. Nach der
 Auflösung am Tisch vergleicht jeder selbst und hakt auf seinem Handy ein Feld ab, wie beim Original. Grenzfälle
 entscheidet die Gruppe. Die App prüft nur, ob eine Karte Bingo hat.
 
