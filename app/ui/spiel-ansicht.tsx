@@ -19,13 +19,19 @@ import type { Zufall } from "@/lib/zufall";
 export default function SpielAnsicht({
   songs,
   zufall = Math.random,
+  sofort = false,
 }: {
   songs: readonly Song[];
   zufall?: Zufall;
+  // Ohne eigenen Knopf starten, wenn schon vorher geklickt wurde (z. B. in der Songliste).
+  sofort?: boolean;
 }) {
-  // Startet erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
-  // Browser verschiedene Karten (Hydration-Fehler).
-  const [spiel, setSpiel] = useState<Spiel | null>(null);
+  // Startet sonst erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
+  // Browser verschiedene Karten (Hydration-Fehler). Mit sofort erscheint die Ansicht erst nach
+  // einem Klick, nie beim ersten Rendern auf dem Server.
+  const [spiel, setSpiel] = useState<Spiel | null>(() =>
+    sofort ? spielStarten(songs, zufall) : null,
+  );
 
   if (!spiel) {
     return (

@@ -149,3 +149,10 @@ test("fünf in einer Reihe zeigen Bingo, danach nur noch „Neues Spiel“", () 
   ).toHaveLength(0);
   expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
 });
+
+test("mit sofort startet das Spiel ohne eigenen Knopf „Spiel starten“", () => {
+  render(<SpielAnsicht songs={FUENF_SONGS} zufall={() => 0} sofort />);
+  expect(screen.queryByRole("button", { name: "Spiel starten" })).toBeNull();
+  expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
+  expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
+});

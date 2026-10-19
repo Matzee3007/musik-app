@@ -91,3 +91,28 @@ test("lehnt Spotify das Token beim Laden ab, wird abgemeldet", async () => {
   ).toBeDefined();
   expect(localStorage.getItem("musik-app:spotify-token")).toBeNull();
 });
+
+test("ein Klick auf eine Playlist öffnet das Vorbereiten, Zurück führt zur Liste", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(Date.now() + 3_600_000);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) =>
+      url.includes("/me/playlists")
+        ? antwort({
+            items: [{ id: "p1", name: "Partyhits", items: { total: 98 } }],
+            next: null,
+          })
+        : antwort({ items: [], next: null }),
+    ),
+  );
+  render(<Start />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Partyhits (98 Songs)" }),
+  );
+  expect(screen.getByRole("heading", { name: "Partyhits" })).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "Zurück" }));
+  expect(
+    await screen.findByRole("heading", { name: "Deine Playlists" }),
+  ).toBeDefined();
+});
