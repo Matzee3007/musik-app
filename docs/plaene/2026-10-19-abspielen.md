@@ -188,7 +188,7 @@ test("jahrKorrigieren ändert auch den Song im Stapel", () => {
   `initialization_error` → `PlayerFehler("Dieser Browser kann Spotify nicht abspielen.")`, `authentication_error` →
   `PlayerFehler("Spotify-Anmeldung abgelaufen.")`). `vonVorn` ist `seek(0)` und `resume()`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("trackAbspielen startet den Song auf dem Gerät des Tisches", async () => {
@@ -214,13 +214,18 @@ test("sdkLaden fügt das Skript nur einmal ein und wartet auf das SDK", async ()
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+Bei der Umsetzung besser als geplant: `playerVerbinden` ist doch automatisch getestet, mit einem nachgebauten
+`window.Spotify.Player`, der beim `connect()` „ready“ oder einen Fehler meldet (alle drei Fehlerarten und die Steuerung).
+Jeder Test lädt `player.ts` frisch (`vi.resetModules()`), weil `sdkLaden` sein Ergebnis merkt. Ungetestet bleibt nur
+das echte Skript von Spotify, das prüft Aufgabe 8.
+
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
   (`npx vitest run __tests__/lib/spotify/abspielen.test.ts __tests__/lib/spotify/player.test.ts`)
-- [ ] **Schritt 3: `abspielen.ts` und `player.ts` schreiben.** Eigene schmale Typen für `window.Spotify` und
+- [x] **Schritt 3: `abspielen.ts` und `player.ts` schreiben.** Eigene schmale Typen für `window.Spotify` und
   `window.onSpotifyWebPlaybackSDKReady` (`declare global`), nur was `player.ts` benutzt. `playerVerbinden` selbst
   braucht das echte SDK und wird in Aufgabe 8 echt geprüft.
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify player connection"`
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add Spotify player connection"`
 
 ### Aufgabe 5: Musik je Runde mit Ausschnitt und Musikspur
 
