@@ -355,7 +355,7 @@ ein Effekt liest das Token.
   „Abmelden“ und „Demo starten“. Wirft das Laden `SpotifyFehler` 401, meldet `Start` ab.
 - „Demo starten“ zeigt `<SpielAnsicht songs={SONGLISTE} />`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("abgemeldet: Anmelden und Demo, die Demo startet das Spiel aus Phase 1", async () => {
@@ -392,10 +392,14 @@ test("entzogener Zugriff zeigt wieder „Mit Spotify anmelden“", async () => {
 
 `__tests__/page.test.tsx` prüft danach Überschrift „Musik-App“ und den Knopf „Demo starten“ (statt „Spiel starten“).
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/ui/start.test.tsx __tests__/page.test.tsx`)
-- [ ] **Schritt 3: `Start` schreiben und in `app/page.tsx` einsetzen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen** (gleicher Befehl, dann `npm test` für alles)
-- [ ] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add start page with Spotify login and demo"`
+Bei der Umsetzung ergänzt: „lehnt Spotify das Token beim Laden ab, wird abgemeldet“ (401 beim Laden der Playlists).
+Der Klick auf „Mit Spotify anmelden“ (`window.location.assign`) lässt sich in jsdom nicht testen, er wird in Aufgabe 7
+echt geprüft.
+
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen** (`npx vitest run __tests__/ui/start.test.tsx __tests__/page.test.tsx`)
+- [x] **Schritt 3: `Start` schreiben und in `app/page.tsx` einsetzen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen** (gleicher Befehl, dann `npm test` für alles)
+- [x] **Schritt 5: Prüfen und committen:** `npm run check`, `git commit -m "Add start page with Spotify login and demo"`
 
 ### Aufgabe 7: Einrichtung und echte Anmeldung
 
