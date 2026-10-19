@@ -29,7 +29,7 @@ Erstes Journal der Musik-App. Gehört zu [[projects/musik-app/docs/Projektvision
 - [x] Plan [[2026-10-18-ci-und-prettier-hook|Plan: CI und Prettier-Hook]] mit `plan-schreiben` geschrieben und
   umgesetzt (PR #4)
 - [x] CI mit GitHub Actions: `.github/workflows/ci.yml` erst rot mit Probedatei, dann grün, Doku in
-  [[GitHub Actions - Einrichtung]]
+  [[projects/musik-app/docs/tools/GitHub Actions - Einrichtung|GitHub Actions - Einrichtung]]
 - [x] Prettier- und ESLint-Hook nach jeder Änderung durch Claude, fünf Prüfaufrufe bestanden, Doku in
   [[projects/musik-app/docs/tools/Claude Code - Einrichtung|Claude Code - Einrichtung]]
 - [x] Roadmap-Punkt „Phasen 1 bis 3 geplant“ ersetzt: Jede Phase wird zu Beginn mit `plan-schreiben` geplant, für

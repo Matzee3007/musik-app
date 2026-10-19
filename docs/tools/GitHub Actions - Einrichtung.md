@@ -9,8 +9,8 @@ tags: [tools, github, ci, einrichtung]
 
 Teil der [[projects/musik-app/docs/tools/Tools Übersicht|Tools Übersicht]]. GitHub Actions sind automatische Abläufe auf GitHub, beschrieben in YAML-Dateien unter
 `.github/workflows/`. Sie laufen auf frischen Linux-Rechnern von GitHub (Runner). Prüft so ein Ablauf jeden Push,
-nennt man das **CI** (Continuous Integration). Die ausführliche Notiz mit allen Begriffen liegt bisher nur in
-sport-fantasy (`projects/sport-fantasy/docs/tools/GitHub Actions.md`) und soll ins Ecosystem umziehen.
+nennt man das **CI** (Continuous Integration). Begriffe, Befehle und Fehler stehen in der Werkzeug-Notiz des
+Ecosystems: [[GitHub Actions]]. Hier steht nur, wie es in diesem Projekt eingerichtet ist.
 
 ## Was prüft die CI?
 
