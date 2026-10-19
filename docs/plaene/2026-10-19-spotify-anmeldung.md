@@ -25,8 +25,10 @@ Ablauf am Tisch, Demo); [[0003-spotify-anmeldung-nur-im-browser|ADR 0003]]; Begr
 
 - Phase 2 in drei Pläne geteilt, je ein PR: **A Anmeldung und Playlists** (dieser Plan), **B Vorbereiten und
   Erscheinungsjahr**, **C Abspielen**. B und C werden geschrieben, wenn der Vorgänger gemergt ist.
-- Der Dev-Server läuft nur auf `127.0.0.1` (`next dev -H 127.0.0.1`). Spotify verlangt diese Adresse, und der Browser
-  trennt den Speicher nach Adresse. `localhost:3000` antwortet dann gar nicht, statt still ein anderes Token zu haben.
+- Der Dev-Server läuft auf `127.0.0.1` (`next dev -H 127.0.0.1`), Spotify verlangt diese Adresse. **Korrektur bei
+  Aufgabe 7:** `localhost:3000` antwortet trotzdem, weil macOS `localhost` auch zu `127.0.0.1` auflöst. Wer die App
+  unter `localhost` öffnet, schickt `http://localhost:3000/callback` als Redirect-URI, und Spotify bricht mit „Invalid
+  redirect URI“ ab. Der Fehler ist also laut, es entsteht kein zweites Token unter anderer Adresse.
 - Die Rückruf-Seite liest den Code im Browser (`window.location.search`), nicht als `searchParams` einer
   Server-Seite: Mit `cacheComponents` bräuchte das eine eigene Suspense-Grenze.
 - Fremde Playlists erkennt die App daran, dass Spotify bei ihnen das Feld `items` weglässt (Stand Februar 2026). Ein
@@ -410,10 +412,10 @@ echt geprüft.
 Redirect-URI `http://127.0.0.1:3000/callback`, APIs „Web API“ und „Web Playback SDK“ angehakt, Client-ID in
 `.env.local` als `NEXT_PUBLIC_SPOTIFY_CLIENT_ID=<id>`.
 
-- [ ] **Schritt 1: Skript `dev` auf `next dev -H 127.0.0.1` ändern**, `.env.example` mit
+- [x] **Schritt 1: Skript `dev` auf `next dev -H 127.0.0.1` ändern**, `.env.example` mit
   `NEXT_PUBLIC_SPOTIFY_CLIENT_ID=` anlegen, in `CLAUDE.md` die Adresse bei `npm run dev` auf
   `http://127.0.0.1:3000` ändern.
-- [ ] **Schritt 2: Tool-Notiz `Spotify Web API.md`** nach dem Aufbau aus `Tools Übersicht.md` (Was, wofür, Begriffe
+- [x] **Schritt 2: Tool-Notiz `Spotify Web API.md`** nach dem Aufbau aus `Tools Übersicht.md` (Was, wofür, Begriffe
   Client-ID, Redirect-URI, Scope, Token, Einrichtung im Dashboard, Development Mode mit 5 Konten, Fehler) und Zeile in
   „Im Einsatz“.
 - [ ] **Schritt 3: Echt prüfen.** `npm run dev`, `http://127.0.0.1:3000` öffnen, anmelden, Rechte bestätigen.
