@@ -156,3 +156,14 @@ test("mit sofort startet das Spiel ohne eigenen Knopf „Spiel starten“", () =
   expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
   expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
 });
+
+// Ein frisch eingehängtes Rad hat keinen alten Winkel, der Browser spielt dann keinen Übergang ab
+// und meldet nie transitionend: Nach der ersten Auflösung blieb das Spiel stehen (gefunden 2026-10-19).
+test("das Rad bleibt über die Auflösung hinweg dasselbe Element", () => {
+  starten(FUENF_SONGS);
+  drehen("Rad drehen");
+  const rad = screen.getByRole("img", { name: "Rad" });
+  klick("Lösung anzeigen");
+  klick("Nächste Runde");
+  expect(screen.getByRole("img", { name: "Rad", hidden: true })).toBe(rad);
+});

@@ -65,7 +65,12 @@ export default function Tisch({
         </>
       )}
 
-      {!runde?.aufgeloest && (
+      {/* In der Auflösung nur verstecken, nicht aushängen: Ein neu eingehängtes Rad hat keinen alten Winkel,
+          der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie. */}
+      <div
+        aria-hidden={runde?.aufgeloest || undefined}
+        className={runde?.aufgeloest ? "invisible h-0 overflow-hidden" : ""}
+      >
         <RadAnsicht
           runde={runde}
           onStillstand={() => {
@@ -73,7 +78,7 @@ export default function Tisch({
             onRadSteht?.();
           }}
         />
-      )}
+      </div>
 
       {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
 
