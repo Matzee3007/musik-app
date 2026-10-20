@@ -68,7 +68,8 @@ export function feldAbhaken(spiel: Spiel, index: number): Spiel {
   const { runde, karte } = spiel;
   const feld = karte[index];
   if (!runde?.aufgeloest || runde.abgehaktesFeld !== null) return spiel;
-  if (feld.abgehakt || feld.kategorie !== runde.kategorie.id) return spiel;
+  if (!feld || feld.abgehakt || feld.kategorie !== runde.kategorie.id)
+    return spiel;
 
   return {
     ...spiel,
