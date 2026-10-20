@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Abspielen"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-19
 tags: [plan, spotify, web-playback-sdk, phase-2]
 ---
@@ -356,14 +356,26 @@ Ausbauen belegt.
 
 **Dateien:** Ändern `docs/tools/Spotify Web API.md`, `docs/tools/Tools Übersicht.md`, `docs/Projektvision.md`
 
-- [ ] **Schritt 1: Tool-Notiz** um „Web Playback SDK“ ergänzen (Skript, Gerät, `activateElement`, Ereignisse,
+- [x] **Schritt 1: Tool-Notiz** um „Web Playback SDK“ ergänzen (Skript, Gerät, `activateElement`, Ereignisse,
   `PUT /me/player/play`), in der Übersicht von „Geplant“ nach „Im Einsatz“.
-- [ ] **Schritt 2: Echt prüfen.** `npm run dev`, anmelden, vorbereitete Playlist, „Spiel starten“. Erwartet: In der
+- [x] **Schritt 2: Echt prüfen.** `npm run dev`, anmelden, vorbereitete Playlist, „Spiel starten“. Erwartet: In der
   Spotify-App erscheint das Gerät „Musik-App Tisch“; steht das Rad, läuft der Song, die Musikspur springt in der Farbe
   der Kategorie, nach 30 Sekunden Pause mit „Nochmal“ und „Weiterhören“; Ausschnitt auf „ganzer Song“ stellen,
   nächste Runde läuft durch; Auflösung mit Cover, ein Jahr korrigieren und in der Songliste wiederfinden; ein Spiel
   bis Bingo (Fertig-Kriterium der Phase).
-- [ ] **Schritt 3: Prüfen und committen:** `npm run check`, `npm run build`, `git commit -m "Document Web Playback SDK"`
-- [ ] **Schritt 4: Plan und PR:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
+Ergebnis 2026-10-19/20 (echter Test des Entwicklers bis Bingo):
+
+- **Fehler seit Phase 1 gefunden:** Nach der ersten Auflösung ging es nicht weiter. Ursache: Die Auflösung hängte das
+  Rad aus, „Nächste Runde“ hängte ein neues direkt mit dem Endwinkel ein, der Browser spielte keinen Übergang ab und
+  meldete nie `transitionend`. Fix: Rad bleibt eingehängt und wird nur versteckt. Nachgewiesen mit einem Skript, das
+  die Demo in Chrome ohne Fenster zwei und drei Runden durchklickt; Regressionstest „das Rad bleibt dasselbe Element“.
+- **Zwei Wünsche des Entwicklers umgesetzt:** „Lösung anzeigen“ hält die Musik an (mit „Weiterhören“ in der Auflösung),
+  „Nächste Runde“ hält einen laufenden Song sofort an.
+- **Offen:** Im Log einmal `unhandledRejection: TypeError: Failed to fetch` aus `getOAuthToken` → `gueltigesToken`
+  (Token erneuern ohne Netz, vermutlich nach dem Ruhezustand). Fehler bei Spotify-Aufrufen mitten im Spiel werden
+  noch nirgends abgefangen. Vorschlag für die nächste Session.
+
+- [x] **Schritt 3: Prüfen und committen:** `npm run check`, `npm run build`, `git commit -m "Document Web Playback SDK"`
+- [x] **Schritt 4: Plan und PR:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
 - [ ] **Schritt 5: Phase 2 abschließen** (Regel „Phasenwechsel“ der globalen `CLAUDE.md`): Roadmap abhaken, Skill
   `journal` für Phase 2, Skill `naechste-session` mit Phase 3, beide PRs mergen.
