@@ -7,6 +7,8 @@ export type PlaylistSong = {
   interpret: string;
   isrc: string | null;
   spotifyJahr: number;
+  // Größtes Bild des Albums, für die Auflösung.
+  cover: string | null;
 };
 
 type Track = {
@@ -14,7 +16,8 @@ type Track = {
   id: string;
   name: string;
   artists: { name: string }[];
-  album: { release_date: string };
+  // Spotify sortiert die Bilder vom größten zum kleinsten.
+  album: { release_date: string; images?: { url: string }[] };
   // Ohne ISRC lässt sich kein Erscheinungsjahr in MusicBrainz finden.
   external_ids: { isrc?: string };
   // Nur mit "market" vorhanden. Fehlt es, gilt der Song als spielbar.
@@ -52,6 +55,7 @@ export async function playlistSongs(
         interpret: item.artists.map((a) => a.name).join(", "),
         isrc: item.external_ids.isrc ?? null,
         spotifyJahr: Number(item.album.release_date.slice(0, 4)),
+        cover: item.album.images?.[0]?.url ?? null,
       });
     }
     url = seite.next;

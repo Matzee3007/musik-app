@@ -3,6 +3,7 @@ import { feldSetzen } from "@/lib/karte";
 import {
   abhakenZuruecknehmen,
   feldAbhaken,
+  jahrKorrigieren,
   loesungAnzeigen,
   rundeStarten,
   spielStarten,
@@ -112,5 +113,25 @@ describe("Abhaken", () => {
     );
     const mitBingo = { ...spiel, karte };
     expect(rundeStarten(mitBingo, () => 0)).toBe(mitBingo);
+  });
+});
+
+describe("Jahr korrigieren", () => {
+  test("ändert das Jahr in der Runde und lässt den Rest gleich", () => {
+    const spiel = aufgeloesteRunde();
+    const song = spiel.runde!.song;
+    const neu = jahrKorrigieren(spiel, song.id, 1950);
+    expect(neu.runde!.song).toEqual({ ...song, jahr: 1950 });
+    expect(neu.karte).toBe(spiel.karte);
+    expect(neu.stapel).toEqual(spiel.stapel);
+    expect(spiel.runde!.song.jahr).toBe(song.jahr);
+  });
+
+  test("ändert auch den Song im Stapel", () => {
+    const spiel = spielStarten(SONGS, () => 0);
+    const song = spiel.stapel[1];
+    const neu = jahrKorrigieren(spiel, song.id, 1950);
+    expect(neu.stapel[1]).toEqual({ ...song, jahr: 1950 });
+    expect(neu.stapel[0]).toBe(spiel.stapel[0]);
   });
 });

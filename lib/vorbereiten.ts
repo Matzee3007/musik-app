@@ -61,6 +61,7 @@ export function spielSongs(
     titel: s.titel,
     interpret: s.interpret,
     jahr: jahrFuerSpiel(jahreVon(s, gespeichert)),
+    ...(s.cover ? { cover: s.cover } : {}),
   }));
 }
 
@@ -87,12 +88,15 @@ export async function vorbereiten(
     jahrAbfragen?: (isrc: string) => Promise<number | null>;
     warten?: (ms: number) => Promise<void>;
     onFortschritt?: (fertig: number, gesamt: number) => void;
+    // Vor jedem Song gefragt, z. B. wenn der DJ "Zurück" geklickt hat. Dann endet es ohne Fehler.
+    abgebrochen?: () => boolean;
   } = {},
 ): Promise<void> {
   const {
     jahrAbfragen = (isrc: string) => jahrUeberServer(isrc),
     warten = pause,
     onFortschritt = () => {},
+    abgebrochen = () => false,
   } = p;
 
   async function mitWiederholung(isrc: string): Promise<number | null> {
@@ -117,6 +121,7 @@ export async function vorbereiten(
   onFortschritt(0, offen.length);
   let schonGefragt = false;
   for (const [i, song] of offen.entries()) {
+    if (abgebrochen()) return;
     let musicbrainz: number | null = null;
     // Ohne ISRC findet MusicBrainz nichts, dann gar nicht erst fragen.
     if (song.isrc) {

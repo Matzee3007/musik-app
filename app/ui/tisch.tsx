@@ -1,5 +1,7 @@
 import { useState } from "react";
+import Musikspur from "@/app/ui/musikspur";
 import RadAnsicht from "@/app/ui/rad-ansicht";
+import { gueltigesJahr } from "@/lib/erscheinungsjahr";
 import { KATEGORIEN } from "@/lib/kategorien";
 import type { Runde } from "@/lib/spiel";
 
@@ -13,6 +15,9 @@ export default function Tisch({
   onLoesungAnzeigen,
   onVonVorn,
   onNeuesSpiel,
+  onRadSteht,
+  musik,
+  onJahrKorrigieren,
 }: {
   runde: Runde | null;
   stapelLeer: boolean;
@@ -21,12 +26,30 @@ export default function Tisch({
   onLoesungAnzeigen: () => void;
   onVonVorn: () => void;
   onNeuesSpiel: () => void;
+  // Nur mit Spotify: Das Rad steht, jetzt soll der Song laufen.
+  onRadSteht?: () => void;
+  // Nur mit Spotify, sonst steht dort wie in der Demo "Song läuft".
+  musik?: {
+    laeuft: boolean;
+    // Der Ausschnitt ist zu Ende, der Song pausiert.
+    vorbei: boolean;
+    dauerMs: number | null;
+    // Neuer Wert: Musikspur beginnt von vorn.
+    start: number;
+    onNochmal: () => void;
+    onWeiterhoeren: () => void;
+  };
+  // Nur mit Spotify: Der DJ korrigiert in der Auflösung das Jahr.
+  onJahrKorrigieren?: (jahr: number) => void;
 }) {
   // Kategorie und Knöpfe erst zeigen, wenn das Rad steht.
   const [dreht, setDreht] = useState(false);
+  // Eingabe für "Jahr korrigieren", null: geschlossen.
+  const [jahrFeld, setJahrFeld] = useState<string | null>(null);
 
   function drehen() {
     setDreht(true);
+    setJahrFeld(null);
     onRadDrehen();
   }
 
@@ -42,9 +65,20 @@ export default function Tisch({
         </>
       )}
 
-      {!runde?.aufgeloest && (
-        <RadAnsicht runde={runde} onStillstand={() => setDreht(false)} />
-      )}
+      {/* In der Auflösung nur verstecken, nicht aushängen: Ein neu eingehängtes Rad hat keinen alten Winkel,
+          der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie. */}
+      <div
+        aria-hidden={runde?.aufgeloest || undefined}
+        className={runde?.aufgeloest ? "invisible h-0 overflow-hidden" : ""}
+      >
+        <RadAnsicht
+          runde={runde}
+          onStillstand={() => {
+            setDreht(false);
+            onRadSteht?.();
+          }}
+        />
+      </div>
 
       {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
 
@@ -65,13 +99,39 @@ export default function Tisch({
 
       {runde && !runde.aufgeloest && !dreht && (
         <>
-          <p className="text-lg">Song läuft</p>
+          {musik ? (
+            <>
+              <Musikspur
+                key={musik.start}
+                farbe={runde.kategorie.farbe}
+                laeuft={musik.laeuft}
+                dauerMs={musik.dauerMs}
+              />
+              {musik.vorbei && (
+                <div className="flex gap-2">
+                  <Knopf onClick={musik.onNochmal}>Nochmal</Knopf>
+                  <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-lg">Song läuft</p>
+          )}
           <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
         </>
       )}
 
       {runde?.aufgeloest && (
         <>
+          {runde.song.cover && (
+            // Ein Bild von Spotify am Tisch: next/image bräuchte eine Freigabe der Adresse und spart hier nichts.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={runde.song.cover}
+              alt={`Cover von ${runde.song.titel}`}
+              className="h-48 w-48 rounded-lg object-cover shadow"
+            />
+          )}
           <h2 className="text-4xl font-bold">
             {runde.kategorie.loesung(runde.song)}
           </h2>
@@ -85,6 +145,41 @@ export default function Tisch({
             <dt className="text-zinc-600 dark:text-zinc-400">Jahrzehnt</dt>
             <dd>{jahrzehnt.loesung(runde.song)}</dd>
           </dl>
+          {musik && !musik.laeuft && !bingo && (
+            <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
+          )}
+          {onJahrKorrigieren &&
+            (jahrFeld === null ? (
+              <button className="underline" onClick={() => setJahrFeld("")}>
+                Jahr korrigieren
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
+                  Jahr
+                  <input
+                    type="number"
+                    className="w-24 rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700"
+                    value={jahrFeld}
+                    onChange={(e) => setJahrFeld(e.target.value)}
+                  />
+                </label>
+                <Knopf
+                  onClick={() => {
+                    // Wie in der Songliste nur ganze Jahre bis heute, sonst bleibt das Feld offen.
+                    const jahr = gueltigesJahr(
+                      jahrFeld,
+                      new Date().getFullYear(),
+                    );
+                    if (jahr === null) return;
+                    onJahrKorrigieren(jahr);
+                    setJahrFeld(null);
+                  }}
+                >
+                  Speichern
+                </Knopf>
+              </div>
+            ))}
           {!bingo && <p>Richtig? Hake ein Feld {runde.kategorie.name} ab.</p>}
           {bingo ? null : stapelLeer ? (
             <>

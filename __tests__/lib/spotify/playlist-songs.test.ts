@@ -29,6 +29,7 @@ test("playlistSongs liefert Titel, Interpreten, ISRC und Spotify-Jahr", async ()
         interpret: "Queen, David Bowie",
         isrc: "ISRCt1",
         spotifyJahr: 2011,
+        cover: null,
       },
     ],
   });
@@ -93,4 +94,22 @@ test("abgelaufenes Token ergibt SpotifyFehler 401", async () => {
     name: "SpotifyFehler",
     status: 401,
   });
+});
+
+test("das Cover ist das größte Bild des Albums", async () => {
+  const abruf = vi.fn<Abruf>(async () =>
+    antwort({
+      items: [
+        track("t1", {
+          album: {
+            release_date: "2011",
+            images: [{ url: "gross.jpg" }, { url: "klein.jpg" }],
+          },
+        }),
+      ],
+      next: null,
+    }),
+  );
+  const { songs } = await playlistSongs("p1", "a1", abruf);
+  expect(songs[0].cover).toBe("gross.jpg");
 });

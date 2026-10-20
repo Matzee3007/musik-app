@@ -24,6 +24,7 @@ const song = (id: string, isrc: string | null = `ISRC${id}`): PlaylistSong => ({
   interpret: "Queen",
   isrc,
   spotifyJahr: 2011,
+  cover: null,
 });
 const ohnePause = vi.fn(async () => {});
 
@@ -168,4 +169,26 @@ test("ohne eigene Abfrage fragt vorbereiten die Route", async () => {
   );
   await vorbereiten([song("t1")], { warten: ohnePause });
   expect(gespeicherteJahre().t1.musicbrainz).toBe(1975);
+});
+
+test("spielSongs reicht das Cover weiter, Songs ohne Cover haben keins", () => {
+  expect(spielSongs([{ ...song("t1"), cover: "gross.jpg" }], {})[0].cover).toBe(
+    "gross.jpg",
+  );
+  expect(spielSongs([song("t1")], {})[0]).not.toHaveProperty("cover");
+});
+
+test("vorbereiten hört auf, sobald abgebrochen meldet, ohne Fehler", async () => {
+  let abgebrochen = false;
+  const jahrAbfragen = vi.fn(async () => {
+    abgebrochen = true;
+    return 1975;
+  });
+  await vorbereiten([song("t1"), song("t2"), song("t3")], {
+    jahrAbfragen,
+    warten: ohnePause,
+    abgebrochen: () => abgebrochen,
+  });
+  expect(jahrAbfragen.mock.calls).toEqual([["ISRCt1"]]);
+  expect(Object.keys(gespeicherteJahre())).toEqual(["t1"]);
 });

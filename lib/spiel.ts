@@ -96,3 +96,19 @@ export function stapelNeuMischen(
 ): Spiel {
   return { ...spiel, stapel: mischen(songs, zufall) };
 }
+
+// Der DJ korrigiert in der Auflösung das Jahr eines Songs, in der Runde und im Stapel.
+export function jahrKorrigieren(
+  spiel: Spiel,
+  songId: string,
+  jahr: number,
+): Spiel {
+  const korrigiert = (song: Song) =>
+    song.id === songId ? { ...song, jahr } : song;
+  const { runde } = spiel;
+  return {
+    ...spiel,
+    stapel: spiel.stapel.map(korrigiert),
+    runde: runde && { ...runde, song: korrigiert(runde.song) },
+  };
+}

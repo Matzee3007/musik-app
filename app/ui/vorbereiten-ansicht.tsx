@@ -5,11 +5,29 @@ import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import { MusicBrainzBeschaeftigt } from "@/lib/musicbrainz";
 import type { Song } from "@/lib/song";
+import { clientId } from "@/lib/spotify/konfig";
+import {
+  playerVerbinden,
+  PlayerFehler,
+  type Abspieler,
+} from "@/lib/spotify/player";
 import { playlistSongs, type PlaylistSong } from "@/lib/spotify/playlist-songs";
 import type { Playlist } from "@/lib/spotify/playlists";
-import { vorbereiten } from "@/lib/vorbereiten";
+import { gueltigesToken } from "@/lib/spotify/sitzung";
+import { korrekturSpeichern, vorbereiten } from "@/lib/vorbereiten";
 
 type Geladen = { songs: PlaylistSong[]; uebersprungen: number };
+
+// Verbindet den Browser als Spotify-Gerät, das Token holt es bei Bedarf frisch.
+function standardVerbinden(): Promise<Abspieler> {
+  return playerVerbinden({
+    tokenHolen: async () => {
+      const token = await gueltigesToken(clientId()!);
+      if (!token) throw new PlayerFehler("Spotify-Anmeldung abgelaufen.");
+      return token.accessToken;
+    },
+  });
+}
 
 // Vorbereiten einer Playlist (siehe Glossar), danach Songliste und Spiel.
 export default function VorbereitenAnsicht({
@@ -17,12 +35,15 @@ export default function VorbereitenAnsicht({
   accessToken,
   onZurueck,
   warten,
+  verbinden = standardVerbinden,
 }: {
   playlist: Playlist;
   accessToken: string;
   onZurueck: () => void;
   // Tests setzen eine Pause ohne Wartezeit ein.
   warten?: (ms: number) => Promise<void>;
+  // Tests setzen einen nachgebauten Player ein.
+  verbinden?: () => Promise<Abspieler>;
 }) {
   const [geladen, setGeladen] = useState<Geladen | null>(null);
   const [spielSongs, setSpielSongs] = useState<Song[] | null>(null);
@@ -39,6 +60,16 @@ export default function VorbereitenAnsicht({
   // viele Anfragen an MusicBrainz wie erlaubt, deshalb startet jeder Versuch nur einmal.
   const gestartet = useRef<number | null>(null);
 
+  // "Zurück" hängt die Ansicht aus, dann soll das Vorbereiten aufhören. Im Effekt gesetzt, damit der
+  // doppelte Durchlauf im StrictMode (ein-, aus-, wieder einhängen) am Ende "sichtbar" ergibt.
+  const sichtbar = useRef(true);
+  useEffect(() => {
+    sichtbar.current = true;
+    return () => {
+      sichtbar.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (gestartet.current === versuch) return;
     gestartet.current = versuch;
@@ -47,6 +78,7 @@ export default function VorbereitenAnsicht({
         await vorbereiten(ergebnis.songs, {
           warten,
           onFortschritt: (fertig, gesamt) => setFortschritt({ fertig, gesamt }),
+          abgebrochen: () => !sichtbar.current,
         });
         setGeladen(ergebnis);
       })
@@ -56,7 +88,39 @@ export default function VorbereitenAnsicht({
       });
   }, [playlist.id, accessToken, warten, versuch]);
 
-  if (spielSongs) return <SpielAnsicht songs={spielSongs} sofort />;
+  // Musik: null während des Verbindens, sonst der Player oder der Grund, warum es keine Musik gibt.
+  const [musik, setMusik] = useState<
+    { abspieler: Abspieler } | { fehler: string } | null
+  >(null);
+  const verbunden = useRef(false);
+
+  // Verbinden, sobald die Songliste da ist, damit "Spiel starten" den Player schon im Klick aktivieren kann.
+  useEffect(() => {
+    if (!geladen || verbunden.current) return;
+    verbunden.current = true;
+    verbinden()
+      .then((abspieler) => setMusik({ abspieler }))
+      .catch((e: Error) => setMusik({ fehler: e.message }));
+  }, [geladen, verbinden]);
+
+  const abspieler = musik && "abspieler" in musik ? musik.abspieler : undefined;
+
+  // Beim Verlassen trennen, sonst bleibt "Musik-App Tisch" als Gerät in Spotify stehen.
+  useEffect(() => {
+    if (!abspieler) return;
+    return () => abspieler.trennen();
+  }, [abspieler]);
+
+  if (spielSongs) {
+    return (
+      <SpielAnsicht
+        songs={spielSongs}
+        sofort
+        abspieler={abspieler}
+        onJahrKorrigiert={korrekturSpeichern}
+      />
+    );
+  }
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
@@ -65,11 +129,24 @@ export default function VorbereitenAnsicht({
       </button>
       <h2 className="text-3xl font-semibold">{playlist.name}</h2>
       {geladen ? (
-        <Songliste
-          songs={geladen.songs}
-          uebersprungen={geladen.uebersprungen}
-          onSpielStarten={setSpielSongs}
-        />
+        <>
+          <p className="text-sm">
+            {musik === null
+              ? "Musik wird verbunden …"
+              : "fehler" in musik
+                ? `Musik nicht verfügbar: ${musik.fehler}`
+                : "Musik bereit"}
+          </p>
+          <Songliste
+            songs={geladen.songs}
+            uebersprungen={geladen.uebersprungen}
+            onSpielStarten={(songs) => {
+              // Im Klick, sonst lässt der Browser keinen Ton zu.
+              abspieler?.aktivieren();
+              setSpielSongs(songs);
+            }}
+          />
+        </>
       ) : fehler ? (
         <>
           <p>{fehler}</p>

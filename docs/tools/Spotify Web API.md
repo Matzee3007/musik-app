@@ -68,6 +68,23 @@ npm run dev                   # startet auf http://127.0.0.1:3000
   auf. Folge: Unter `localhost` geöffnet, schickt die App `http://localhost:3000/callback` als Redirect-URI, Spotify
   meldet „Invalid redirect URI“. Lösung: immer `http://127.0.0.1:3000` öffnen.
 
+## Web Playback SDK
+
+Macht den Browser des Tisches zu einem Spotify-Gerät „Musik-App Tisch“ (Code: `lib/spotify/player.ts`, Plan:
+[[2026-10-19-abspielen]]). Nur mit Spotify Premium.
+
+- **Laden:** Skript `https://sdk.scdn.co/spotify-player.js`, fertig ist es, wenn es
+  `window.onSpotifyWebPlaybackSDKReady` aufruft. Die App lädt es genau einmal (`sdkLaden`).
+- **Verbinden:** `new Spotify.Player({ name, getOAuthToken })`, dann `connect()`. Das Ereignis `ready` liefert die
+  `device_id`. Fehler kommen als Ereignisse: `account_error` (kein Premium), `initialization_error` (Browser kann es
+  nicht), `authentication_error` (Token ungültig). Die App zeigt dann „Musik nicht verfügbar: …“ und spielt ohne Musik.
+- **Ton freischalten:** `activateElement()` muss aus einem Klick kommen, sonst blockiert der Browser den Ton. Die App
+  ruft es beim Klick auf „Spiel starten“ auf.
+- **Song starten:** nicht über das SDK, sondern über die Web API: `PUT /me/player/play?device_id=…` mit
+  `{ "uris": ["spotify:track:<id>"], "position_ms": 0 }`, Antwort `204` ohne Inhalt. Scope `user-modify-playback-state`.
+- **Steuern:** `pause()`, `resume()`, `seek(0)`; „Nochmal“ ist `seek(0)` und danach `resume()`.
+- **Trennen:** `disconnect()` beim Verlassen der Ansicht, sonst bleibt das Gerät in Spotify stehen.
+
 ## Stand der API (Oktober 2026)
 
 - Playlist-Songs über `/playlists/{id}/items` statt `/tracks`, nur für eigene oder kollaborative Playlists. Bei fremden
