@@ -104,8 +104,8 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
 - [x] **Phase 1 – Spiel auf einem Gerät:** Rad, Karte 5×5 mit Farben je Kategorie, Auflösung, Abhaken,
   Bingo-Erkennung, testgetrieben. Tisch und Karte nebeneinander am Laptop, feste Songliste, noch ohne Spotify.
   Dazu ein grafisches Rad (abgeschlossen 2026-10-19, PRs #10 und #11)
-- [ ] **Phase 2 – Spotify:** Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
-  Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch
+- [x] **Phase 2 – Spotify:** Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
+  Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch (abgeschlossen 2026-10-20, PRs #13 bis #15)
 - [ ] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
   Realtime, Deployment auf Vercel
 - [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy

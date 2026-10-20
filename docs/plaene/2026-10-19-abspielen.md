@@ -377,5 +377,5 @@ Ergebnis 2026-10-19/20 (echter Test des Entwicklers bis Bingo):
 
 - [x] **Schritt 3: Prüfen und committen:** `npm run check`, `npm run build`, `git commit -m "Document Web Playback SDK"`
 - [x] **Schritt 4: Plan und PR:** `status: abgeschlossen`, PR öffnen, `gh pr checks <nr>` grün, mergen.
-- [ ] **Schritt 5: Phase 2 abschließen** (Regel „Phasenwechsel“ der globalen `CLAUDE.md`): Roadmap abhaken, Skill
+- [x] **Schritt 5: Phase 2 abschließen** (Regel „Phasenwechsel“ der globalen `CLAUDE.md`): Roadmap abhaken, Skill
   `journal` für Phase 2, Skill `naechste-session` mit Phase 3, beide PRs mergen.
