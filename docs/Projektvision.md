@@ -30,7 +30,7 @@ So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im
 **Spielregeln im Detail:**
 
 - **Karte:** 5×5, jede der 5 Kategorien genau 5-mal zufällig verteilt, kein Freifeld, jede Karte anders.
-- **Bingo:** erkennt die App automatisch. Abschaltbar, dann krönt der DJ am Tisch die Sieger von Hand (auch mehrere).
+- **Bingo:** erkennt die App automatisch. Abschaltbar (ab Phase 4), dann krönt der DJ am Tisch die Sieger von Hand (auch mehrere).
 - **Gleichstand:** Haben mehrere in derselben Runde Bingo, gewinnen standardmäßig alle. Als Einstellung gibt es
   Stechen: Nur sie spielen weiter, bis einer als Einziger richtig liegt.
 - **Songs:** jeder nur einmal pro Spiel. Ist die Playlist leer, wählt der DJ „von vorn“ (neu gemischt) oder eine
@@ -108,7 +108,9 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
   Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch (abgeschlossen 2026-10-20, PRs #13 bis #15)
 - [ ] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
   Realtime, Deployment auf Vercel
-- [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy
+- [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy.
+  Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar,
+  Kategorie und Lösung auch auf dem Handy, Playwright in der CI
 
 ## Stolpersteine
 
@@ -163,3 +165,36 @@ B [[2026-10-19-vorbereiten|Vorbereiten und Erscheinungsjahr]], C [[2026-10-19-ab
 - **Spotify-API, Stand Oktober 2026:** `external_ids` (ISRC) wurde im Februar 2026 für den Development Mode gestrichen,
   im März aber wieder eingeführt. Playlist-Songs kommen über `/items` statt `/tracks` und nur für eigene oder
   kollaborative Playlists, die Suche liefert höchstens 10 Treffer.
+
+Mit `/grill-with-docs` am 2026-10-20 für **Phase 3 – Mehrspieler** geklärt:
+
+Umsetzung in drei Plänen mit je einem PR: A Deployment auf Vercel, B Raum und Beitritt, C Live-Spiel. A zuerst, weil
+Handys `127.0.0.1` nicht erreichen und Spotify außerhalb davon HTTPS verlangt.
+
+- **Spielstand:** Supabase Realtime mit Broadcast und Presence, ohne Tabellen
+  ([[0004-mehrspieler-ohne-tabellen|ADR 0004]]). Der Tisch gibt den Takt vor (neue Runde, Auflösung), jedes Handy hält
+  seine Karte selbst. Songs und Erscheinungsjahre bleiben im `localStorage` des Tisches, der Umzug nach Supabase kommt
+  mit Phase 4.
+- **Raum:** gilt für den ganzen Spieleabend, mehrere Spiele mit demselben Code. „Neues Spiel“ gibt allen neue Karten.
+  Endet mit „Raum schließen“ am Tisch, die Handys zeigen dann „Raum geschlossen“. Auch die Demo eröffnet einen Raum.
+- **Beitritt:** Der Tisch zeigt einen Raum-Code aus 4 Buchstaben (ohne verwechselbare Zeichen) und einen QR-Code mit
+  dem Link `/raum/<Code>`. Handy scannen oder Code auf der Startseite eintippen, Namen eingeben. Ein Name, der im Raum
+  schon verbunden ist, wird abgelehnt („Name schon vergeben“). Wer mitten im Spiel beitritt, bekommt sofort eine Karte.
+- **Neuladen:** Handy (Raum-Code, Name, Karte) und Tisch (Raum-Code, Spielstand) merken sich alles im eigenen
+  `localStorage` und machen nach dem Neuladen weiter.
+- **Handy:** zeigt nur Karte und Notizfläche. Die Notizfläche lässt sich ausschalten (die Karte wird dann größer),
+  das Handy merkt sich die Wahl, und sie leert sich bei jeder neuen Runde. Felder, die gerade nicht abgehakt werden
+  dürfen, sind ausgegraut: Vor der Auflösung ist alles grau, danach leuchten nur die freien Felder der gedrehten
+  Kategorie. Sind alle fünf schon abgehakt, bleibt alles grau. Abhaken wie in Phase 1. Bei Bingo zeigt das eigene
+  Handy „Bingo!“ und hebt die Reihe hervor, bei allen anderen ist die Karte bis zum neuen Spiel gesperrt.
+- **Tisch:** statt der Karte eine Leiste mit den Spielern und ihrer Zahl abgehakter Felder („Anna 7 · Ben 5“),
+  nicht verbundene ausgegraut. Bei Bingo „Bingo! Anna“ (bei mehreren alle Namen), die Musik hört auf. Haben mehrere
+  in derselben Runde Bingo, gewinnen alle (Stechen kommt in Phase 4).
+- **Deployment:** `https://musik-bingo.vercel.app` (ohne „hitster“), als zweite Redirect-URI bei Spotify eingetragen.
+  Vorschau-Deployments der PRs laufen nur mit der Demo, weil Spotify nur genau eingetragene Adressen erlaubt.
+- **Tests:** Playwright ab Plan B, vorerst nur lokal (`npm run e2e`) gegen das Supabase-Projekt, mit zwei Browsern
+  (Tisch und Handy) im Demo-Raum. In die CI kommt er mit einem GitHub-Secret in Phase 4.
+- **Fertig, wenn:** Der Laptop öffnet die Vercel-Adresse als Tisch mit Spotify, zwei echte Handys treten per QR-Code
+  bei, ein komplettes Spiel läuft bis zum Bingo, und der Tisch zeigt den Namen. Unterwegs lädt ein Handy neu und
+  behält seine Karte, ein drittes tritt mitten im Spiel bei. Playwright-Test für den Demo-Raum und `npm run check`
+  grün.
