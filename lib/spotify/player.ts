@@ -78,8 +78,8 @@ export async function playerVerbinden(p: {
   const player = new window.Spotify!.Player({
     name: "Musik-App Tisch",
     getOAuthToken: (cb) => {
-      // Kein Token (z. B. kein Netz nach dem Ruhezustand): Das SDK bekommt keins, den Fehler meldet
-      // der nächste Befehl an den Abspieler.
+      // Kein Token (z. B. kein Netz nach dem Ruhezustand): Das SDK bekommt keins. Den Fehler meldet
+      // abspielen, das sein Token selbst holt.
       p.tokenHolen().then(cb, () => {});
     },
   });

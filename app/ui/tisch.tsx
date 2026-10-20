@@ -18,6 +18,7 @@ export default function Tisch({
   onRadSteht,
   musik,
   onJahrKorrigieren,
+  meldung,
 }: {
   runde: Runde | null;
   stapelLeer: boolean;
@@ -36,13 +37,15 @@ export default function Tisch({
     dauerMs: number | null;
     // Neuer Wert: Musikspur beginnt von vorn.
     start: number;
-    // Spotify war nicht erreichbar: Meldung, nur "Nochmal" startet den Song neu.
+    // Der Start ist gescheitert: Nur "Nochmal" startet den Song neu.
     fehler: boolean;
     onNochmal: () => void;
     onWeiterhoeren: () => void;
   };
   // Nur mit Spotify: Der DJ korrigiert in der Auflösung das Jahr.
   onJahrKorrigieren?: (jahr: number) => void;
+  // Nur mit Spotify: Ein Befehl an Spotify ist gescheitert.
+  meldung?: string | null;
 }) {
   // Kategorie und Knöpfe erst zeigen, wenn das Rad steht.
   const [dreht, setDreht] = useState(false);
@@ -60,6 +63,12 @@ export default function Tisch({
       aria-label="Tisch"
       className="flex flex-col items-center gap-4 rounded-xl border border-zinc-300 p-6 dark:border-zinc-700"
     >
+      {meldung && (
+        <p role="alert" className="text-red-600 dark:text-red-400">
+          {meldung}
+        </p>
+      )}
+
       {bingo && (
         <>
           <h2 className="text-5xl font-bold">Bingo!</h2>
@@ -109,11 +118,6 @@ export default function Tisch({
                 laeuft={musik.laeuft}
                 dauerMs={musik.dauerMs}
               />
-              {musik.fehler && (
-                <p role="alert" className="text-red-600 dark:text-red-400">
-                  Spotify nicht erreichbar.
-                </p>
-              )}
               {musik.vorbei && (
                 <div className="flex gap-2">
                   <Knopf onClick={musik.onNochmal}>Nochmal</Knopf>
