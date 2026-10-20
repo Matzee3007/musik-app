@@ -39,6 +39,9 @@ Handy, Live-Abgleich über Supabase Realtime, Deployment auf Vercel.
      `unhandledRejection: TypeError: Failed to fetch` beim Erneuern des Tokens für das SDK (vermutlich nach dem
      Ruhezustand des Laptops). Zu klären: Was zeigt die App, wenn Spotify kurz nicht erreichbar ist? Am besten mit
      `/grill-with-docs` kurz klären, dann mit `tdd` umsetzen.
+   - **Restpunkt aus Phase 1:** `feldAbhaken` mit ungültigem Index (z. B. `-1`) in einer aufgelösten Runde wirft einen
+     `TypeError`, weil `karte[index]` dann `undefined` ist (`lib/spiel.ts`, rund Zeile 69). Gefunden am 2026-10-20 vom
+     Agent `plan-pruefer` im Ecosystem. Mit `tdd`: erst ein Test, dann den Index prüfen und das Spiel unverändert lassen.
    - Punkte fürs Ecosystem (u. a. der Datenschutz-Hook) stehen in der
      [[docs/Nächste Session|Übergabe des Ecosystems]].
 2. [[projects/musik-app/docs/Tools für später|Tools für später]] und die
