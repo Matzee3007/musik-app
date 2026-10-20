@@ -68,7 +68,7 @@ export default function SpielAnsicht({
   // Nummer des letzten Starts. Ein später Fehler eines Befehls von einem älteren Start zählt nicht mehr.
   const startNr = useRef(0);
 
-  // Neuer Start: Musikspur von vorn, eine alte Meldung verschwindet.
+  // Neuer Start oder neue Runde: Musikspur von vorn, eine alte Meldung verschwindet.
   function neuerStart(): number {
     startNr.current += 1;
     setMeldung(null);
@@ -103,7 +103,7 @@ export default function SpielAnsicht({
       setMeldung(
         fehler instanceof PlayerFehler
           ? fehler.message
-          : "Spotify nicht erreichbar.",
+          : "Spotify reagiert nicht.",
       );
       if (!start) return;
       if (zeitgeber.current) clearTimeout(zeitgeber.current);
@@ -143,6 +143,7 @@ export default function SpielAnsicht({
     if (!spiel) return;
     setSpiel(rundeStarten(spiel, zufall));
     if (musik?.laeuft) musikAnhalten();
+    neuerStart();
   }
 
   // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
@@ -162,9 +163,14 @@ export default function SpielAnsicht({
     setMusik(null);
   }
 
+  // Ist der Start gescheitert, lief vielleicht nie ein Song, dann neu abspielen statt fortsetzen.
   function weiterhoeren() {
+    if (!abspieler || !spiel?.runde) return;
     const nr = neuerStart();
-    abspieler?.fortsetzen().catch(spotifyFehler(nr, true));
+    const befehl = musik?.fehler
+      ? abspieler.abspielen(spiel.runde.song.id)
+      : abspieler.fortsetzen();
+    befehl.catch(spotifyFehler(nr, true));
     setMusik({
       laeuft: true,
       vorbei: false,

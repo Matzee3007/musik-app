@@ -237,9 +237,7 @@ test("ist Spotify nicht erreichbar, steht die Musik mit Meldung und Nochmal star
   abspieler.abspielen.mockRejectedValueOnce(new TypeError("Failed to fetch"));
   starten();
   await vergehen(0);
-  expect(screen.getByRole("alert").textContent).toBe(
-    "Spotify nicht erreichbar.",
-  );
+  expect(screen.getByRole("alert").textContent).toBe("Spotify reagiert nicht.");
   expect(screen.getByRole("img", { name: "Musikspur steht" })).toBeDefined();
   expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
   klick("Nochmal");
@@ -309,4 +307,33 @@ test("ist die Anmeldung abgelaufen, sagt die Meldung das", async () => {
   expect(screen.getByRole("alert").textContent).toBe(
     "Spotify-Anmeldung abgelaufen.",
   );
+});
+
+test("scheitert Weiterhören in der Auflösung, bleibt der Knopf und spielt den Song neu ab", async () => {
+  abspieler.fortsetzen.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  klick("Lösung anzeigen");
+  klick("Weiterhören");
+  await vergehen(0);
+  expect(screen.getByRole("alert")).toBeDefined();
+  klick("Weiterhören");
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+  expect(abspieler.fortsetzen).toHaveBeenCalledTimes(1);
+});
+
+test("beim Drehen verschwindet die Meldung, ein später Fehler der alten Runde erscheint nicht", async () => {
+  let startScheitert: (fehler: Error) => void = () => {};
+  abspieler.abspielen.mockReturnValueOnce(
+    new Promise((_, abgelehnt) => (startScheitert = abgelehnt)),
+  );
+  abspieler.pausieren.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  klick("Lösung anzeigen");
+  await vergehen(0);
+  expect(screen.getByRole("alert")).toBeDefined();
+  // Das Rad dreht noch, der neue Song ist noch nicht angefragt.
+  klick("Nächste Runde");
+  expect(screen.queryByRole("alert")).toBeNull();
+  await act(async () => startScheitert(new TypeError("Failed to fetch")));
+  expect(screen.queryByRole("alert")).toBeNull();
 });

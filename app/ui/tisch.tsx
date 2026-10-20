@@ -158,7 +158,7 @@ export default function Tisch({
             <dt className="text-zinc-600 dark:text-zinc-400">Jahrzehnt</dt>
             <dd>{jahrzehnt.loesung(runde.song)}</dd>
           </dl>
-          {musik && !musik.laeuft && !musik.fehler && !bingo && (
+          {musik && !musik.laeuft && !bingo && (
             <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
           )}
           {onJahrKorrigieren &&
