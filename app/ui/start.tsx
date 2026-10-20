@@ -105,8 +105,8 @@ export default function Start() {
       </button>
       {!id && (
         <p className="max-w-sm text-sm">
-          Spotify-Client-ID fehlt: trage NEXT_PUBLIC_SPOTIFY_CLIENT_ID in
-          .env.local ein.
+          Spotify ist hier nicht eingerichtet, nur die Demo. Lokal:
+          NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
         </p>
       )}
       {demoKnopf}
