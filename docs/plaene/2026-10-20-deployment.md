@@ -97,13 +97,13 @@ git commit -m "Explain missing Spotify client ID on preview deployments"
 - Nutzt: Aufgabe 1 (Hinweis für Vorschauen)
 - Liefert: Production-Adresse `https://musik-bingo.vercel.app` für Aufgabe 3 und für Plan B (QR-Code)
 
-- [ ] **Schritt 1: `engines` in `package.json` eintragen, `npm run check` grün, committen**
+- [x] **Schritt 1: `engines` in `package.json` eintragen, `npm run check` grün, committen**
 
 ```bash
 git commit -am "Pin Node 24 for Vercel"
 ```
 
-- [ ] **Schritt 2: Branch pushen und PR öffnen**, damit Vercel gleich nach dem Verbinden ein Vorschau-Deployment baut.
+- [x] **Schritt 2: Branch pushen und PR öffnen**, damit Vercel gleich nach dem Verbinden ein Vorschau-Deployment baut.
 
 - [ ] **Schritt 3 (Entwickler, im Browser): Projekt importieren**
 
