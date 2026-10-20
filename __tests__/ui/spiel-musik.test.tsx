@@ -7,7 +7,7 @@ import {
   screen,
 } from "@testing-library/react";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
-import type { Abspieler } from "@/lib/spotify/player";
+import { PlayerFehler, type Abspieler } from "@/lib/spotify/player";
 import { SONGLISTE } from "@/lib/songliste";
 
 // Zufall 0: Das Rad wählt Titel, gespielt wird der erste Song im gemischten Stapel.
@@ -158,7 +158,7 @@ test("ganzer Song: keine Pause", async () => {
 
 // Mit Zufall 0,999 ist die letzte Zeile der Karte (Felder 20 bis 24) ganz „Jahr ±3“,
 // und das Rad wählt immer „Jahr ±3“ (wie in spiel-ansicht.test.tsx).
-test("Bingo hält die Musik an", () => {
+function bisZumBingo() {
   render(
     <SpielAnsicht
       songs={SONGLISTE.slice(0, 5)}
@@ -176,6 +176,10 @@ test("Bingo hält die Musik an", () => {
       screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
     );
   }
+}
+
+test("Bingo hält die Musik an", () => {
+  bisZumBingo();
   expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
   expect(abspieler.abspielen).toHaveBeenCalledTimes(5);
   // 5-mal beim Aufdecken, einmal beim Bingo.
@@ -227,4 +231,109 @@ test("Nächste Runde stoppt einen weiterlaufenden Song sofort, nicht erst wenn d
   expect(abspieler.abspielen).toHaveBeenCalledTimes(1);
   fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
   expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+});
+
+test("ist Spotify nicht erreichbar, steht die Musik mit Meldung und Nochmal startet den Song neu", async () => {
+  abspieler.abspielen.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  await vergehen(0);
+  expect(screen.getByRole("alert").textContent).toBe("Spotify reagiert nicht.");
+  expect(screen.getByRole("img", { name: "Musikspur steht" })).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
+  klick("Nochmal");
+  await vergehen(0);
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+  expect(abspieler.vonVorn).not.toHaveBeenCalled();
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByRole("img", { name: "Musikspur läuft" })).toBeDefined();
+});
+
+test("scheitert das Pausieren am Ende des Ausschnitts, bleiben Nochmal und Weiterhören", async () => {
+  abspieler.pausieren.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  await vergehen(30_000);
+  expect(screen.getByRole("alert")).toBeDefined();
+  expect(screen.getByRole("button", { name: "Weiterhören" })).toBeDefined();
+  klick("Nochmal");
+  expect(abspieler.vonVorn).toHaveBeenCalledTimes(1);
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(1);
+});
+
+test("scheitert das Pausieren beim Aufdecken, steht die Meldung in der Auflösung", async () => {
+  abspieler.pausieren.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  klick("Lösung anzeigen");
+  await vergehen(0);
+  expect(screen.getByRole("alert")).toBeDefined();
+  expect(screen.getByRole("button", { name: "Weiterhören" })).toBeDefined();
+  expect(screen.getByRole("button", { name: "Nächste Runde" })).toBeDefined();
+});
+
+test("scheitert das Pausieren beim Bingo, steht die Meldung beim Bingo", async () => {
+  // Die ersten 5 Pausen beim Aufdecken klappen, die beim Bingo scheitert.
+  abspieler.pausieren
+    .mockResolvedValueOnce(undefined)
+    .mockResolvedValueOnce(undefined)
+    .mockResolvedValueOnce(undefined)
+    .mockResolvedValueOnce(undefined)
+    .mockResolvedValueOnce(undefined)
+    .mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  bisZumBingo();
+  await vergehen(0);
+  expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
+  expect(screen.getByRole("alert")).toBeDefined();
+});
+
+test("ein später Fehler eines älteren Befehls trifft den neuen Song nicht", async () => {
+  let pauseScheitert: (fehler: Error) => void = () => {};
+  abspieler.pausieren.mockReturnValueOnce(
+    new Promise((_, abgelehnt) => (pauseScheitert = abgelehnt)),
+  );
+  starten();
+  naechsteRunde();
+  await act(async () => pauseScheitert(new TypeError("Failed to fetch")));
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByRole("img", { name: "Musikspur läuft" })).toBeDefined();
+  await vergehen(30_000);
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
+});
+
+test("ist die Anmeldung abgelaufen, sagt die Meldung das", async () => {
+  abspieler.abspielen.mockRejectedValueOnce(
+    new PlayerFehler("Spotify-Anmeldung abgelaufen."),
+  );
+  starten();
+  await vergehen(0);
+  expect(screen.getByRole("alert").textContent).toBe(
+    "Spotify-Anmeldung abgelaufen.",
+  );
+});
+
+test("scheitert Weiterhören in der Auflösung, bleibt der Knopf und spielt den Song neu ab", async () => {
+  abspieler.fortsetzen.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  klick("Lösung anzeigen");
+  klick("Weiterhören");
+  await vergehen(0);
+  expect(screen.getByRole("alert")).toBeDefined();
+  klick("Weiterhören");
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+  expect(abspieler.fortsetzen).toHaveBeenCalledTimes(1);
+});
+
+test("beim Drehen verschwindet die Meldung, ein später Fehler der alten Runde erscheint nicht", async () => {
+  let startScheitert: (fehler: Error) => void = () => {};
+  abspieler.abspielen.mockReturnValueOnce(
+    new Promise((_, abgelehnt) => (startScheitert = abgelehnt)),
+  );
+  abspieler.pausieren.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  klick("Lösung anzeigen");
+  await vergehen(0);
+  expect(screen.getByRole("alert")).toBeDefined();
+  // Das Rad dreht noch, der neue Song ist noch nicht angefragt.
+  klick("Nächste Runde");
+  expect(screen.queryByRole("alert")).toBeNull();
+  await act(async () => startScheitert(new TypeError("Failed to fetch")));
+  expect(screen.queryByRole("alert")).toBeNull();
 });

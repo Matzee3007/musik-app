@@ -22,7 +22,7 @@ import {
   stapelNeuMischen,
   type Spiel,
 } from "@/lib/spiel";
-import type { Abspieler } from "@/lib/spotify/player";
+import { PlayerFehler, type Abspieler } from "@/lib/spotify/player";
 import type { Zufall } from "@/lib/zufall";
 
 export default function SpielAnsicht({
@@ -56,40 +56,76 @@ export default function SpielAnsicht({
     dauerMs: number | null;
     // Zählt jeden Start (Song, Nochmal, Weiterhören), damit die Musikspur neu beginnt.
     start: number;
+    // Der Start ist gescheitert (z. B. kein Netz), die Musik steht.
+    fehler: boolean;
   } | null>(null);
+  // Ein Befehl an Spotify ist gescheitert, das Spiel geht weiter. Gilt bis zum nächsten Start.
+  const [meldung, setMeldung] = useState<string | null>(null);
   // Gilt ab dem nächsten Song, der laufende behält seine Länge.
   const [ausschnitt, setAusschnitt] = useState<Ausschnitt>(STANDARD_AUSSCHNITT);
   // Beendet den Ausschnitt: Song pausieren, Musikspur anhalten.
   const zeitgeber = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Nummer des letzten Starts. Ein später Fehler eines Befehls von einem älteren Start zählt nicht mehr.
+  const startNr = useRef(0);
+
+  // Neuer Start oder neue Runde: Musikspur von vorn, eine alte Meldung verschwindet.
+  function neuerStart(): number {
+    startNr.current += 1;
+    setMeldung(null);
+    return startNr.current;
+  }
 
   // Die Musikspur läuft, nach dauerMs pausiert der Song (null: läuft ganz).
-  function ausschnittLaeuft(dauerMs: number | null) {
+  function ausschnittLaeuft(dauerMs: number | null): number {
     // Ein Zeitgeber vom vorigen Song darf den neuen nicht anhalten.
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
-    setMusik((m) => ({
+    const nr = neuerStart();
+    setMusik({
       laeuft: true,
       vorbei: false,
       dauerMs,
-      start: (m?.start ?? 0) + 1,
-    }));
+      start: nr,
+      fehler: false,
+    });
     if (dauerMs !== null) {
       zeitgeber.current = setTimeout(() => {
-        abspieler?.pausieren();
+        abspieler?.pausieren().catch(spotifyFehler(nr, false));
         setMusik((m) => m && { ...m, laeuft: false, vorbei: true });
       }, dauerMs);
     }
+    return nr;
+  }
+
+  // Fehlerbehandlung für einen Befehl, der zum Start nr gehört. Ist ein Start gescheitert, steht die Musik.
+  function spotifyFehler(nr: number, start: boolean) {
+    return (fehler: unknown) => {
+      if (nr !== startNr.current) return;
+      setMeldung(
+        fehler instanceof PlayerFehler
+          ? fehler.message
+          : "Spotify reagiert nicht.",
+      );
+      if (!start) return;
+      if (zeitgeber.current) clearTimeout(zeitgeber.current);
+      setMusik((m) => m && { ...m, laeuft: false, vorbei: true, fehler: true });
+    };
   }
 
   function songStarten() {
     if (!abspieler || !spiel?.runde) return;
-    abspieler.abspielen(spiel.runde.song.id);
-    ausschnittLaeuft(ausschnittMs(ausschnitt));
+    const nr = ausschnittLaeuft(ausschnittMs(ausschnitt));
+    abspieler.abspielen(spiel.runde.song.id).catch(spotifyFehler(nr, true));
   }
 
-  // Derselbe Song, derselbe Ausschnitt von vorn.
+  // Derselbe Song, derselbe Ausschnitt von vorn. Ist der Start gescheitert, lief vielleicht nie
+  // ein Song, dann neu abspielen statt nur an den Anfang springen.
   function nochmal() {
-    abspieler?.vonVorn();
-    ausschnittLaeuft(musik?.dauerMs ?? null);
+    if (!abspieler || !spiel?.runde) return;
+    const nr = ausschnittLaeuft(musik?.dauerMs ?? null);
+    const befehl = musik?.fehler
+      ? abspieler.abspielen(spiel.runde.song.id)
+      : abspieler.vonVorn();
+    befehl.catch(spotifyFehler(nr, true));
   }
 
   function jahrKorrigiert(jahr: number) {
@@ -107,6 +143,7 @@ export default function SpielAnsicht({
     if (!spiel) return;
     setSpiel(rundeStarten(spiel, zufall));
     if (musik?.laeuft) musikAnhalten();
+    neuerStart();
   }
 
   // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
@@ -115,25 +152,32 @@ export default function SpielAnsicht({
     setSpiel(loesungAnzeigen(spiel));
     if (!musik?.laeuft) return;
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
-    abspieler?.pausieren();
+    abspieler?.pausieren().catch(spotifyFehler(startNr.current, false));
     setMusik({ ...musik, laeuft: false, vorbei: true });
   }
 
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
   function musikAnhalten() {
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
-    abspieler?.pausieren();
+    abspieler?.pausieren().catch(spotifyFehler(startNr.current, false));
     setMusik(null);
   }
 
+  // Ist der Start gescheitert, lief vielleicht nie ein Song, dann neu abspielen statt fortsetzen.
   function weiterhoeren() {
-    abspieler?.fortsetzen();
-    setMusik((m) => ({
+    if (!abspieler || !spiel?.runde) return;
+    const nr = neuerStart();
+    const befehl = musik?.fehler
+      ? abspieler.abspielen(spiel.runde.song.id)
+      : abspieler.fortsetzen();
+    befehl.catch(spotifyFehler(nr, true));
+    setMusik({
       laeuft: true,
       vorbei: false,
       dauerMs: null,
-      start: (m?.start ?? 0) + 1,
-    }));
+      start: nr,
+      fehler: false,
+    });
   }
 
   if (!spiel) {
@@ -159,6 +203,7 @@ export default function SpielAnsicht({
         onNeuesSpiel={() => setSpiel(spielStarten(spielSongs, zufall))}
         onRadSteht={songStarten}
         onJahrKorrigieren={onJahrKorrigiert && jahrKorrigiert}
+        meldung={meldung}
         musik={
           musik
             ? { ...musik, onNochmal: nochmal, onWeiterhoeren: weiterhoeren }
