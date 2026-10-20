@@ -80,6 +80,7 @@ export function feldAbhaken(spiel: Spiel, index: number): Spiel {
 
 export function abhakenZuruecknehmen(spiel: Spiel, index: number): Spiel {
   const { runde } = spiel;
+  if (!spiel.karte[index]) return spiel;
   return {
     ...spiel,
     karte: feldSetzen(spiel.karte, index, false),

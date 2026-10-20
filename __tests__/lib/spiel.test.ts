@@ -100,6 +100,8 @@ describe("Abhaken", () => {
     const spiel = aufgeloesteRunde();
     expect(feldAbhaken(spiel, -1)).toBe(spiel);
     expect(feldAbhaken(spiel, spiel.karte.length)).toBe(spiel);
+    expect(abhakenZuruecknehmen(spiel, -1)).toBe(spiel);
+    expect(abhakenZuruecknehmen(spiel, spiel.karte.length)).toBe(spiel);
   });
 
   test("Zurücknehmen gibt das Feld frei und erlaubt neues Abhaken in derselben Runde", () => {
