@@ -228,3 +228,29 @@ test("Nächste Runde stoppt einen weiterlaufenden Song sofort, nicht erst wenn d
   fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
   expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
 });
+
+test("ist Spotify nicht erreichbar, steht die Musik mit Meldung und Nochmal startet den Song neu", async () => {
+  abspieler.abspielen.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  await vergehen(0);
+  expect(screen.getByRole("alert").textContent).toBe(
+    "Spotify nicht erreichbar.",
+  );
+  expect(screen.getByRole("img", { name: "Musikspur steht" })).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Weiterhören" })).toBeNull();
+  klick("Nochmal");
+  await vergehen(0);
+  expect(abspieler.abspielen).toHaveBeenCalledTimes(2);
+  expect(abspieler.vonVorn).not.toHaveBeenCalled();
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByRole("img", { name: "Musikspur läuft" })).toBeDefined();
+});
+
+test("scheitert das Pausieren, erscheint die Meldung und das Spiel geht weiter", async () => {
+  abspieler.pausieren.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+  starten();
+  await vergehen(30_000);
+  expect(screen.getByRole("alert")).toBeDefined();
+  klick("Lösung anzeigen");
+  expect(screen.getByRole("button", { name: "Nächste Runde" })).toBeDefined();
+});

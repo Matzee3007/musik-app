@@ -36,6 +36,8 @@ export default function Tisch({
     dauerMs: number | null;
     // Neuer Wert: Musikspur beginnt von vorn.
     start: number;
+    // Spotify war nicht erreichbar: Meldung, nur "Nochmal" startet den Song neu.
+    fehler: boolean;
     onNochmal: () => void;
     onWeiterhoeren: () => void;
   };
@@ -107,10 +109,17 @@ export default function Tisch({
                 laeuft={musik.laeuft}
                 dauerMs={musik.dauerMs}
               />
+              {musik.fehler && (
+                <p role="alert" className="text-red-600 dark:text-red-400">
+                  Spotify nicht erreichbar.
+                </p>
+              )}
               {musik.vorbei && (
                 <div className="flex gap-2">
                   <Knopf onClick={musik.onNochmal}>Nochmal</Knopf>
-                  <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
+                  {!musik.fehler && (
+                    <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
+                  )}
                 </div>
               )}
             </>
@@ -145,7 +154,7 @@ export default function Tisch({
             <dt className="text-zinc-600 dark:text-zinc-400">Jahrzehnt</dt>
             <dd>{jahrzehnt.loesung(runde.song)}</dd>
           </dl>
-          {musik && !musik.laeuft && !bingo && (
+          {musik && !musik.laeuft && !musik.fehler && !bingo && (
             <Knopf onClick={musik.onWeiterhoeren}>Weiterhören</Knopf>
           )}
           {onJahrKorrigieren &&

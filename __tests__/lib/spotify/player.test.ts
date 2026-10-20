@@ -132,3 +132,20 @@ test("der Abspieler steuert den Player, von vorn heißt an den Anfang und weiter
     "disconnect",
   ]);
 });
+
+test("scheitert das Token für das SDK (z. B. kein Netz), bleibt der Fehler nicht unbehandelt", async () => {
+  const { playerVerbinden, sdkLaden } = await player();
+  const geladen = sdkLaden();
+  window.Spotify = { Player: NachgebauterPlayer } as never;
+  window.onSpotifyWebPlaybackSDKReady!();
+  await geladen;
+  await playerVerbinden({
+    tokenHolen: async () => {
+      throw new TypeError("Failed to fetch");
+    },
+  });
+  const cb = vi.fn();
+  NachgebauterPlayer.letzter.optionen.getOAuthToken(cb);
+  await new Promise((fertig) => setTimeout(fertig));
+  expect(cb).not.toHaveBeenCalled();
+});
