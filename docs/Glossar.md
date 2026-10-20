@@ -13,8 +13,13 @@ Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]]. Technische A
 ## Begriffe
 
 **Raum**:
-Der virtuelle Ort eines Spieleabends, dem die Spieler mit einem Raum-Code von ihrem Handy aus beitreten.
+Der virtuelle Ort eines Spieleabends, dem die Spieler mit einem Raum-Code von ihrem Handy aus beitreten; er besteht,
+bis der DJ ihn am Tisch schließt.
 _Nicht verwenden_: Lobby, Session
+
+**Raum-Code**:
+Vier Buchstaben, die einen Raum benennen; der Tisch zeigt sie zusammen mit einem QR-Code, der auf den Raum verlinkt.
+_Nicht verwenden_: PIN, Passwort
 
 **Ausschnitt**:
 Der Teil eines Songs, der in einer Runde abgespielt wird, wahlweise eine einstellbare Länge oder der ganze Song.
@@ -94,6 +99,6 @@ Ein Kästchen der Karte in der Farbe einer Kategorie; wer in einer Runde richtig
 Kategorie nach eigener Wahl ab.
 
 **Notizfläche**:
-Ein Textfeld auf dem Handy des Spielers, in das er seine Antwort tippt; es lässt sich abschalten, wenn auf Papier
-geschrieben wird.
+Ein Textfeld auf dem Handy des Spielers, in das er seine Antwort tippt; es leert sich bei jeder neuen Runde und lässt
+sich abschalten, wenn auf Papier geschrieben wird.
 _Nicht verwenden_: Antwortfeld, Eingabe
