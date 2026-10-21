@@ -217,5 +217,11 @@ git commit -am "Hide followed playlists and show Spotify errors while loading"
 
 Danach auf der Vorschau bzw. nach dem Merge unter `musik-bingo.vercel.app`: Die gefolgte Playlist fehlt in der Liste.
 
+Aus dem Review von PR #24, umgesetzt: Auch jeder andere Fehler beim Laden zeigt eine Meldung, ohne Netz „Keine
+Verbindung. Prüfe das Internet und versuch es nochmal.“ (fetch meldet das als `TypeError`). Bei 403 fehlt
+„Nochmal versuchen“, weil ein neuer Versuch nicht hilft. Offen, in der Übergabe: eine kollaborative Playlist, der der
+DJ nur folgt, könnte trotz Filter 403 liefern (dann kommt wenigstens die Meldung); bei 401 nutzt „Nochmal versuchen“
+dasselbe alte Token; scheitert `/v1/me`, bleibt die Playlist-Liste leer wie bisher bei `/me/playlists`.
+
 **Fertig, wenn:** Fremde gefolgte Playlists erscheinen nicht mehr, ein Spotify-Fehler beim Laden zeigt eine Meldung
 statt stehen zu bleiben, beide Tests grün.
