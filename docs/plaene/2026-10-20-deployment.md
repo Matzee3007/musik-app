@@ -112,7 +112,7 @@ bitten lassen) → Projektname `musik-bingo`, Framework „Next.js“ (erkennt V
 unverändert → unter „Environment Variables“ `NEXT_PUBLIC_SPOTIFY_CLIENT_ID` mit der Client-ID aus `.env.local`,
 **nur Production** angehakt → „Deploy“.
 
-- [ ] **Schritt 4: Production prüfen**
+- [x] **Schritt 4: Production prüfen**
 
 `curl -s -o /dev/null -w "%{http_code}\n" https://musik-bingo.vercel.app`
 Erwartet: `200`. Im Browser: Startseite mit aktivem Knopf „Mit Spotify anmelden“. Auf dem Handy: Demo bis zur ersten
@@ -123,7 +123,7 @@ Auflösung spielbar.
 `gh pr checks <nr>` zeigt den Vercel-Check, der PR einen Kommentar mit der Vorschau-Adresse. Erwartet: Dort ist
 „Mit Spotify anmelden“ ausgegraut mit dem Hinweis aus Aufgabe 1, die Demo läuft.
 
-- [ ] **Schritt 6: Tool-Notiz und Übersicht schreiben, committen**
+- [x] **Schritt 6: Tool-Notiz und Übersicht schreiben, committen**
 
 Aus dem Review von PR #22 in die Notiz: Eine geänderte Umgebungsvariable gilt erst nach „Redeploy“ (`NEXT_PUBLIC_*`
 steckt fest im gebauten Code). Die Vercel-Anmeldung (Deployment Protection) schützt Vorschauen und die Nebenadressen
