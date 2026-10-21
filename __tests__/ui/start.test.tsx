@@ -30,8 +30,14 @@ test("ohne Client-ID ist Anmelden aus und ein Hinweis erklärt warum", async () 
   });
   expect(anmelden.disabled).toBe(true);
   expect(
-    screen.getByText(/NEXT_PUBLIC_SPOTIFY_CLIENT_ID in \.env\.local/),
+    screen.getByText(
+      "Spotify ist hier nicht eingerichtet, nur die Demo. Lokal: NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.",
+    ),
   ).toBeDefined();
+  expect(
+    screen.getByRole<HTMLButtonElement>("button", { name: "Demo starten" })
+      .disabled,
+  ).toBe(false);
 });
 
 function angemeldet(ablauf: number) {
