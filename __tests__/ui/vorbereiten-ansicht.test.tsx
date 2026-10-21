@@ -117,6 +117,50 @@ test("überlastetes MusicBrainz zeigt die Meldung, Nochmal versuchen setzt fort"
   ).toBeDefined();
 });
 
+test("gibt Spotify die Songs nicht heraus (403), zeigt die Ansicht eine Meldung statt zu laden", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () =>
+      antwort({ error: { status: 403, message: "Forbidden" } }, 403),
+    ),
+  );
+  ansicht();
+  expect(
+    await screen.findByText(
+      "Spotify gibt die Songs dieser Playlist nicht heraus. Kopiere sie in eine eigene Playlist.",
+    ),
+  ).toBeDefined();
+  expect(screen.queryByText("Songs werden geladen …")).toBeNull();
+  // Die Playlist bleibt gesperrt, ein neuer Versuch hilft nicht.
+  expect(
+    screen.queryByRole("button", { name: "Nochmal versuchen" }),
+  ).toBeNull();
+});
+
+test("ohne Netz zeigt die Ansicht eine Meldung, Nochmal versuchen lädt neu", async () => {
+  let online = false;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) => {
+      if (!online) throw new TypeError("Failed to fetch");
+      return url.startsWith("https://api.spotify.com")
+        ? spotifySeite.clone()
+        : antwort({ jahr: 1975 });
+    }),
+  );
+  ansicht();
+  expect(
+    await screen.findByText(
+      "Keine Verbindung. Prüfe das Internet und versuch es nochmal.",
+    ),
+  ).toBeDefined();
+  online = true;
+  fireEvent.click(screen.getByRole("button", { name: "Nochmal versuchen" }));
+  expect(
+    await screen.findByText("1 Song bereit, 0 übersprungen"),
+  ).toBeDefined();
+});
+
 test("zeigt beim Vorbereiten den Fortschritt", async () => {
   let freigeben = () => {};
   netz(

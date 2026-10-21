@@ -112,18 +112,18 @@ bitten lassen) → Projektname `musik-bingo`, Framework „Next.js“ (erkennt V
 unverändert → unter „Environment Variables“ `NEXT_PUBLIC_SPOTIFY_CLIENT_ID` mit der Client-ID aus `.env.local`,
 **nur Production** angehakt → „Deploy“.
 
-- [ ] **Schritt 4: Production prüfen**
+- [x] **Schritt 4: Production prüfen**
 
 `curl -s -o /dev/null -w "%{http_code}\n" https://musik-bingo.vercel.app`
 Erwartet: `200`. Im Browser: Startseite mit aktivem Knopf „Mit Spotify anmelden“. Auf dem Handy: Demo bis zur ersten
 Auflösung spielbar.
 
-- [ ] **Schritt 5: Vorschau prüfen**
+- [x] **Schritt 5: Vorschau prüfen**
 
 `gh pr checks <nr>` zeigt den Vercel-Check, der PR einen Kommentar mit der Vorschau-Adresse. Erwartet: Dort ist
 „Mit Spotify anmelden“ ausgegraut mit dem Hinweis aus Aufgabe 1, die Demo läuft.
 
-- [ ] **Schritt 6: Tool-Notiz und Übersicht schreiben, committen**
+- [x] **Schritt 6: Tool-Notiz und Übersicht schreiben, committen**
 
 Aus dem Review von PR #22 in die Notiz: Eine geänderte Umgebungsvariable gilt erst nach „Redeploy“ (`NEXT_PUBLIC_*`
 steckt fest im gebauten Code). Die Vercel-Anmeldung (Deployment Protection) schützt Vorschauen und die Nebenadressen
@@ -147,12 +147,12 @@ git commit -m "Add Vercel tool note"
 - Nutzt: Production-Adresse aus Aufgabe 2
 - Liefert: Anmeldung und Musik unter der Production-Adresse, Grundlage für Plan B
 
-- [ ] **Schritt 1 (Entwickler, im Browser): Redirect-URI eintragen**
+- [x] **Schritt 1 (Entwickler, im Browser): Redirect-URI eintragen**
 
 developer.spotify.com → Dashboard → App → „Edit Settings“ → „Redirect URIs“ → `https://musik-bingo.vercel.app/callback`
 hinzufügen, „Save“.
 
-- [ ] **Schritt 2: Anmeldung, Vorbereiten und Musik prüfen (Prüf-Schwerpunkte 1, 2, 3, 5)**
+- [x] **Schritt 2: Anmeldung, Vorbereiten und Musik prüfen (Prüf-Schwerpunkte 1, 2, 3, 5)**
 
 Immer über `https://musik-bingo.vercel.app`, nicht über eine Nebenadresse aus „Visit“ oder der Deployment-Liste: Dort
 hat die App auch die Client-ID, Spotify lehnt die Redirect-URI aber ab (Review PR #22). MusicBrainz begrenzt je
@@ -163,7 +163,7 @@ Am Laptop `https://musik-bingo.vercel.app` öffnen → anmelden → eine Playlis
 Spiel starten → eine Runde mit Musik bis zur Auflösung. Erwartet: keine Fehlermeldung, Song läuft, Erscheinungsjahre
 wie lokal.
 
-- [ ] **Schritt 3: Doku ergänzen und committen**
+- [x] **Schritt 3: Doku ergänzen und committen**
 
 ```bash
 git add "docs/tools/Spotify Web API.md" CLAUDE.md docs/plaene/2026-10-20-deployment.md
@@ -173,3 +173,55 @@ git commit -m "Document production address and Spotify redirect URI"
 **Fertig, wenn:** `https://musik-bingo.vercel.app` liefert die App, der DJ meldet sich dort an, bereitet eine Playlist
 vor und hört in einer Runde Musik. Die Vorschau des PRs bietet nur die Demo an. `npm run check` und `gh pr checks`
 grün, `plan-pruefer` hat den Branch gegen diesen Plan geprüft.
+
+### Aufgabe 4: Fremde Playlists und Spotify-Fehler beim Laden
+
+Nachgetragen am 2026-10-21 beim Test von Aufgabe 3, Schritt 2: Eine gefolgte Playlist (nicht vom DJ erstellt) mit
+52 Songs blieb unter `https://musik-bingo.vercel.app` bei „Songs werden geladen …“ stehen. In der Konsole:
+`GET https://api.spotify.com/v1/playlists/<id>/items?… 403 (Forbidden)` und `Uncaught (in promise) SpotifyFehler:
+Spotify antwortet mit 403`. Zwei Ursachen:
+
+1. `eigenePlaylists` erkennt fremde Playlists am fehlenden Feld `items`. Spotify schickt es bei dieser gefolgten
+   Playlist trotzdem mit, die Songs gibt es aber nicht heraus (seit Februar 2026 nur für eigene oder kollaborative).
+2. `VorbereitenAnsicht` zeigt nur `MusicBrainzBeschaeftigt` an und wirft jeden anderen Fehler weiter. Die Ansicht
+   bleibt dann ohne Meldung stehen, ebenso bei 401 oder 429.
+
+**Dateien:**
+- Ändern: `lib/spotify/playlists.ts` (Filter nach Besitzer), `app/ui/vorbereiten-ansicht.tsx` (Spotify-Fehler zeigen)
+- Test: `__tests__/lib/spotify/playlists.test.ts`, `__tests__/ui/vorbereiten-ansicht.test.tsx`
+- Ändern: `docs/tools/Spotify Web API.md` (Abschnitt „Stand der API“, Fehler mit Ursache und Lösung)
+
+**Schnittstellen:**
+- `eigenePlaylists(accessToken, abruf)` bleibt gleich, fragt zusätzlich `GET /v1/me` nach der Spotify-ID des DJs und
+  behält nur Playlists mit `owner.id` gleich dieser ID oder `collaborative: true`.
+- `VorbereitenAnsicht` zeigt bei einem `SpotifyFehler` beim Laden eine Meldung, bei 403 „Spotify gibt die Songs dieser
+  Playlist nicht heraus. Kopiere sie in eine eigene Playlist.“
+
+- [x] **Schritt 1: Roter Test für den Filter, dann grün**
+
+Testfall: `/me` liefert `id: "dj"`, die Liste enthält eine eigene, eine kollaborative fremde und eine gefolgte fremde
+Playlist, alle mit `items`. Erwartet: nur die ersten beiden.
+`npx vitest run __tests__/lib/spotify/playlists.test.ts`
+
+- [x] **Schritt 2: Roter Test für die Meldung, dann grün**
+
+Testfall: `playlistSongs` scheitert mit `SpotifyFehler(403, …)`. Erwartet: Meldung statt „Songs werden geladen …“.
+`npx vitest run __tests__/ui/vorbereiten-ansicht.test.tsx`
+
+- [x] **Schritt 3: Prüfen, Doku ergänzen, committen**
+
+```bash
+npm run check
+git commit -am "Hide followed playlists and show Spotify errors while loading"
+```
+
+Danach auf der Vorschau bzw. nach dem Merge unter `musik-bingo.vercel.app`: Die gefolgte Playlist fehlt in der Liste.
+
+Aus dem Review von PR #24, umgesetzt: Auch jeder andere Fehler beim Laden zeigt eine Meldung, ohne Netz „Keine
+Verbindung. Prüfe das Internet und versuch es nochmal.“ (fetch meldet das als `TypeError`). Bei 403 fehlt
+„Nochmal versuchen“, weil ein neuer Versuch nicht hilft. Offen, in der Übergabe: eine kollaborative Playlist, der der
+DJ nur folgt, könnte trotz Filter 403 liefern (dann kommt wenigstens die Meldung); bei 401 nutzt „Nochmal versuchen“
+dasselbe alte Token; scheitert `/v1/me`, bleibt die Playlist-Liste leer wie bisher bei `/me/playlists`.
+
+**Fertig, wenn:** Fremde gefolgte Playlists erscheinen nicht mehr, ein Spotify-Fehler beim Laden zeigt eine Meldung
+statt stehen zu bleiben, beide Tests grün.

@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
-import { MusicBrainzBeschaeftigt } from "@/lib/musicbrainz";
 import type { Song } from "@/lib/song";
+import { SpotifyFehler } from "@/lib/spotify/abruf";
 import { clientId } from "@/lib/spotify/konfig";
 import {
   playerVerbinden,
@@ -48,7 +48,10 @@ export default function VorbereitenAnsicht({
   const [geladen, setGeladen] = useState<Geladen | null>(null);
   const [spielSongs, setSpielSongs] = useState<Song[] | null>(null);
 
-  const [fehler, setFehler] = useState<string | null>(null);
+  const [fehler, setFehler] = useState<{
+    meldung: string;
+    nochmal: boolean;
+  } | null>(null);
   const [fortschritt, setFortschritt] = useState<{
     fertig: number;
     gesamt: number;
@@ -83,8 +86,24 @@ export default function VorbereitenAnsicht({
         setGeladen(ergebnis);
       })
       .catch((e) => {
-        if (!(e instanceof MusicBrainzBeschaeftigt)) throw e;
-        setFehler(e.message);
+        // 403: Die Playlist gehört dem DJ nicht, Spotify gibt ihre Songs seit Februar 2026 nicht heraus.
+        // Ein neuer Versuch hilft dann nicht.
+        if (e instanceof SpotifyFehler && e.status === 403) {
+          setFehler({
+            meldung:
+              "Spotify gibt die Songs dieser Playlist nicht heraus. Kopiere sie in eine eigene Playlist.",
+            nochmal: false,
+          });
+          return;
+        }
+        // fetch meldet ein unterbrochenes Netz als TypeError.
+        setFehler({
+          meldung:
+            e instanceof TypeError
+              ? "Keine Verbindung. Prüfe das Internet und versuch es nochmal."
+              : e.message,
+          nochmal: true,
+        });
       });
   }, [playlist.id, accessToken, warten, versuch]);
 
@@ -149,17 +168,19 @@ export default function VorbereitenAnsicht({
         </>
       ) : fehler ? (
         <>
-          <p>{fehler}</p>
-          <button
-            className="rounded-lg border px-4 py-2"
-            onClick={() => {
-              setFehler(null);
-              setFortschritt(null);
-              setVersuch((v) => v + 1);
-            }}
-          >
-            Nochmal versuchen
-          </button>
+          <p>{fehler.meldung}</p>
+          {fehler.nochmal && (
+            <button
+              className="rounded-lg border px-4 py-2"
+              onClick={() => {
+                setFehler(null);
+                setFortschritt(null);
+                setVersuch((v) => v + 1);
+              }}
+            >
+              Nochmal versuchen
+            </button>
+          )}
         </>
       ) : fortschritt ? (
         <>

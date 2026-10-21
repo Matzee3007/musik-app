@@ -8,21 +8,33 @@ const seite = (playlists: object[], next: string | null) =>
 const eigene = (id: string, total: number) => ({
   id,
   name: `Liste ${id}`,
+  owner: { id: "dj" },
   items: { total },
 });
+const ME = "https://api.spotify.com/v1/me";
+
+// /v1/me liefert den DJ, alle anderen Adressen die Playlist-Seiten der Reihe nach.
+function spotify(...seiten: Response[]) {
+  let i = 0;
+  return vi.fn<Abruf>(async (url) =>
+    url === ME ? antwort({ id: "dj" }) : seiten[i++],
+  );
+}
+const playlistAufrufe = (abruf: ReturnType<typeof spotify>) =>
+  abruf.mock.calls.filter(([url]) => url !== ME);
 
 test("eigenePlaylists fragt mit dem Token und liefert Name und Anzahl Songs", async () => {
-  const abruf = vi.fn<Abruf>(async () => seite([eigene("p1", 120)], null));
+  const abruf = spotify(seite([eigene("p1", 120)], null));
   expect(await eigenePlaylists("a1", abruf)).toEqual([
     { id: "p1", name: "Liste p1", anzahlSongs: 120 },
   ]);
-  const [url, init] = abruf.mock.calls[0];
+  const [url, init] = playlistAufrufe(abruf)[0];
   expect(url).toBe("https://api.spotify.com/v1/me/playlists?limit=50");
   expect(init?.headers).toEqual({ Authorization: "Bearer a1" });
 });
 
 test("eigenePlaylists lässt fremde Playlists weg, bei denen Spotify die Songs verschweigt", async () => {
-  const abruf = vi.fn<Abruf>(async () =>
+  const abruf = spotify(
     seite([{ id: "fremd", name: "Hitster" }, eigene("p1", 7)], null),
   );
   expect(await eigenePlaylists("a1", abruf)).toEqual([
@@ -30,19 +42,53 @@ test("eigenePlaylists lässt fremde Playlists weg, bei denen Spotify die Songs v
   ]);
 });
 
+test("eigenePlaylists lässt gefolgte Playlists weg, auch wenn Spotify die Anzahl Songs mitschickt", async () => {
+  const abruf = spotify(
+    seite(
+      [
+        eigene("p1", 7),
+        {
+          id: "geteilt",
+          name: "Mit Freunden",
+          owner: { id: "freund" },
+          collaborative: true,
+          items: { total: 30 },
+        },
+        {
+          id: "gefolgt",
+          name: "Von Freund",
+          owner: { id: "freund" },
+          collaborative: false,
+          items: { total: 52 },
+        },
+      ],
+      null,
+    ),
+  );
+  expect(await eigenePlaylists("a1", abruf)).toEqual([
+    { id: "p1", name: "Liste p1", anzahlSongs: 7 },
+    { id: "geteilt", name: "Mit Freunden", anzahlSongs: 30 },
+  ]);
+  expect(abruf.mock.calls[0][0]).toBe(ME);
+  expect(abruf.mock.calls[0][1]?.headers).toEqual({
+    Authorization: "Bearer a1",
+  });
+});
+
 test("eigenePlaylists folgt allen Seiten, auch über 50 Playlists", async () => {
   const zweite = "https://api.spotify.com/v1/me/playlists?offset=50&limit=50";
-  const abruf = vi
-    .fn<Abruf>()
-    .mockResolvedValueOnce(seite([eigene("p1", 120)], zweite))
-    .mockResolvedValueOnce(seite([eigene("p2", 7)], null));
+  const abruf = spotify(
+    seite([eigene("p1", 120)], zweite),
+    seite([eigene("p2", 7)], null),
+  );
   expect(await eigenePlaylists("a1", abruf)).toEqual([
     { id: "p1", name: "Liste p1", anzahlSongs: 120 },
     { id: "p2", name: "Liste p2", anzahlSongs: 7 },
   ]);
-  expect(abruf).toHaveBeenCalledTimes(2);
-  expect(abruf.mock.calls[1][0]).toBe(zweite);
-  expect(abruf.mock.calls[1][1]?.headers).toEqual({
+  const aufrufe = playlistAufrufe(abruf);
+  expect(aufrufe).toHaveLength(2);
+  expect(aufrufe[1][0]).toBe(zweite);
+  expect(aufrufe[1][1]?.headers).toEqual({
     Authorization: "Bearer a1",
   });
 });

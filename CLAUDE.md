@@ -77,6 +77,9 @@ gh pr checks <nr>          # CI-Ergebnis eines PRs (GitHub Actions)
 Vor jedem Commit: `npm run check` muss mit Exit-Code 0 durchlaufen. Vor jedem Merge: `gh pr checks <nr>` muss grün
 sein (privates Repo mit GitHub Free, daher kein Branch-Schutz).
 
+Production: `https://musik-bingo.vercel.app`, jeder Merge in `main` erneuert sie, jeder PR bekommt eine Vorschau.
+Spotify-Anmeldung nur unter dieser Adresse und lokal, Vorschauen zeigen nur die Demo (`docs/tools/Vercel.md`).
+
 ## Dokumentation
 
 Allgemeine Konventionen (ADRs, Lernjournale, Tool-Notizen, Skills, Tools für später) stehen in

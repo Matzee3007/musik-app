@@ -26,11 +26,11 @@ alle benutzten Befehle, Fehler.
 | [[projects/musik-app/docs/tools/GitHub Actions - Einrichtung\|GitHub Actions]] | 2026-10-18 | prüft jeden PR automatisch (CI) |
 | [[Spotify Web API]] | 2026-10-19 | Anmeldung des DJs, seine Playlists und ihre Songs, Abspielen über das Web Playback SDK |
 | [[MusicBrainz]] | 2026-10-19 | Erscheinungsjahr eines Songs über den ISRC |
+| [[projects/musik-app/docs/tools/Vercel\|Vercel]] | 2026-10-20 | bringt die App ins Internet, `musik-bingo.vercel.app` und eine Vorschau je PR |
 
 ## Geplant
 
 | Werkzeug | Phase | Wofür in einem Satz |
 |---|---|---|
 | Supabase | 3 | Datenbank und Live-Abgleich zwischen den Geräten |
-| Vercel | 3 | App ins Internet bringen |
 | Playwright | später | Tests im echten Browser |
