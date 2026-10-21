@@ -28,8 +28,20 @@ von Phase 3.
   `NEXT_PUBLIC_SPOTIFY_CLIENT_ID` nur für Production. `https://musik-bingo.vercel.app` antwortet mit 200, der PR hat
   den ersten Vercel-Check. Aus dem Review: `engines` von Hand ins Lockfile (`npm install --package-lock-only` hätte
   66 fremde Zeilen mitgebracht), übrige Funde als Notizen in Plan A. PR #22 gemergt.
-- [ ] Plan A, Aufgabe 2, Schritte 4 bis 6 (Production und Vorschau im Browser prüfen, Tool-Notiz Vercel) und
-  Aufgabe 3 (Redirect-URI bei Spotify, Anmeldung und Musik unter der Vercel-Adresse)
+- [x] Plan A, Aufgabe 2, Schritte 4 bis 6: Production antwortet mit 200, Knopf „Mit Spotify anmelden“ aktiv, Demo am
+  Handy spielbar; Vorschau von PR #24 mit ausgegrautem Knopf und Demo; Tool-Notiz `docs/tools/Vercel.md`, CI liest die
+  Node-Version mit `node-version-file: package.json`
+- [x] Plan A, Aufgabe 3: Redirect-URI `https://musik-bingo.vercel.app/callback` bei Spotify, Anmeldung unter
+  Production, eigene Playlist mit 81 Songs vorbereitet ohne Abbruch, Jahre stimmen, Musik läuft über HTTPS
+- [x] Plan A, Aufgabe 4 (beim Test nachgetragen): gefolgte Playlists ausgeblendet (Filter nach `owner.id` aus
+  `GET /v1/me` oder `collaborative`), jeder Fehler beim Laden der Songs erscheint als Meldung, bei 403 ohne „Nochmal
+  versuchen“. Mit `fehler-diagnose` eingegrenzt, testgetrieben gebaut. `/code-review` meldete 9 Funde, 2 behoben,
+  3 in die Übergabe, 4 verworfen. `plan-pruefer`: ERFÜLLT. PR #24 gemergt, unter Production geprüft.
+- [x] Skill `assistent-bauen` ins Ecosystem übernommen (aus Matts `wizard`, übersetzt, PR #81 im Ecosystem, Review
+  mit 5 kleinen Funden, behoben)
+- [x] Plan B geschrieben: [[2026-10-21-raum-beitritt|Raum und Beitritt]] (8 Aufgaben). Entschieden: Beitritt in
+  Plan B, Spiel in Plan C; „Raum eröffnen“ als eigener Knopf; Supabase-Einrichtung mit `assistent-bauen`
+- [ ] Plan B umsetzen
 
 ## Befehle: Git und PRs
 
@@ -60,6 +72,32 @@ npx prettier --write __tests__/ui/spiel-musik.test.tsx
 - `npm run check …; echo "EXIT: $?"`: alle Prüfungen, danach den Exit-Code zeigen (0 heißt bestanden).
 - `npx prettier --write <datei>`: formatiert eine Datei, die nicht über Edit/Write entstanden ist.
 - `/usr/bin/curl … -w "%{http_code}"`: fragt nur den HTTP-Status einer Adresse ab, mit dem `curl` von macOS.
+
+## Befehle: Vercel, GitHub und Pakete
+
+```bash
+curl --cacert /etc/ssl/cert.pem -sS -o /dev/null -w "%{http_code}\n" https://musik-bingo.vercel.app
+gh pr view 24 --json comments -q '.comments[].body'
+gh api repos/Matzee3007/musik-app/commits/<sha>/status -q '.statuses[] | select(.context=="Vercel") | .state'
+until s=$(gh api …); [ "$s" != "pending" ]; do sleep 10; done
+npm view @supabase/supabase-js version
+npm view @supabase/supabase-js time --json
+gh api "repos/mattpocock/skills/contents/<pfad>?ref=<commit>" -q .content | base64 -d > <datei>
+bash -n vorlage.sh
+./install.sh
+```
+
+- `curl --cacert /etc/ssl/cert.pem …`: wie `/usr/bin/curl`, aber mit der Zertifikatsliste von macOS angegeben;
+  `-sS` zeigt bei einem Fehler die Meldung statt nur `000`.
+- `gh pr view <nr> --json comments`: Kommentare eines PRs, darin die Vorschau-Adresse des Vercel-Bots.
+- `gh api …/commits/<sha>/status`: Status der Checks eines Commits, hier ob Vercel nach dem Merge fertig gebaut hat.
+- `until …; do sleep 10; done`: wartet, bis eine Bedingung erfüllt ist, statt fester Wartezeiten.
+- `npm view <paket> version` und `time --json`: neueste Version und Datum jeder Version, ohne etwas zu installieren.
+  Damit nehmen wir die neueste Version, die mindestens zwei Wochen alt ist.
+- `gh api …/contents/<pfad>?ref=<commit> -q .content | base64 -d`: eine Datei aus einem fremden Repo auf genau
+  einem Commit herunterladen (GitHub liefert sie Base64-kodiert).
+- `bash -n <skript>`: prüft die Syntax eines Bash-Skripts, ohne es auszuführen.
+- `./install.sh` (im Ecosystem): verlinkt neue Skills nach `~/.claude/skills/`, damit Claude Code sie findet.
 
 ## Neu gelernt
 
@@ -110,6 +148,40 @@ Token, vorbereitete Playlists und korrigierte Jahre von `http://127.0.0.1:3000` 
 
 `127.0.0.1` ist die Adresse des Laptops für sich selbst. Für Handys braucht es eine echte Adresse, und Spotify verlangt
 außerhalb von `127.0.0.1` HTTPS. Deshalb kommt das Deployment in Phase 3 zuerst.
+
+### Ein weitergeworfener Fehler lässt die Ansicht stumm hängen
+
+`VorbereitenAnsicht` zeigte nur „MusicBrainz beschäftigt“ an und warf jeden anderen Fehler weiter (`throw e`). Im
+Browser wird daraus `Uncaught (in promise)` in der Konsole, auf der Seite passiert nichts. Die Konsole
+(Cmd + Option + J) und der Tab „Network“ mit der Antwort des Servers waren das Signal, das die Ursache zeigte. `fetch`
+meldet ein unterbrochenes Netz als `TypeError`.
+
+### Spotify: Feld `items` heißt nicht „lesbar“
+
+Seit Februar 2026 gibt Spotify die Songs nur bei eigenen oder kollaborativen Playlists heraus, sonst 403. Bei
+gefolgten Playlists schickt `/me/playlists` das Feld `items` trotzdem mit. Verlässlich ist der Besitzer:
+`owner.id` gleich der ID aus `GET /v1/me`.
+
+### Startseite entsteht im Browser
+
+Das HTML, das `curl` bekommt, enthält den Knopf „Mit Spotify anmelden“ nicht, weil React ihn erst im Browser
+zeichnet. `curl` prüft nur, dass der Server antwortet, den Rest prüft der Browser.
+
+### Supabase-Schlüssel 2026
+
+Der **publishable key** (`sb_publishable_…`) darf in den Browser, er kann nur, was RLS erlaubt. Der **secret key**
+(`sb_secret_…`) nie. Die alten Schlüssel `anon` und `service_role` laufen Ende 2026 aus. Öffentliche Realtime-Kanäle
+gehen nur, solange in den Realtime-Einstellungen „Allow public access“ an ist.
+
+### Pakete nicht in der neuesten Version
+
+Eine Version, die gerade erst erschienen ist, kann fehlerhaft oder manipuliert sein. Für Plan B gilt deshalb: genaue
+Version (`npm install -E`), mindestens zwei Wochen alt.
+
+### Next.js 16: dynamische Routen
+
+`app/raum/[code]/page.tsx` beantwortet jede Adresse `/raum/<etwas>`. `params` ist ein Promise, der Typ kommt aus
+`PageProps<'/raum/[code]'>` (Doku in `node_modules/next/dist/docs/`).
 
 ## Fehler und Lösungen
 
@@ -162,6 +234,33 @@ außerhalb von `127.0.0.1` HTTPS. Deshalb kommt das Deployment in Phase 3 zuerst
 - **Lösung:** `/usr/bin/curl`
 - **Prüfen:** `/usr/bin/curl -s -o /dev/null -w "%{http_code}\n" https://musik-bingo.vercel.app` gibt `200` aus.
 
+### `redirect_uri: Not matching configuration`
+
+- **Wo:** erster Klick auf „Mit Spotify anmelden“ unter `https://musik-bingo.vercel.app`
+- **Ursache:** Die bei Spotify eingetragene Redirect-URI wich von `https://musik-bingo.vercel.app/callback` ab. Die
+  App schickt `window.location.origin` + `/callback`.
+- **Lösung:** im Spotify-Dashboard genau diese Adresse eintragen, „Save“
+- **Prüfen:** Anmeldung führt zurück zur Startseite mit den Playlists.
+
+### `GET https://api.spotify.com/v1/playlists/<id>/items?limit=50&market=from_token 403 (Forbidden)`
+
+- **Wo:** Vorbereiten einer gefolgten Playlist mit 52 Songs, die Seite blieb bei „Songs werden geladen …“ stehen.
+  Dazu `Uncaught (in promise) SpotifyFehler: Spotify antwortet mit 403`, Antwort nur
+  `{"error": {"status": 403, "message": "Forbidden"}}`.
+- **Ursache:** Die Playlist gehörte nicht dem DJ, der Filter verließ sich auf das Feld `items`. Die Ansicht warf den
+  Fehler weiter, statt ihn anzuzeigen.
+- **Lösung:** Filter nach `owner.id` oder `collaborative`, Meldung für jeden Fehler beim Laden (PR #24)
+- **Prüfen:** `npx vitest run __tests__/lib/spotify/playlists.test.ts __tests__/ui/vorbereiten-ansicht.test.tsx`;
+  unter Production fehlt die gefolgte Playlist in der Liste.
+
+### `curl: (77) error adding trust anchors from file: /opt/anaconda3/ssl/cacert.pem` (zum dritten Mal)
+
+- **Wo:** Prüfen der Production mit `curl`, Ausgabe zuerst nur `000`
+- **Ursache:** wie zuvor, das `curl` aus Anaconda findet seine Zertifikate nicht.
+- **Lösung:** `--cacert /etc/ssl/cert.pem` oder `/usr/bin/curl`. Die Zeile für die globale `CLAUDE.md` ist im
+  Ecosystem vorgemerkt und sollte jetzt eingetragen werden.
+- **Prüfen:** Der Befehl gibt `200` aus.
+
 ## Aus dem Chat
 
 -
@@ -170,9 +269,13 @@ außerhalb von `127.0.0.1` HTTPS. Deshalb kommt das Deployment in Phase 3 zuerst
 
 - Was tut das Web Playback SDK ohne Netz: Scheitern Pause und Fortsetzen, bleiben sie hängen, oder spielt der Song
   weiter? Nur am Laptop mit echtem Player prüfbar (WLAN aus).
+- Zählt Spotify jemanden, der einer kollaborativen Playlist nur folgt, als Mitarbeitenden? Wenn nicht, zeigt die
+  Liste sie trotz Filter (Fund #3 aus PR #24, dann kommt wenigstens die Meldung).
+- Das Vorbereiten von 81 Songs dauert gut anderthalb Minuten (MusicBrainz erlaubt 1 Anfrage pro Sekunde). Lohnt es
+  sich, die Jahre in Supabase zu speichern (Phase 4) oder im Hintergrund vorzubereiten?
 
 ## Nächste Schritte
 
-1. Plan A fertig machen: Production und Vorschau im Browser prüfen, Tool-Notiz Vercel, Redirect-URI bei Spotify
-   eintragen, Anmeldung, Vorbereiten und Musik unter der Vercel-Adresse.
-2. Plan B (Raum und Beitritt) mit `plan-schreiben`, danach Supabase-Projekt anlegen.
+1. Plan B lesen und freigeben, dann Aufgabe 1: Supabase mit dem Skript aus `assistent-bauen` einrichten.
+2. Plan B Aufgabe für Aufgabe umsetzen, am Ende mit zwei echten Handys unter Production prüfen.
+3. Danach Plan C (Live-Spiel) mit `plan-schreiben`.
