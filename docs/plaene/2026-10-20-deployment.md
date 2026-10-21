@@ -118,7 +118,7 @@ unverändert → unter „Environment Variables“ `NEXT_PUBLIC_SPOTIFY_CLIENT_I
 Erwartet: `200`. Im Browser: Startseite mit aktivem Knopf „Mit Spotify anmelden“. Auf dem Handy: Demo bis zur ersten
 Auflösung spielbar.
 
-- [ ] **Schritt 5: Vorschau prüfen**
+- [x] **Schritt 5: Vorschau prüfen**
 
 `gh pr checks <nr>` zeigt den Vercel-Check, der PR einen Kommentar mit der Vorschau-Adresse. Erwartet: Dort ist
 „Mit Spotify anmelden“ ausgegraut mit dem Hinweis aus Aufgabe 1, die Demo läuft.
