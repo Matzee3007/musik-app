@@ -5,6 +5,7 @@ import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import { MusicBrainzBeschaeftigt } from "@/lib/musicbrainz";
 import type { Song } from "@/lib/song";
+import { SpotifyFehler } from "@/lib/spotify/abruf";
 import { clientId } from "@/lib/spotify/konfig";
 import {
   playerVerbinden,
@@ -83,7 +84,18 @@ export default function VorbereitenAnsicht({
         setGeladen(ergebnis);
       })
       .catch((e) => {
-        if (!(e instanceof MusicBrainzBeschaeftigt)) throw e;
+        // 403: Die Playlist gehört dem DJ nicht, Spotify gibt ihre Songs seit Februar 2026 nicht heraus.
+        if (e instanceof SpotifyFehler && e.status === 403) {
+          setFehler(
+            "Spotify gibt die Songs dieser Playlist nicht heraus. Kopiere sie in eine eigene Playlist.",
+          );
+          return;
+        }
+        if (!(
+          e instanceof MusicBrainzBeschaeftigt || e instanceof SpotifyFehler
+        )) {
+          throw e;
+        }
         setFehler(e.message);
       });
   }, [playlist.id, accessToken, warten, versuch]);

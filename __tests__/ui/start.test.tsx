@@ -52,11 +52,20 @@ test("angemeldet: Playlists mit Anzahl, Abmelden führt zurück zum Anmelden", a
   angemeldet(Date.now() + 3_600_000);
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () =>
-      antwort({
-        items: [{ id: "p1", name: "Partyhits", items: { total: 98 } }],
-        next: null,
-      }),
+    vi.fn(async (url: string) =>
+      url.endsWith("/v1/me")
+        ? antwort({ id: "dj" })
+        : antwort({
+            items: [
+              {
+                id: "p1",
+                name: "Partyhits",
+                owner: { id: "dj" },
+                items: { total: 98 },
+              },
+            ],
+            next: null,
+          }),
     ),
   );
   render(<Start />);
@@ -104,12 +113,21 @@ test("ein Klick auf eine Playlist öffnet das Vorbereiten, Zurück führt zur Li
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string) =>
-      url.includes("/me/playlists")
-        ? antwort({
-            items: [{ id: "p1", name: "Partyhits", items: { total: 98 } }],
-            next: null,
-          })
-        : antwort({ items: [], next: null }),
+      url.endsWith("/v1/me")
+        ? antwort({ id: "dj" })
+        : url.includes("/me/playlists")
+          ? antwort({
+              items: [
+                {
+                  id: "p1",
+                  name: "Partyhits",
+                  owner: { id: "dj" },
+                  items: { total: 98 },
+                },
+              ],
+              next: null,
+            })
+          : antwort({ items: [], next: null }),
     ),
   );
   render(<Start />);

@@ -117,6 +117,22 @@ test("überlastetes MusicBrainz zeigt die Meldung, Nochmal versuchen setzt fort"
   ).toBeDefined();
 });
 
+test("gibt Spotify die Songs nicht heraus (403), zeigt die Ansicht eine Meldung statt zu laden", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () =>
+      antwort({ error: { status: 403, message: "Forbidden" } }, 403),
+    ),
+  );
+  ansicht();
+  expect(
+    await screen.findByText(
+      "Spotify gibt die Songs dieser Playlist nicht heraus. Kopiere sie in eine eigene Playlist.",
+    ),
+  ).toBeDefined();
+  expect(screen.queryByText("Songs werden geladen …")).toBeNull();
+});
+
 test("zeigt beim Vorbereiten den Fortschritt", async () => {
   let freigeben = () => {};
   netz(
