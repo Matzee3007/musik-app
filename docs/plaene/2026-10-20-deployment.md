@@ -105,7 +105,7 @@ git commit -am "Pin Node 24 for Vercel"
 
 - [x] **Schritt 2: Branch pushen und PR öffnen**, damit Vercel gleich nach dem Verbinden ein Vorschau-Deployment baut.
 
-- [ ] **Schritt 3 (Entwickler, im Browser): Projekt importieren**
+- [x] **Schritt 3 (Entwickler, im Browser): Projekt importieren**
 
 vercel.com → „Add New… → Project“ → GitHub-Repo `musik-app` importieren (Vercel um Zugriff auf genau dieses Repo
 bitten lassen) → Projektname `musik-bingo`, Framework „Next.js“ (erkennt Vercel selbst), Build-Befehl und Ordner
@@ -124,6 +124,13 @@ Auflösung spielbar.
 „Mit Spotify anmelden“ ausgegraut mit dem Hinweis aus Aufgabe 1, die Demo läuft.
 
 - [ ] **Schritt 6: Tool-Notiz und Übersicht schreiben, committen**
+
+Aus dem Review von PR #22 in die Notiz: Eine geänderte Umgebungsvariable gilt erst nach „Redeploy“ (`NEXT_PUBLIC_*`
+steckt fest im gebauten Code). Die Vercel-Anmeldung (Deployment Protection) schützt Vorschauen und die Nebenadressen
+von Production (`musik-bingo-<hash>-….vercel.app`), nicht `musik-bingo.vercel.app`.
+
+Dazu `.github/workflows/ci.yml`: `node-version: 24` durch `node-version-file: package.json` ersetzen, damit die
+Node-Version nur noch in `engines` steht.
 
 ```bash
 git add docs/tools/Vercel.md "docs/tools/Tools Übersicht.md"
@@ -146,6 +153,11 @@ developer.spotify.com → Dashboard → App → „Edit Settings“ → „Redir
 hinzufügen, „Save“.
 
 - [ ] **Schritt 2: Anmeldung, Vorbereiten und Musik prüfen (Prüf-Schwerpunkte 1, 2, 3, 5)**
+
+Immer über `https://musik-bingo.vercel.app`, nicht über eine Nebenadresse aus „Visit“ oder der Deployment-Liste: Dort
+hat die App auch die Client-ID, Spotify lehnt die Redirect-URI aber ab (Review PR #22). MusicBrainz begrenzt je
+IP-Adresse, und Vercel-Funktionen teilen sich IPs. Kommen beim Vorbereiten deutlich mehr „beschäftigt“ als lokal oder
+fehlen Jahre, Plan A um eine Aufgabe erweitern, statt weiterzumachen.
 
 Am Laptop `https://musik-bingo.vercel.app` öffnen → anmelden → eine Playlist mit mindestens 20 Songs vorbereiten →
 Spiel starten → eine Runde mit Musik bis zur Auflösung. Erwartet: keine Fehlermeldung, Song läuft, Erscheinungsjahre
