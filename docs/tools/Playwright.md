@@ -36,6 +36,9 @@ finden. Ein Test spielt Tisch und zwei Handys gleichzeitig.
 
 - `playwright.config.ts`: Tests in `e2e/`, Adresse `http://127.0.0.1:3000`, nur Chromium.
 - `e2e/raum.spec.ts`: Raum eröffnen, beitreten, „Name schon vergeben“, Neuladen, Raum schließen.
+- `e2e/wiederkommen.spec.ts`: Handy geht offline (`context.setOffline(true)`, wie gesperrter Bildschirm) und kommt
+  zurück, der Name am Tisch wird grau und wieder normal. Dauert gut eine Minute, so lange braucht Supabase, bis es
+  das Handy als weg erkennt.
 - `vitest.config.mts` schließt `e2e/` aus, sonst führte Vitest die `.spec.ts` selbst aus.
 - `.gitignore`: `test-results/`, `playwright-report/`.
 - **Nur lokal**, nicht in der CI: Der Test braucht das Supabase-Projekt aus `.env.local`
@@ -58,4 +61,6 @@ npx playwright show-report                  # Bericht des letzten Laufs im Brows
 
 ## Fehler, die uns passiert sind
 
-Noch keine.
+- **`npm run e2e` mal grün, mal rot** (2026-10-22): `getByLabel("Dein Name")` lief in den Timeout. Ursache: Das Handy
+  öffnete den Raum, bevor sich der Tisch per Presence angemeldet hatte, und blieb bei „Kein Tisch“. Lösung in der App:
+  Das Handy geht weiter, sobald der Tisch auftaucht. Lehre: e2e-Tests mehrmals hintereinander laufen lassen.

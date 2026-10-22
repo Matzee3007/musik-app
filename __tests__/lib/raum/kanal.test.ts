@@ -18,7 +18,7 @@ function nachgebauterClient() {
     gesendet: [] as unknown[],
     entfernt: false,
     geoeffnet: 0,
-    // Antwort von Supabase auf track() und send(): "ok", "timed out" oder "error".
+    // Antwort von Supabase auf track() und send(): "ok", "timed out" oder "error"; "wirft" wirft.
     antwort: "ok",
     status: (s: string) => status(s),
     ausloesen(art: string, event: string, payload?: unknown) {
@@ -43,6 +43,7 @@ function nachgebauterClient() {
     presenceState: () => welt.zustand,
     async track(eintrag: unknown) {
       welt.angemeldet.push(eintrag);
+      if (welt.antwort === "wirft") throw new Error("Verbindung weg");
       return welt.antwort;
     },
     async send(nachricht: unknown) {
@@ -189,4 +190,45 @@ test("anmelden und senden scheitern, wenn Supabase nicht ok meldet", async () =>
   await expect(kanal.senden({ art: "geschlossen" })).rejects.toThrow(
     "Keine Verbindung zum Raum.",
   );
+});
+
+test("nach einem Wiederbeitritt meldet sich das Gerät neu an", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  const verbunden = kanal.verbinden();
+  welt.status("SUBSCRIBED");
+  welt.ausloesen("presence", "sync");
+  await verbunden;
+  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
+  await kanal.anmelden(anna);
+
+  // Bildschirm war gesperrt: Supabase verbindet neu und tritt dem Kanal wieder bei.
+  welt.status("SUBSCRIBED");
+  expect(welt.angemeldet).toEqual([anna, anna]);
+});
+
+test("eine gescheiterte Anmeldung wird beim Wiederbeitritt nicht nachgeholt", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  kanal.verbinden();
+  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
+  welt.antwort = "error";
+  await expect(kanal.anmelden(anna)).rejects.toThrow();
+
+  welt.antwort = "ok";
+  welt.status("SUBSCRIBED");
+  expect(welt.angemeldet).toEqual([anna]);
+});
+
+test("scheitert die neue Anmeldung nach dem Wiederbeitritt, bleibt das ohne unbehandelten Fehler", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  kanal.verbinden();
+  await kanal.anmelden({ schluessel: "s1", rolle: "tisch" });
+
+  welt.antwort = "wirft";
+  welt.status("SUBSCRIBED");
+  // Einen Takt warten, damit eine unbehandelte Ablehnung auffiele.
+  await new Promise((r) => setTimeout(r, 0));
+  expect(welt.angemeldet).toHaveLength(2);
 });

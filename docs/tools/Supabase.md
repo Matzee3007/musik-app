@@ -73,4 +73,9 @@ bash scripts/supabase-einrichten.sh            # Einrichtung (eigenes Terminal)
 
 ## Fehler, die uns passiert sind
 
-Noch keine.
+- **Name blieb am Tisch grau, nachdem das Handy entsperrt war** (2026-10-22, Test mit echten Handys). Erst Neuladen
+  half. Ursache: Reißt die Verbindung ab, vergisst Supabase die Presence des Geräts. realtime-js verbindet sich beim
+  Zurückkommen selbst neu und tritt dem Kanal wieder bei, schickt das `track()` aber nicht noch einmal. Lösung:
+  `lib/raum/kanal.ts` merkt sich den angemeldeten Eintrag und ruft bei jedem `SUBSCRIBED` erneut `track()` auf (das
+  Muster aus den Supabase-Beispielen). Nachgestellt mit Playwright (`e2e/wiederkommen.spec.ts`, Handy offline und
+  wieder online).
