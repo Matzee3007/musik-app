@@ -1,12 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { Spieler, Tisch } from "./hilfen/raum";
+import { alleSchliessen, Spieler, Tisch } from "./hilfen/raum";
+
+test.afterEach(alleSchliessen);
 
 // Ein ganzer Spieleabend im Demo-Raum mit Bots: Runde um Runde bis zum Bingo, unterwegs Notizen, Zurücknehmen,
 // Neuladen, Beitritt mitten im Spiel und ein Handy ohne Netz. Am Ende neues Spiel und Raum schließen.
-test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({
-  browser,
-  browserName,
-}) => {
+test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({ browser }) => {
   test.setTimeout(600_000);
   const tisch = await Tisch.eroeffnen(browser);
   const anna = await Spieler.beitreten(browser, tisch.code, "Anna");
@@ -62,22 +61,12 @@ test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({
   });
 
   await test.step("Runde 4: Ben verliert die Verbindung und holt die Runde nach", async () => {
-    // Unter WebKit trennt setOffline bestehende WebSockets nicht, Ben bliebe verbunden: dort eine normale Runde.
-    if (browserName === "webkit") {
-      await alleHakenAb(await tisch.drehen());
-      return;
-    }
-    // Wie ein gesperrter Bildschirm: Erst wenn der Tisch Ben ausgraut, ist seine Verbindung wirklich weg. Bei einer
-    // kurzen Unterbrechung liefert der Browser die Nachrichten nur verspätet aus.
-    await ben.kontext.setOffline(true);
-    await expect(tisch.seite.getByText("Ben", { exact: true })).toHaveAttribute(
-      "aria-disabled",
-      "true",
-      { timeout: 90_000 },
-    );
+    await ben.trennen();
+    await tisch.zeigtVerbunden("Ben", false);
     const kategorie = await tisch.drehen();
-    await ben.kontext.setOffline(false);
-    await expect(ben.freieFelder().first()).toBeVisible({ timeout: 60_000 });
+    ben.verbinden();
+    await expect(ben.freieFelder().first()).toBeVisible({ timeout: 30_000 });
+    await tisch.zeigtVerbunden("Ben", true);
     await alleHakenAb(kategorie);
   });
 

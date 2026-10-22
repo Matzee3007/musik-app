@@ -46,7 +46,10 @@ finden. Ein Test spielt Tisch und zwei Handys gleichzeitig.
   zusätzlich im Projekt `iphone` (WebKit).
 - `e2e/spieleabend.spec.ts`: Tisch und drei Spieler-Bots spielen bis zum Bingo (meist 8 bis 15 Runden): Notizen,
   Zurücknehmen, Neuladen, Beitritt mitten im Spiel, Verbindungsabbruch, Bingo auf allen Geräten, neues Spiel, Raum
-  schließen, keine Fehler im Browser. Gut 2 Minuten unter Chromium, unter einer Minute unter WebKit.
+  schließen, keine Fehler im Browser. Knapp eine Minute je Projekt.
+- **Verbindungsabbruch:** `Spieler.trennen()` fängt die WebSocket-Verbindung zu Supabase mit `page.routeWebSocket`
+  ab, schließt sie und lässt keinen Neuversuch durch, bis `verbinden()` kommt. Das klappt unter Chromium und WebKit.
+- `alleSchliessen()` in `test.afterEach` schließt alle Browser-Kontexte der Bots, auch nach einem Fehler.
 - `e2e/zwei-runden.spec.ts`: Regressionstest für das Presence-Limit von Supabase.
 - `e2e/seed.spec.ts`: Ausgangspunkt der Test-Agents (frische Startseite), testet selbst nichts.
 - `e2e/raum.spec.ts`: Raum eröffnen, beitreten, „Name schon vergeben“, Neuladen, Raum schließen.
@@ -85,5 +88,5 @@ npx playwright show-report                  # Bericht des letzten Laufs im Brows
 - **Runde 4 im Spieleabend unter WebKit rot** (2026-10-22): Nach 90 Sekunden offline zeigte der Tisch noch „Ben 3“.
   Ursache: `context.setOffline(true)` trennt unter WebKit bestehende WebSockets nicht, unter Chromium hält es sie
   nur an. Eine kurze Unterbrechung prüft deshalb nichts: Chromium liefert die Nachrichten danach verspätet aus.
-  Lösung: offline bleiben, bis der Tisch den Spieler ausgraut (dann ist die Verbindung wirklich weg), und den Schritt
-  unter WebKit auslassen.
+  Lösung: die Verbindung zu Supabase mit `page.routeWebSocket` abfangen und gezielt schließen (`Spieler.trennen()`),
+  in beiden Engines gleich und ohne 90 Sekunden Warten.

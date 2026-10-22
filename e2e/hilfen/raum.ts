@@ -3,39 +3,45 @@ import {
   type Browser,
   type BrowserContext,
   type Page,
+  type WebSocketRoute,
 } from "@playwright/test";
+import { LINIEN } from "@/lib/bingo";
 
 // Bots für Browser-Tests im Demo-Raum: ein Tisch und Spieler, jeder in einem eigenen Browser-Kontext wie auf eigenen
 // Geräten. Fehler im Browser (pageerror) sammelt jeder in fehler, damit der Test sie am Ende prüfen kann.
 
-// Die 12 Linien einer 5×5-Karte wie in lib/bingo.ts.
-const NULL_BIS_VIER = [0, 1, 2, 3, 4];
-const LINIEN: number[][] = [
-  ...NULL_BIS_VIER.map((zeile) => NULL_BIS_VIER.map((s) => zeile * 5 + s)),
-  ...NULL_BIS_VIER.map((spalte) => NULL_BIS_VIER.map((z) => z * 5 + spalte)),
-  NULL_BIS_VIER.map((i) => i * 6),
-  NULL_BIS_VIER.map((i) => (i + 1) * 4),
-];
-
 type Feld = { kategorie: string; abgehakt: boolean };
+
+// Alle Kontexte der Bots, damit kein alter Tisch oder Spieler mit Supabase verbunden bleibt.
+const kontexte: BrowserContext[] = [];
+
+async function geraet(browser: Browser, fehler: string[]) {
+  const kontext = await browser.newContext();
+  kontexte.push(kontext);
+  const seite = await kontext.newPage();
+  seite.on("pageerror", (e) => fehler.push(e.message));
+  return seite;
+}
+
+// Für test.afterEach: schließt alle Kontexte, auch wenn der Test vorher gescheitert ist.
+export async function alleSchliessen() {
+  await Promise.all(kontexte.splice(0).map((k) => k.close()));
+}
 
 export class Tisch {
   readonly fehler: string[] = [];
-  readonly code: string;
-  private constructor(
-    readonly seite: Page,
-    code: string | null,
-  ) {
-    expect(code).toMatch(/^[A-Z]{4}$/);
-    this.code = code!;
-    seite.on("pageerror", (e) => this.fehler.push(e.message));
-  }
+  seite!: Page;
+  code = "";
 
   static async eroeffnen(browser: Browser): Promise<Tisch> {
-    const seite = await (await browser.newContext()).newPage();
-    await seite.goto("/");
-    await seite.getByRole("button", { name: "Raum eröffnen" }).click();
-    return new Tisch(seite, await seite.getByText(/^[A-Z]{4}$/).textContent());
+    const tisch = new Tisch();
+    tisch.seite = await geraet(browser, tisch.fehler);
+    await tisch.seite.goto("/");
+    await tisch.seite.getByRole("button", { name: "Raum eröffnen" }).click();
+    const code = await tisch.seite.getByText(/^[A-Z]{4}$/).textContent();
+    expect(code).toMatch(/^[A-Z]{4}$/);
+    tisch.code = code!;
+    return tisch;
   }
 
   async demoStarten() {
@@ -57,6 +63,22 @@ export class Tisch {
     return (await this.seite.getByRole("status").textContent())!;
   }
 
+  // Verbundene Spieler stehen normal in der Leiste, gegangene ausgegraut.
+  async zeigtVerbunden(name: string, verbunden: boolean) {
+    const eintrag = this.seite.getByRole("listitem").filter({
+      hasText: new RegExp(`^${name}( \\d+)?$`),
+    });
+    if (verbunden) {
+      await expect(eintrag).not.toHaveAttribute("aria-disabled", {
+        timeout: 30_000,
+      });
+    } else {
+      await expect(eintrag).toHaveAttribute("aria-disabled", "true", {
+        timeout: 30_000,
+      });
+    }
+  }
+
   // Die Leiste zeigt "Anna 3" für verbundene Spieler mit Stand im laufenden Spiel.
   async zeigt(name: string, abgehakt: number) {
     await expect(
@@ -71,22 +93,35 @@ export class Tisch {
 
 export class Spieler {
   readonly fehler: string[] = [];
-  private constructor(
-    readonly name: string,
-    readonly kontext: BrowserContext,
-    readonly seite: Page,
-  ) {
-    seite.on("pageerror", (e) => this.fehler.push(e.message));
-  }
+  seite!: Page;
+  // Offene WebSockets zu Supabase, abgefangen mit routeWebSocket, damit trennen() sie schließen kann.
+  // Je Verbindung die Seite zum Browser und die zum Server.
+  private sockets = new Set<{
+    browser: WebSocketRoute;
+    server: WebSocketRoute;
+  }>();
+  private getrennt = false;
+  private constructor(readonly name: string) {}
 
   static async beitreten(
     browser: Browser,
     code: string,
     name: string,
   ): Promise<Spieler> {
-    const kontext = await browser.newContext();
-    const seite = await kontext.newPage();
-    const spieler = new Spieler(name, kontext, seite);
+    const spieler = new Spieler(name);
+    const seite = await geraet(browser, spieler.fehler);
+    spieler.seite = seite;
+    // Leitet die Verbindung zu Supabase Realtime durch. Solange getrennt, wird jeder neue Versuch sofort geschlossen.
+    await seite.routeWebSocket(/\/realtime\//, (socket) => {
+      if (spieler.getrennt) {
+        void socket.close();
+        return;
+      }
+      spieler.sockets.add({
+        browser: socket,
+        server: socket.connectToServer(),
+      });
+    });
     await seite.goto(`/raum/${code}`);
     await seite.getByLabel("Dein Name").fill(name);
     await seite.getByRole("button", { name: "Beitreten" }).click();
@@ -121,6 +156,22 @@ export class Spieler {
         abgehakt: k.getAttribute("aria-pressed") === "true",
       })),
     );
+  }
+
+  // Wie ein gesperrter Bildschirm: Die Verbindung zu Supabase reißt ab, und kein Neuversuch kommt durch.
+  // Funktioniert unter Chromium und WebKit, anders als context.setOffline.
+  async trennen() {
+    this.getrennt = true;
+    for (const { browser, server } of this.sockets) {
+      await server.close();
+      await browser.close();
+    }
+    this.sockets.clear();
+  }
+
+  // Der nächste Neuversuch von realtime-js kommt wieder durch.
+  verbinden() {
+    this.getrennt = false;
   }
 
   async hatBingo(): Promise<boolean> {
