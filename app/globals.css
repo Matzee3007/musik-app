@@ -11,6 +11,11 @@
   --font-schild: var(--font-bungee);
 }
 
+/* Auch Auswahllisten, Zahlenfelder und Scrollbalken des Browsers dunkel. */
+:root {
+  color-scheme: dark;
+}
+
 body {
   background: var(--color-nacht);
   color: var(--color-licht);
@@ -57,7 +62,7 @@ body {
   }
 }
 
-/* Birnenkranz ums Rad: Lauflicht beim Drehen, Blinken bei Bingo. --i ist die Nummer der Birne. */
+/* Birnenkranz ums Rad: Lauflicht beim Drehen, Blinken bei Bingo. --anteil (0 bis 1) setzt birnenkranz.tsx je Birne. */
 .birne {
   box-shadow: 0 0 8px 1px var(--color-birne);
 }
@@ -80,7 +85,7 @@ body {
 
 .birnenkranz[data-modus="lauf"] .birne {
   animation: birne-lauf 0.8s linear infinite;
-  animation-delay: calc(var(--i) * 0.8s / 24 - 0.8s);
+  animation-delay: calc((var(--anteil) - 1) * 0.8s);
 }
 
 .birnenkranz[data-modus="bingo"] .birne {

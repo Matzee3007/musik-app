@@ -160,7 +160,7 @@ export default function HandySpiel({
             </label>
           )}
           <button
-            className="text-birne underline"
+            className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={() => {
               notizenSpeichern(!notizen);
               setNotizen(!notizen);

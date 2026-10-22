@@ -12,7 +12,7 @@ export default function Knopf({
 }) {
   const farbe =
     art === "haupt"
-      ? "bg-birne text-nacht"
+      ? "border-2 border-transparent bg-birne text-nacht"
       : "border-2 border-licht text-licht";
   return (
     <button

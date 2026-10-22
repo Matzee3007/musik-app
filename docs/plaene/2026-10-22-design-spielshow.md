@@ -345,6 +345,29 @@ git commit -m "Style the phone card with bingo stamps"
 - Statt Schriftgröße mit `clamp`: Silbentrennung (`hyphens-auto`, „Jahr-zehnt“) und weniger Seitenrand am Handy
   (`px-4` in `app/raum/[code]/page.tsx`).
 
+## Review (2026-10-22)
+
+`plan-pruefer` und `/code-review` über alle vier Teile (`main...feat/design-handy`). Behoben in Teil 4:
+
+- Rahmen ums Rad `w-96 max-w-full` statt `w-80`: Das Rad war mit Birnenrand kaum größer als vorher (264 px). Der
+  befürchtete seitliche Scroll bei 360 px trat nicht auf, der e2e-Test „Tisch scrollt am Handy nicht seitlich“ wacht
+  jetzt darüber.
+- `color-scheme: dark`, damit Auswahllisten, Zahlenfelder und Scrollbalken des Browsers dunkel sind.
+- `Knopf` „haupt“ mit durchsichtigem Rahmen, sonst 4 px niedriger als „neben“.
+- Sichtbarer Fokus auch an Textknöpfen und Links.
+- `e2e/design.spec.ts` öffnet den Tisch über den Bot `Tisch.eroeffnen`, damit `alleSchliessen` ihn nach einem
+  Fehlschlag schließt.
+- Anzahl der Birnen nur in `birnenkranz.tsx` (`--anteil`), Dauer des Lauflichts nur in `globals.css`.
+- Stempel als gelber Ring statt Scheibe: Die Kategorie-Farbe bleibt sichtbar (Entscheidung des Entwicklers).
+
+Bewusst gelassen:
+
+- Spielerzeile „Anna 3“ bleibt ein Text ohne Zahl rechts und ohne `font-schild`: Die Bots suchen sie so.
+- Lösung `text-4xl` und Cover `size-36` statt `text-5xl` und `w-40`: damit die Auflösung in 800 px passt.
+- Am Handy kein einzeiliger Kopf: Die Überschrift „Raum XXXX“ steht schon darüber, der Satz mit dem Namen bleibt klein.
+- Kein `break-words` an den Feldern: Silbentrennung reicht, der Test bei 360 px ist grün.
+- QR-Farben als Hex-Werte und Titel in zwei Seiten: je zwei Stellen, eine gemeinsame Konstante lohnt nicht.
+
 ## Abschluss
 
 - `plan-pruefer` prüft jeden Branch gegen diesen Plan, `/code-review` vor jedem Merge.

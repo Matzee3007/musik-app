@@ -26,7 +26,10 @@ export default function Rueckruf({ onFertig }: { onFertig: () => void }) {
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-signal">{fehler}</p>
-      <Link className="text-birne underline" href="/">
+      <Link
+        className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        href="/"
+      >
         Zur Startseite
       </Link>
     </div>

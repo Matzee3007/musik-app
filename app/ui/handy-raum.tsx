@@ -102,7 +102,10 @@ export default function HandyRaum({
     return (
       <div className="flex flex-col items-center gap-4">
         <p>Ungültiger Raum-Code.</p>
-        <Link className="underline" href="/">
+        <Link
+          className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+          href="/"
+        >
           Zur Startseite
         </Link>
       </div>

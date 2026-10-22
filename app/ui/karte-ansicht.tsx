@@ -33,7 +33,7 @@ export default function KarteAnsicht({
             {/* Das Wort zuerst: Der Browser-Test misst das erste Kind. Es liegt über dem Stempel. */}
             <span className="relative z-10">{kategorie.name}</span>
             {feld.abgehakt && (
-              <span className="stempel absolute inset-[5%] rounded-full bg-birne ring-2 ring-nacht/40" />
+              <span className="stempel absolute inset-[5%] rounded-full border-[5px] border-birne ring-2 ring-nacht/40" />
             )}
           </button>
         );
