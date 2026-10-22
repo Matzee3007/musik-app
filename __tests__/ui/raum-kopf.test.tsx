@@ -166,3 +166,30 @@ test("Raum-Kopf fragt nach und zeigt die Antworten in der Leiste", async () => {
   act(() => raum.verbundenMelden());
   expect(raum.gesendet).toContainEqual({ art: "anfrage" });
 });
+
+test("schickt nach dem Wiederbeitritt seinen Stand neu", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  await waitFor(() =>
+    expect(raum.gesendet).toContainEqual({ art: "tisch", stand }),
+  );
+  raum.gesendet.length = 0;
+  act(() => raum.verbundenMelden());
+  await waitFor(() =>
+    expect(raum.gesendet).toContainEqual({ art: "tisch", stand }),
+  );
+});
+
+test("eine Fehlermeldung verschwindet, sobald das Senden wieder klappt", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  await waitFor(() =>
+    expect(raum.gesendet).toContainEqual({ art: "tisch", stand }),
+  );
+  raum.stoerung = "Keine Verbindung zum Raum.";
+  raum.neuerStand(runde(1));
+  expect(await screen.findByText("Keine Verbindung zum Raum.")).toBeDefined();
+  raum.stoerung = null;
+  raum.neuerStand(runde(2));
+  await waitFor(() =>
+    expect(screen.queryByText("Keine Verbindung zum Raum.")).toBeNull(),
+  );
+});

@@ -71,7 +71,7 @@ export default function HandyRaum({
         setZustand({ art: "name" });
         return;
       }
-      // Erst danach "drin": HandySpiel schickt seinen Stand per Nachricht, erst wenn das Gerät sichtbar ist.
+      // Erst danach "drin": So steht das Handy in Presence, bevor HandySpiel nach dem Stand fragt.
       k.anmelden({
         schluessel: tabSchluessel(),
         rolle: "spieler",

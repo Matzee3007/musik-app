@@ -85,18 +85,25 @@ export default function RaumKopf({
     return kanal.beiVerbunden(fragen);
   }, [kanal, verbunden]);
 
-  // Jeden neuen Stand an alle schicken, und auf Anfrage den aktuellen.
+  // Jeden neuen Stand an alle schicken, auf Anfrage den aktuellen und nach einem Wiederbeitritt noch einmal:
+  // Anfragen und Änderungen aus der Zeit ohne Verbindung sind verloren.
   useEffect(() => {
     if (!verbunden) return;
     function melden() {
       kanal
         .senden({ art: "tisch", stand })
+        .then(() => setFehler(null))
         .catch((e: Error) => setFehler(e.message));
     }
     melden();
-    return kanal.beiNachricht((nachricht) => {
+    const nachrichtAb = kanal.beiNachricht((nachricht) => {
       if (nachricht.art === "anfrage") melden();
     });
+    const verbundenAb = kanal.beiVerbunden(melden);
+    return () => {
+      nachrichtAb();
+      verbundenAb();
+    };
   }, [kanal, verbunden, stand]);
 
   async function schliessen() {
