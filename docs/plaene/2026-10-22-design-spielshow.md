@@ -172,7 +172,7 @@ git commit -m "Add design tokens, fonts and shared button"
 **Schnittstellen:**
 - Nutzt: `Knopf` (Aufgabe 1).
 
-- [ ] **Schritt 1: Umsetzen**
+- [x] **Schritt 1: Umsetzen**
   - Start ohne Raum: „Raum eröffnen“ als `Knopf` `haupt`, darunter die Code-Eingabe als ein Feld im Stil einer
     Anzeigetafel (`font-schild text-3xl tracking-[0.3em] uppercase bg-boden`, Breite für 4 Zeichen, kein `maxLength`)
     mit „Beitreten“ als `Knopf` `neben`. Das Etikett „Raum-Code“ bleibt.
@@ -182,14 +182,14 @@ git commit -m "Add design tokens, fonts and shared button"
     (`text-xl`, `py-3`), „Beitreten“ als `Knopf` `haupt`, Meldungen in `text-signal`.
   - `rueckruf.tsx`: Link „Zur Startseite“ in `text-birne`.
 
-- [ ] **Schritt 2: Tests laufen lassen**
+- [x] **Schritt 2: Tests laufen lassen**
 
 `npm run check && npm run e2e`
 Erwartet: beide grün, keine Teständerung nötig.
 
-- [ ] **Schritt 3: Screenshots ansehen:** Start in 1280×800 und 393×852, Namensabfrage in 393×852. Fokus mit Tab sichtbar.
+- [x] **Schritt 3: Screenshots ansehen:** Start in 1280×800 und 393×852, Namensabfrage in 393×852. Fokus mit Tab sichtbar.
 
-- [ ] **Schritt 4: Committen, PR**
+- [x] **Schritt 4: Committen, PR**
 
 ```bash
 git add app/ui/start.tsx app/ui/handy-raum.tsx app/ui/rueckruf.tsx

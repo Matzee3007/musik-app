@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Knopf from "@/app/ui/knopf";
 import RaumKopf from "@/app/ui/raum-kopf";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
@@ -25,9 +26,6 @@ import {
 import type { Token } from "@/lib/spotify/token";
 import { SONGLISTE } from "@/lib/songliste";
 import { supabaseKonfiguriert } from "@/lib/supabase";
-
-const knopf =
-  "rounded-lg bg-foreground px-6 py-3 text-lg font-semibold text-background";
 
 export default function Start({
   kanalOeffnen = supabaseRaumKanal,
@@ -90,33 +88,34 @@ export default function Start({
 
   const gelesenerCode = raumCodeLesen(codeEingabe);
   const raumWahl = (
-    <div className="flex flex-col items-center gap-4">
-      <button
-        className={`${knopf} disabled:opacity-40`}
-        disabled={!supabase}
-        onClick={eroeffnen}
-      >
+    <div className="flex flex-col items-center gap-10">
+      <Knopf disabled={!supabase} onClick={eroeffnen}>
         Raum eröffnen
-      </button>
-      <div className="flex items-center gap-2">
-        <label htmlFor="raum-code">Raum-Code</label>
-        <input
-          id="raum-code"
-          className="w-24 rounded border px-2 py-1 uppercase"
-          value={codeEingabe}
-          onChange={(e) => setCodeEingabe(e.target.value)}
-          disabled={!supabase}
-        />
-        <button
-          className="rounded-lg border px-4 py-1 disabled:opacity-40"
-          disabled={!supabase || !gelesenerCode}
-          onClick={() => router.push(`/raum/${gelesenerCode}`)}
-        >
-          Beitreten
-        </button>
+      </Knopf>
+      {/* Wie eine Anzeigetafel. Kein maxLength: raumCodeLesen nimmt auch "EH MF" mit Leerzeichen. */}
+      <div className="flex flex-col items-center gap-3">
+        <label htmlFor="raum-code" className="text-licht/70">
+          Raum-Code
+        </label>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <input
+            id="raum-code"
+            className="w-48 rounded-lg bg-boden px-4 py-2 text-center font-schild text-3xl tracking-[0.3em] uppercase outline-birne focus-visible:outline-2 disabled:opacity-40"
+            value={codeEingabe}
+            onChange={(e) => setCodeEingabe(e.target.value)}
+            disabled={!supabase}
+          />
+          <Knopf
+            art="neben"
+            disabled={!supabase || !gelesenerCode}
+            onClick={() => router.push(`/raum/${gelesenerCode}`)}
+          >
+            Beitreten
+          </Knopf>
+        </div>
       </div>
       {!supabase && (
-        <p className="max-w-sm text-sm">
+        <p className="max-w-sm text-sm text-licht/70">
           Supabase ist hier nicht eingerichtet, nur die Demo ohne Raum.
         </p>
       )}
@@ -171,43 +170,44 @@ export default function Start({
     }
 
     const demoKnopf = (
-      <button className={knopf} onClick={() => setDemo(true)}>
+      <Knopf art="neben" onClick={() => setDemo(true)}>
         Demo starten
-      </button>
+      </Knopf>
     );
 
     if (token) {
       return (
-        <div className="flex flex-col items-center gap-4">
-          <h2 className="text-2xl font-semibold">Deine Playlists</h2>
-          <ul className="flex flex-col gap-1">
+        <div className="flex w-full max-w-md flex-col items-center gap-4">
+          <h2 className="font-schild text-2xl">Deine Playlists</h2>
+          <ul className="flex w-full flex-col gap-2">
             {playlists.map((p) => (
               <li key={p.id}>
-                <button className="underline" onClick={() => setGewaehlt(p)}>
+                <button
+                  className="w-full rounded-lg bg-boden px-4 py-3 text-left font-semibold outline-birne focus-visible:outline-2"
+                  onClick={() => setGewaehlt(p)}
+                >
                   {p.name} ({p.anzahlSongs} Songs)
                 </button>
               </li>
             ))}
           </ul>
-          <button className={knopf} onClick={abmeldenKlick}>
-            Abmelden
-          </button>
-          {demoKnopf}
+          <div className="flex flex-wrap justify-center gap-3">
+            {demoKnopf}
+            <Knopf art="neben" onClick={abmeldenKlick}>
+              Abmelden
+            </Knopf>
+          </div>
         </div>
       );
     }
 
     return (
       <div className="flex flex-col items-center gap-4">
-        <button
-          className={`${knopf} disabled:opacity-40`}
-          disabled={!id}
-          onClick={anmelden}
-        >
+        <Knopf disabled={!id} onClick={anmelden}>
           Mit Spotify anmelden
-        </button>
+        </Knopf>
         {!id && (
-          <p className="max-w-sm text-sm">
+          <p className="max-w-sm text-sm text-licht/70">
             Spotify ist hier nicht eingerichtet, nur die Demo. Lokal:
             NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
           </p>

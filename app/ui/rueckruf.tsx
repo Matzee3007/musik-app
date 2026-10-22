@@ -25,8 +25,8 @@ export default function Rueckruf({ onFertig }: { onFertig: () => void }) {
   if (!fehler) return <p>Anmeldung läuft …</p>;
   return (
     <div className="flex flex-col items-center gap-4">
-      <p>{fehler}</p>
-      <Link className="underline" href="/">
+      <p className="text-signal">{fehler}</p>
+      <Link className="text-birne underline" href="/">
         Zur Startseite
       </Link>
     </div>
