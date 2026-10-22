@@ -1,8 +1,7 @@
 import type { KategorieId } from "@/lib/kategorien";
-import type { Anwesend } from "@/lib/raum/spieler";
 import type { Runde } from "@/lib/spiel";
 
-// Was der Tisch in seinem Presence-Eintrag zeigt (ADR 0005). spiel ist die Kennung des Spiels, neu bei jedem
+// Was der Tisch per Nachricht schickt (ADR 0006). spiel ist die Kennung des Spiels, neu bei jedem
 // neuen Spiel. bingo nennt alle Spieler mit Bingo in diesem Spiel.
 export type TischStand = {
   spiel: string;
@@ -10,8 +9,11 @@ export type TischStand = {
   bingo: string[];
 };
 
-// Was ein Handy in seinem Presence-Eintrag zeigt.
+// Was ein Handy per Nachricht schickt.
 export type SpielerStand = { spiel: string; abgehakt: number; bingo: boolean };
+
+// Je Spielername der zuletzt gemeldete Stand.
+export type SpielerStaende = Record<string, SpielerStand>;
 
 // Die Runde ohne Song: Die Handys sollen die Lösung nicht sehen.
 export function tischStand(
@@ -30,37 +32,23 @@ export function tischStand(
   };
 }
 
-export function tischStandLesen(
-  anwesende: readonly Anwesend[],
-): TischStand | null {
-  for (const a of anwesende) {
-    if (a.rolle === "tisch" && a.stand) return a.stand;
-  }
-  return null;
-}
-
 // Wer einmal Bingo hatte, bleibt in der Liste, auch wenn er danach die Verbindung verliert.
 export function bingoNamen(
   bisher: readonly string[],
-  anwesende: readonly Anwesend[],
+  staende: SpielerStaende,
   spiel: string,
 ): string[] {
   const namen = [...bisher];
-  for (const a of anwesende) {
-    if (
-      a.rolle === "spieler" &&
-      a.stand?.spiel === spiel &&
-      a.stand.bingo &&
-      !namen.includes(a.name)
-    ) {
-      namen.push(a.name);
+  for (const [name, stand] of Object.entries(staende)) {
+    if (stand.spiel === spiel && stand.bingo && !namen.includes(name)) {
+      namen.push(name);
     }
   }
   return namen;
 }
 
-// Presence-Einträge kommen von anderen Geräten, etwa einer älteren Fassung der App: Form prüfen, bevor
-// ein Stand zählt.
+// Nachrichten kommen von anderen Geräten, etwa einer älteren Fassung der App: Form prüfen, bevor ein Stand
+// zählt.
 export function istTischStand(wert: unknown): wert is TischStand {
   const s = wert as TischStand | null;
   const r = s?.runde;

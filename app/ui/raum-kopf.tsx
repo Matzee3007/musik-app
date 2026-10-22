@@ -10,7 +10,7 @@ import {
   tischRaumSpeichern,
 } from "@/lib/raum/speicher";
 import { spielerleiste, type Anwesend } from "@/lib/raum/spieler";
-import type { TischStand } from "@/lib/raum/stand";
+import type { SpielerStaende, TischStand } from "@/lib/raum/stand";
 
 // Der Raum am Tisch: Code und QR-Code zum Beitreten, die Spieler und "Raum schließen".
 export default function RaumKopf({
@@ -21,7 +21,7 @@ export default function RaumKopf({
 }: {
   code: string;
   kanal: RaumKanal;
-  // Spielstand des Tischs, den die Handys über Presence lesen (ADR 0005). null: noch kein Spiel.
+  // Spielstand des Tischs, den die Handys per Nachricht bekommen (ADR 0006). null: noch kein Spiel.
   stand: TischStand | null;
   onGeschlossen: () => void;
 }) {
@@ -29,6 +29,8 @@ export default function RaumKopf({
     bekannt: string[];
     anwesende: Anwesend[];
   }>(() => ({ bekannt: tischRaumLaden()?.bekannt ?? [], anwesende: [] }));
+  // Je Spieler der zuletzt per Nachricht gemeldete Stand, für die Zahlen in der Leiste.
+  const [staende, setStaende] = useState<SpielerStaende>({});
   const [fehler, setFehler] = useState<string | null>(null);
   const [verbunden, setVerbunden] = useState(false);
 
@@ -38,13 +40,17 @@ export default function RaumKopf({
       // Nach "Raum schließen" ist nichts mehr gespeichert, ein später Abgleich legt den Raum nicht neu an.
       const raum = tischRaumLaden();
       if (!raum) return;
-      const bekannt = spielerleiste(raum.bekannt, anwesende, null).map(
+      const bekannt = spielerleiste(raum.bekannt, anwesende, {}, null).map(
         (s) => s.name,
       );
       tischRaumSpeichern({ code, bekannt });
       setListe({ bekannt, anwesende });
     }
-    const abmelden = kanal.beiAnwesenden(neueAnwesende);
+    const anwesendeAb = kanal.beiAnwesenden(neueAnwesende);
+    const nachrichtAb = kanal.beiNachricht((nachricht) => {
+      if (nachricht.art !== "spieler") return;
+      setStaende((alt) => ({ ...alt, [nachricht.name]: nachricht.stand }));
+    });
     kanal
       .verbinden()
       .then((anwesende) => {
@@ -52,19 +58,52 @@ export default function RaumKopf({
         setVerbunden(true);
       })
       .catch((e: Error) => setFehler(e.message));
-    return abmelden;
+    return () => {
+      anwesendeAb();
+      nachrichtAb();
+    };
   }, [code, kanal]);
 
-  // Nach dem Verbinden und bei jedem neuen Stand: Ein weiteres anmelden ersetzt den Eintrag.
+  // Einmal per Presence anmelden, ohne Stand: Supabase erlaubt je Gerät nur 5 Änderungen in 30 Sekunden
+  // (ADR 0006). Nach einem Wiederbeitritt meldet der Kanal den Tisch selbst neu an.
   useEffect(() => {
     if (!verbunden) return;
     kanal
-      .anmelden({
-        schluessel: tabSchluessel(),
-        rolle: "tisch",
-        ...(stand && { stand }),
-      })
+      .anmelden({ schluessel: tabSchluessel(), rolle: "tisch" })
       .catch((e: Error) => setFehler(e.message));
+  }, [kanal, verbunden]);
+
+  // Nach dem Verbinden und jedem Wiederbeitritt die Handys nach ihrem Stand fragen.
+  useEffect(() => {
+    if (!verbunden) return;
+    function fragen() {
+      kanal
+        .senden({ art: "anfrage" })
+        .catch((e: Error) => setFehler(e.message));
+    }
+    fragen();
+    return kanal.beiVerbunden(fragen);
+  }, [kanal, verbunden]);
+
+  // Jeden neuen Stand an alle schicken, auf Anfrage den aktuellen und nach einem Wiederbeitritt noch einmal:
+  // Anfragen und Änderungen aus der Zeit ohne Verbindung sind verloren.
+  useEffect(() => {
+    if (!verbunden) return;
+    function melden() {
+      kanal
+        .senden({ art: "tisch", stand })
+        .then(() => setFehler(null))
+        .catch((e: Error) => setFehler(e.message));
+    }
+    melden();
+    const nachrichtAb = kanal.beiNachricht((nachricht) => {
+      if (nachricht.art === "anfrage") melden();
+    });
+    const verbundenAb = kanal.beiVerbunden(melden);
+    return () => {
+      nachrichtAb();
+      verbundenAb();
+    };
   }, [kanal, verbunden, stand]);
 
   async function schliessen() {
@@ -94,6 +133,7 @@ export default function RaumKopf({
         {spielerleiste(
           liste.bekannt,
           liste.anwesende,
+          staende,
           stand?.spiel ?? null,
         ).map((s) => (
           <li

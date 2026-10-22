@@ -72,21 +72,21 @@ in Aufgabe 3 weg.
     Nachrichten
   - `RaumKanal.beiVerbunden(rueckruf: () => void): () => void`: bei jedem `SUBSCRIBED` (auch nach Wiederbeitritt)
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 „raumNachrichtLesen nimmt gültige Nachrichten und verwirft andere“ (`{ art: "tisch", stand: { spiel: "x" } }` → `null`,
 `{ art: "spieler", name: 3, … }` → `null`, `{ art: "anfrage" }` → gleich, `{ art: "tisch", stand: null }` → gleich),
 „beiNachricht übergeht Nachrichten in falscher Form“, „beiVerbunden meldet jedes SUBSCRIBED, bis abgemeldet“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/kanal.test.ts`
 
-- [ ] **Schritt 3: `lib/raum/kanal.ts` und den Nachbau umsetzen**
+- [x] **Schritt 3: `lib/raum/kanal.ts` und den Nachbau umsetzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: ADR 0006 schreiben, ADR 0005 als ersetzt markieren, prüfen, committen**
+- [x] **Schritt 5: ADR 0006 schreiben, ADR 0005 als ersetzt markieren, prüfen, committen**
 
 ADR 0006: Kontext (Limit 5 Presence-Änderungen je Gerät in 30 s, gemessen per WebSocket-Mitschnitt, Quelle),
 Entscheidung (Broadcast mit Nachfragen, Presence nur für Anwesenheit), Alternativen (Presence gedrosselt: bis 6 s
@@ -117,7 +117,7 @@ Verhalten: Beim Erscheinen und bei jedem `beiVerbunden` `senden({ art: "anfrage"
 als `spieler`-Nachricht hinaus, nicht mehr über `anmelden`. Scheitert `senden`, steht die Meldung wie bisher unter
 „Du bist im Raum …“.
 
-- [ ] **Schritt 1: Tests umstellen und ergänzen**
+- [x] **Schritt 1: Tests umstellen und ergänzen**
 
 Die Tests aus Plan C geben den Stand des Tischs jetzt per `raum.nachrichtSchicken({ art: "tisch", stand })` vor,
 `anwesende` enthält nur noch, wer da ist. Neu: „fragt beim Erscheinen und nach dem Wiederbeitritt nach“ (`gesendet`
@@ -125,13 +125,13 @@ enthält `anfrage`, nach `verbundenMelden()` ein zweites Mal), „antwortet auf 
 schickt den Stand per Broadcast, nicht per Presence“ (`angemeldet` bleibt leer, `gesendet` zuletzt `spieler` mit
 `abgehakt: 1`, Prüf-Schwerpunkt 5).
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/handy-spiel.test.tsx __tests__/ui/handy-raum.test.tsx`
 
-- [ ] **Schritt 3: `app/ui/handy-spiel.tsx` umbauen**
+- [x] **Schritt 3: `app/ui/handy-spiel.tsx` umbauen**
 
-- [ ] **Schritt 4: Prüfen und committen**
+- [x] **Schritt 4: Prüfen und committen**
 
 ```bash
 npm run check
@@ -162,7 +162,7 @@ git commit -m "Exchange game state on the phone by broadcast"
   mit `abgehakt` nur bei verbundenen Spielern, deren Stand zu `spiel` gehört
 - `RaumKopf` und `SpielAnsicht` behalten ihre Props aus Plan C
 
-- [ ] **Schritt 1: Tests umstellen und ergänzen**
+- [x] **Schritt 1: Tests umstellen und ergänzen**
 
 `stand.test.ts`, `spieler.test.ts`: die Fälle aus Plan C auf `SpielerStaende` umstellen (neues Bingo dazu, gegangene
 bleiben, altes Spiel zählt nicht; Zahl nur für das laufende Spiel und nur verbunden). Tests für `tischStandLesen` und
@@ -173,13 +173,13 @@ dem aktuellen Stand“, „Raum-Kopf fragt nach und zeigt die Antworten in der L
 `spiel-raum.test.tsx`: Bingo-Tests schicken `spieler`-Nachrichten statt Presence-Einträge, sonst unverändert.
 `start.test.tsx`: „Demo im Raum …“ erwartet den Stand in `gesendet` statt in `angemeldet`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum __tests__/ui`
 
-- [ ] **Schritt 3: `lib/raum/` und die Ansichten umbauen**
+- [x] **Schritt 3: `lib/raum/` und die Ansichten umbauen**
 
-- [ ] **Schritt 4: Prüfen und committen**
+- [x] **Schritt 4: Prüfen und committen**
 
 ```bash
 npm run check
@@ -195,12 +195,12 @@ git commit -m "Exchange game state at the table by broadcast"
   Ablauf mit Broadcast und Anfrage), `docs/Projektvision.md` (Geklärte Fragen Phase 3: Live-Spiel über Broadcast, Link
   ADR 0006), `docs/plaene/2026-10-22-live-spiel.md` (Hinweis: Spielstand-Teil durch diesen Plan ersetzt)
 
-- [ ] **Schritt 1: Playwright laufen lassen, alle müssen bestehen**
+- [x] **Schritt 1: Playwright laufen lassen, alle müssen bestehen**
 
 `npm run e2e`
 Erwartet: `4 passed`
 
-- [ ] **Schritt 2: Doku, prüfen, committen, PR**
+- [x] **Schritt 2: Doku, prüfen, committen, PR**
 
 ```bash
 npm run check

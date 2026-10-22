@@ -3,11 +3,13 @@ import type { Anwesend } from "@/lib/raum/spieler";
 
 // Nachbau eines Raums für die Tests der Ansichten: Der Test bestimmt, wer anwesend ist, und
 // schickt Nachrichten; was die Ansicht anmeldet und sendet, steht in angemeldet und gesendet.
-// Mit stoerung scheitern anmelden und senden wie bei Supabase ohne Verbindung.
+// Mit stoerung scheitern anmelden und senden wie bei Supabase ohne Verbindung. verbundenMelden()
+// spielt einen Wiederbeitritt nach.
 export function nachgebauterRaum() {
   let anwesende: Anwesend[] = [];
   const anwesendeRueckrufe = new Set<(anwesende: Anwesend[]) => void>();
   const nachrichtRueckrufe = new Set<(nachricht: RaumNachricht) => void>();
+  const verbundenRueckrufe = new Set<() => void>();
   const gesendet: RaumNachricht[] = [];
   const angemeldet: Anwesend[] = [];
 
@@ -19,6 +21,9 @@ export function nachgebauterRaum() {
     },
     nachrichtSchicken(nachricht: RaumNachricht) {
       for (const rueckruf of nachrichtRueckrufe) rueckruf(nachricht);
+    },
+    verbundenMelden() {
+      for (const rueckruf of verbundenRueckrufe) rueckruf();
     },
     gesendet,
     angemeldet,
@@ -42,6 +47,10 @@ export function nachgebauterRaum() {
     beiNachricht(rueckruf) {
       nachrichtRueckrufe.add(rueckruf);
       return () => nachrichtRueckrufe.delete(rueckruf);
+    },
+    beiVerbunden(rueckruf) {
+      verbundenRueckrufe.add(rueckruf);
+      return () => verbundenRueckrufe.delete(rueckruf);
     },
     trennen() {},
   };

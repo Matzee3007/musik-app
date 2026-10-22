@@ -1,5 +1,11 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import HandySpiel from "@/app/ui/handy-spiel";
 import type { HandyKarte } from "@/lib/raum/handy-karte";
@@ -25,30 +31,20 @@ const aufgeloest: TischStand = {
   runde: { ...runde3.runde!, aufgeloest: true },
 };
 
-function mitTisch(stand?: TischStand): Anwesend[] {
-  return [{ schluessel: "t", rolle: "tisch", ...(stand && { stand }) }];
-}
+const mitTisch: Anwesend[] = [{ schluessel: "t", rolle: "tisch" }];
 
-// Rendert das Handy von Anna; neu() zeigt einen neuen Stand wie nach einem Presence-Abgleich.
-function spielen(anwesende: Anwesend[]) {
+// Rendert das Handy von Anna, der Tisch schickt stand per Nachricht; neu() schickt einen neuen Stand.
+function spielen(stand: TischStand | null = null, anwesende = mitTisch) {
   const raum = nachgebauterRaum();
   const kanal = raum.oeffnen("ABCD", "a");
-  const { rerender } = render(
+  render(
     <HandySpiel code="ABCD" name="Anna" kanal={kanal} anwesende={anwesende} />,
   );
-  return {
-    raum,
-    neu(anwesende: Anwesend[]) {
-      rerender(
-        <HandySpiel
-          code="ABCD"
-          name="Anna"
-          kanal={kanal}
-          anwesende={anwesende}
-        />,
-      );
-    },
-  };
+  function neu(stand: TischStand) {
+    act(() => raum.nachrichtSchicken({ art: "tisch", stand }));
+  }
+  if (stand) neu(stand);
+  return { raum, neu };
 }
 
 function felder() {
@@ -65,27 +61,27 @@ function freieFelder() {
 }
 
 test("Tisch ohne Stand: Warte auf das Spiel", () => {
-  spielen(mitTisch());
+  spielen();
   expect(screen.getByText("Du bist im Raum ABCD als Anna.")).toBeDefined();
   expect(screen.getByText("Warte auf das Spiel …")).toBeDefined();
   expect(screen.queryAllByRole("button", { name: /^Feld / })).toEqual([]);
 });
 
 test("ohne Tisch: Der Tisch ist gerade nicht verbunden.", () => {
-  spielen([]);
+  spielen(null, []);
   expect(
     screen.getByText("Der Tisch ist gerade nicht verbunden."),
   ).toBeDefined();
 });
 
 test("vor der Auflösung sind alle Felder grau", () => {
-  spielen(mitTisch(runde3));
+  spielen(runde3);
   expect(felder()).toHaveLength(25);
   expect(freieFelder()).toEqual([]);
 });
 
 test("nach der Auflösung sind nur die Felder der Kategorie frei", () => {
-  spielen(mitTisch(aufgeloest));
+  spielen(aufgeloest);
   const frei = freieFelder();
   expect(frei).toHaveLength(5);
   expect(frei.every((f) => f.getAttribute("aria-label") === "Feld Titel")).toBe(
@@ -93,18 +89,56 @@ test("nach der Auflösung sind nur die Felder der Kategorie frei", () => {
   );
 });
 
-test("abhaken meldet die Zahl an den Tisch", () => {
-  const { raum } = spielen(mitTisch(aufgeloest));
-  expect(raum.angemeldet.at(-1)).toMatchObject({
-    rolle: "spieler",
+test("abhaken schickt den Stand per Broadcast, nicht per Presence", () => {
+  const { raum } = spielen(aufgeloest);
+  expect(raum.gesendet.at(-1)).toEqual({
+    art: "spieler",
     name: "Anna",
     stand: { spiel: "s1", abgehakt: 0, bingo: false },
   });
   fireEvent.click(freieFelder()[0]);
-  expect(raum.angemeldet.at(-1)).toMatchObject({
+  expect(raum.gesendet.at(-1)).toEqual({
+    art: "spieler",
+    name: "Anna",
     stand: { spiel: "s1", abgehakt: 1, bingo: false },
   });
+  expect(raum.angemeldet).toEqual([]);
   expect(freieFelder()).toEqual([]);
+});
+
+test("fragt beim Erscheinen und nach dem Wiederbeitritt nach", () => {
+  const { raum } = spielen();
+  const anfragen = () =>
+    raum.gesendet.filter((n) => n.art === "anfrage").length;
+  expect(anfragen()).toBe(1);
+  act(() => raum.verbundenMelden());
+  expect(anfragen()).toBe(2);
+});
+
+test("antwortet auf eine Anfrage mit seinem Stand", () => {
+  const { raum, neu } = spielen();
+  // Ohne Karte gibt es noch keinen Stand.
+  act(() => raum.nachrichtSchicken({ art: "anfrage" }));
+  expect(raum.gesendet).toEqual([{ art: "anfrage" }]);
+
+  neu(aufgeloest);
+  raum.gesendet.length = 0;
+  act(() => raum.nachrichtSchicken({ art: "anfrage" }));
+  expect(raum.gesendet).toEqual([
+    {
+      art: "spieler",
+      name: "Anna",
+      stand: { spiel: "s1", abgehakt: 0, bingo: false },
+    },
+  ]);
+});
+
+test("Tisch schickt keinen Stand: Warte auf das Spiel", () => {
+  const { raum, neu } = spielen(aufgeloest);
+  act(() => raum.nachrichtSchicken({ art: "tisch", stand: null }));
+  expect(screen.getByText("Warte auf das Spiel …")).toBeDefined();
+  neu(aufgeloest);
+  expect(felder()).toHaveLength(25);
 });
 
 function abgehakteFelder() {
@@ -112,28 +146,28 @@ function abgehakteFelder() {
 }
 
 test("Karte und Haken überstehen das Neuladen", () => {
-  spielen(mitTisch(aufgeloest));
+  spielen(aufgeloest);
   fireEvent.click(freieFelder()[0]);
   const vorher = felder().map((f) => f.getAttribute("aria-label"));
   cleanup();
 
-  spielen(mitTisch(aufgeloest));
+  spielen(aufgeloest);
   expect(felder().map((f) => f.getAttribute("aria-label"))).toEqual(vorher);
   expect(abgehakteFelder()).toHaveLength(1);
   expect(freieFelder()).toEqual([]);
 });
 
 test("neues Spiel teilt eine neue Karte aus", () => {
-  const { neu } = spielen(mitTisch(aufgeloest));
+  const { neu } = spielen(aufgeloest);
   fireEvent.click(freieFelder()[0]);
-  neu(mitTisch({ ...aufgeloest, spiel: "s2" }));
+  neu({ ...aufgeloest, spiel: "s2" });
   expect(abgehakteFelder()).toEqual([]);
   expect(freieFelder()).toHaveLength(5);
 });
 
 test("zurücknehmen fragt nach und gibt die Runde wieder frei", () => {
   vi.spyOn(window, "confirm").mockReturnValue(true);
-  spielen(mitTisch(aufgeloest));
+  spielen(aufgeloest);
   fireEvent.click(freieFelder()[0]);
   fireEvent.click(abgehakteFelder()[0]);
   expect(window.confirm).toHaveBeenCalledWith("Abhaken zurücknehmen?");
@@ -155,20 +189,21 @@ function karteMitZeile(): HandyKarte {
 
 test("eigenes Bingo zeigt Bingo! und hebt die Reihe hervor", () => {
   handyKarteSpeichern(karteMitZeile());
-  const { raum } = spielen(mitTisch(aufgeloest));
+  const { raum } = spielen(aufgeloest);
   expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
   const reihe = felder().filter((f) => f.dataset.bingo === "true");
   expect(reihe).toHaveLength(5);
-  expect(raum.angemeldet.at(-1)).toMatchObject({
+  expect(raum.gesendet.at(-1)).toMatchObject({
+    art: "spieler",
     stand: { abgehakt: 5, bingo: true },
   });
 });
 
 test("Bingo eines anderen zeigt seinen Namen, zurücknehmen geht nicht mehr", () => {
   const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
-  const { neu } = spielen(mitTisch(aufgeloest));
+  const { neu } = spielen(aufgeloest);
   fireEvent.click(freieFelder()[0]);
-  neu(mitTisch({ ...aufgeloest, bingo: ["Ben"] }));
+  neu({ ...aufgeloest, bingo: ["Ben"] });
   expect(screen.getByRole("heading", { name: "Bingo! Ben" })).toBeDefined();
   fireEvent.click(abgehakteFelder()[0]);
   expect(confirm).not.toHaveBeenCalled();
@@ -176,26 +211,26 @@ test("Bingo eines anderen zeigt seinen Namen, zurücknehmen geht nicht mehr", ()
 });
 
 test("Notizfläche leert sich bei neuer Runde", () => {
-  const { neu } = spielen(mitTisch(runde3));
+  const { neu } = spielen(runde3);
   fireEvent.change(screen.getByLabelText("Notizen"), {
     target: { value: "Queen" },
   });
-  neu(mitTisch(aufgeloest));
+  neu(aufgeloest);
   expect(screen.getByLabelText<HTMLTextAreaElement>("Notizen").value).toBe(
     "Queen",
   );
-  neu(mitTisch({ ...runde3, runde: { ...runde3.runde!, nummer: 4 } }));
+  neu({ ...runde3, runde: { ...runde3.runde!, nummer: 4 } });
   expect(screen.getByLabelText<HTMLTextAreaElement>("Notizen").value).toBe("");
 });
 
 test("Notizen aus wird gemerkt", () => {
-  spielen(mitTisch(runde3));
+  spielen(runde3);
   fireEvent.click(screen.getByRole("button", { name: "Notizen aus" }));
   expect(screen.queryByLabelText("Notizen")).toBeNull();
   expect(notizenAn()).toBe(false);
   cleanup();
 
-  spielen(mitTisch(runde3));
+  spielen(runde3);
   expect(screen.queryByLabelText("Notizen")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Notizen an" }));
   expect(screen.getByLabelText("Notizen")).toBeDefined();

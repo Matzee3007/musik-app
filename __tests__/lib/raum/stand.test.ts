@@ -1,7 +1,6 @@
 import { expect, test } from "vitest";
 import { KATEGORIEN } from "@/lib/kategorien";
-import type { Anwesend } from "@/lib/raum/spieler";
-import { bingoNamen, tischStand, tischStandLesen } from "@/lib/raum/stand";
+import { bingoNamen, tischStand } from "@/lib/raum/stand";
 import { SONGLISTE } from "@/lib/songliste";
 
 test("tischStand nimmt die Kategorie-Id und lässt den Song weg", () => {
@@ -24,47 +23,21 @@ test("tischStand nimmt die Kategorie-Id und lässt den Song weg", () => {
   });
 });
 
-const stand = { spiel: "s1", runde: null, bingo: [] };
-
-test("tischStandLesen liefert den Stand des Tischs", () => {
-  const anwesende: Anwesend[] = [
-    { schluessel: "a", rolle: "spieler", name: "Anna" },
-    { schluessel: "t", rolle: "tisch", stand },
-  ];
-  expect(tischStandLesen(anwesende)).toEqual(stand);
-});
-
-test("tischStandLesen liefert null ohne Tisch oder ohne Stand", () => {
-  expect(tischStandLesen([])).toBeNull();
-  expect(tischStandLesen([{ schluessel: "t", rolle: "tisch" }])).toBeNull();
-});
-
-function spieler(
-  schluessel: string,
-  name: string,
-  spiel: string,
-  bingo: boolean,
-): Anwesend {
-  return {
-    schluessel,
-    rolle: "spieler",
-    name,
-    stand: { spiel, abgehakt: 5, bingo },
-  };
+function stand(spiel: string, bingo: boolean) {
+  return { spiel, abgehakt: 5, bingo };
 }
 
 test("bingoNamen nimmt neue Bingos dieses Spiels dazu und behält gegangene", () => {
-  const anwesende = [
-    spieler("b", "Ben", "s1", true),
-    spieler("c", "Cem", "alt", true),
-    spieler("d", "Dana", "s1", false),
-  ];
-  expect(bingoNamen(["Anna"], anwesende, "s1")).toEqual(["Anna", "Ben"]);
+  const staende = {
+    Ben: stand("s1", true),
+    Cem: stand("alt", true),
+    Dana: stand("s1", false),
+  };
+  expect(bingoNamen(["Anna"], staende, "s1")).toEqual(["Anna", "Ben"]);
 });
 
 test("bingoNamen nennt jeden nur einmal", () => {
-  const ben = spieler("b", "Ben", "s1", true);
-  const benNeuGeladen = spieler("b2", "Ben", "s1", true);
-  expect(bingoNamen([], [ben, benNeuGeladen], "s1")).toEqual(["Ben"]);
-  expect(bingoNamen(["Ben"], [ben], "s1")).toEqual(["Ben"]);
+  expect(bingoNamen(["Ben"], { Ben: stand("s1", true) }, "s1")).toEqual([
+    "Ben",
+  ]);
 });

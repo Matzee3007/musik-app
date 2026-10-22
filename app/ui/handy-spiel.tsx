@@ -18,10 +18,9 @@ import {
   handyKarteSpeichern,
   notizenAn,
   notizenSpeichern,
-  tabSchluessel,
 } from "@/lib/raum/speicher";
 import { tischDa, type Anwesend } from "@/lib/raum/spieler";
-import { tischStandLesen } from "@/lib/raum/stand";
+import type { SpielerStand, TischStand } from "@/lib/raum/stand";
 import type { Zufall } from "@/lib/zufall";
 
 // Das Spiel am Handy: Karte zum Spiel des Tischs, abhaken nach der Auflösung, den eigenen Stand melden.
@@ -38,7 +37,8 @@ export default function HandySpiel({
   anwesende: Anwesend[];
   zufall?: Zufall;
 }) {
-  const stand = tischStandLesen(anwesende);
+  // Stand des Tischs aus seiner letzten Nachricht (ADR 0006).
+  const [stand, setStand] = useState<TischStand | null>(null);
   // Erst nach dem Beitritt gerendert, also nur im Browser: localStorage ist da.
   const [handy, setHandy] = useState<HandyKarte | null>(handyKarteLaden);
   const [fehler, setFehler] = useState<string | null>(null);
@@ -54,22 +54,46 @@ export default function HandySpiel({
     if (handy) handyKarteSpeichern(handy);
   }, [handy]);
 
-  // Der Tisch zählt mit: einmal, sobald die Karte da ist, danach bei jeder Änderung.
+  // Beim Erscheinen und nach jedem Wiederbeitritt nach dem Stand fragen: Broadcast speichert nichts.
+  useEffect(() => {
+    function fragen() {
+      kanal
+        .senden({ art: "anfrage" })
+        .catch((e: Error) => setFehler(e.message));
+    }
+    const nachrichtAb = kanal.beiNachricht((nachricht) => {
+      if (nachricht.art === "tisch") setStand(nachricht.stand);
+    });
+    const verbundenAb = kanal.beiVerbunden(fragen);
+    fragen();
+    return () => {
+      nachrichtAb();
+      verbundenAb();
+    };
+  }, [kanal]);
+
+  // Der Tisch zählt mit: einmal, sobald die Karte da ist, danach bei jeder Änderung und auf Anfrage.
   const ich = karte && spielerStand(karte);
   const meldeSpiel = ich?.spiel;
   const meldeZahl = ich?.abgehakt ?? 0;
   const meldeBingo = ich?.bingo ?? false;
   useEffect(() => {
     if (meldeSpiel === undefined) return;
-    kanal
-      .anmelden({
-        schluessel: tabSchluessel(),
-        rolle: "spieler",
-        name,
-        stand: { spiel: meldeSpiel, abgehakt: meldeZahl, bingo: meldeBingo },
-      })
-      .then(() => setFehler(null))
-      .catch((e: Error) => setFehler(e.message));
+    const meinStand: SpielerStand = {
+      spiel: meldeSpiel,
+      abgehakt: meldeZahl,
+      bingo: meldeBingo,
+    };
+    function melden() {
+      kanal
+        .senden({ art: "spieler", name, stand: meinStand })
+        .then(() => setFehler(null))
+        .catch((e: Error) => setFehler(e.message));
+    }
+    melden();
+    return kanal.beiNachricht((nachricht) => {
+      if (nachricht.art === "anfrage") melden();
+    });
   }, [kanal, name, meldeSpiel, meldeZahl, meldeBingo]);
 
   const linie = karte && bingoLinie(karte.karte);

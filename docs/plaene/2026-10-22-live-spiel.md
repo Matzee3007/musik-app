@@ -7,6 +7,11 @@ tags: [plan, phase-3, supabase, realtime, handy, bingo]
 
 # Plan: Live-Spiel
 
+> [!note] Spielstand-Teil ersetzt
+> Der Spielstand über Presence (ADR 0005) scheiterte am Presence-Limit von Supabase. Er läuft jetzt über Broadcast
+> nach [[2026-10-22-spielstand-broadcast|Plan D: Spielstand über Broadcast]] ([[0006-spielstand-ueber-broadcast|ADR
+> 0006]]). Der Rest dieses Plans gilt weiter.
+
 **Ziel:** Im Raum spielt jeder Spieler auf dem eigenen Handy mit Karte und Notizfläche, der Tisch gibt Runde und
 Auflösung vor, zeigt statt der Karte die Spieler mit ihrer Zahl abgehakter Felder und bei Bingo die Namen.
 

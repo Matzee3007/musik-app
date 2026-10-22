@@ -1,15 +1,9 @@
-import type { SpielerStand, TischStand } from "@/lib/raum/stand";
+import type { SpielerStaende } from "@/lib/raum/stand";
 
 // Ein Gerät im Raum laut Presence. schluessel ist die Kennung des Tabs, zugleich der Presence-Schlüssel.
-// stand fehlt, solange das Gerät noch keinen gemeldet hat.
 export type Anwesend =
-  | { schluessel: string; rolle: "tisch"; stand?: TischStand }
-  | {
-      schluessel: string;
-      rolle: "spieler";
-      name: string;
-      stand?: SpielerStand;
-    };
+  | { schluessel: string; rolle: "tisch" }
+  | { schluessel: string; rolle: "spieler"; name: string };
 
 const NAME_MAX = 20;
 
@@ -44,6 +38,7 @@ export function tischDa(anwesende: readonly Anwesend[]): boolean {
 export function spielerleiste(
   bekannt: readonly string[],
   anwesende: readonly Anwesend[],
+  staende: SpielerStaende,
   spiel: string | null,
 ): { name: string; verbunden: boolean; abgehakt: number | null }[] {
   const verbunden = anwesende.flatMap((a) =>
@@ -54,11 +49,10 @@ export function spielerleiste(
     (name, i) => !bekannt.includes(name) && verbunden.indexOf(name) === i,
   );
   function abgehakt(name: string): number | null {
-    for (const a of anwesende) {
-      if (a.rolle === "spieler" && a.name === name && a.stand?.spiel === spiel)
-        return a.stand.abgehakt;
-    }
-    return null;
+    const stand = staende[name];
+    return verbunden.includes(name) && stand?.spiel === spiel
+      ? stand.abgehakt
+      : null;
   }
   return [
     ...bekannt.map((name) => ({

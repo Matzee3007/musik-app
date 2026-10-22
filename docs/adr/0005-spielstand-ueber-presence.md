@@ -1,11 +1,15 @@
 ---
 titel: "ADR 0005: Spielstand über Presence statt Broadcast"
-status: akzeptiert
+status: ersetzt
 erstellt: 2026-10-22
 tags: [adr, architektur, supabase, realtime, mehrspieler]
 ---
 
 # ADR (Architecture Decision Record) 0005: Spielstand über Presence statt Broadcast
+
+> [!warning] Ersetzt durch [[0006-spielstand-ueber-broadcast|ADR 0006]]
+> Supabase erlaubt je Gerät nur 5 Presence-Änderungen in 30 Sekunden und schließt beim sechsten den Kanal. Der Tisch
+> flog so spätestens in Runde 2 aus dem Raum. Die Aussage „weit unter dem Limit“ unten war nicht nachgeschlagen.
 
 ## Kontext
 

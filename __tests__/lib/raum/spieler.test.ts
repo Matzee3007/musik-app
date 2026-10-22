@@ -32,25 +32,21 @@ test("tischDa erkennt den Tisch unter den Anwesenden", () => {
 
 test("spielerleiste graut bekannte Spieler aus, die nicht verbunden sind, und hängt neue an", () => {
   const ben = { schluessel: "s3", rolle: "spieler", name: "Ben" } as const;
-  expect(spielerleiste(["Anna", "Cem"], [tisch, ben, anna], null)).toEqual([
+  expect(spielerleiste(["Anna", "Cem"], [tisch, ben, anna], {}, null)).toEqual([
     { name: "Anna", verbunden: true, abgehakt: null },
     { name: "Cem", verbunden: false, abgehakt: null },
     { name: "Ben", verbunden: true, abgehakt: null },
   ]);
 });
 
-test("spielerleiste zeigt die Zahl abgehakter Felder nur für das laufende Spiel", () => {
-  const annaMitStand = {
-    ...anna,
-    stand: { spiel: "s1", abgehakt: 3, bingo: false },
+test("spielerleiste zeigt die Zahl abgehakter Felder nur für das laufende Spiel und nur verbunden", () => {
+  const ben = { schluessel: "s3", rolle: "spieler", name: "Ben" } as const;
+  const staende = {
+    Anna: { spiel: "s1", abgehakt: 3, bingo: false },
+    Ben: { spiel: "alt", abgehakt: 9, bingo: false },
+    Cem: { spiel: "s1", abgehakt: 4, bingo: false },
   };
-  const ben = {
-    schluessel: "s3",
-    rolle: "spieler",
-    name: "Ben",
-    stand: { spiel: "alt", abgehakt: 9, bingo: false },
-  } as const;
-  expect(spielerleiste(["Cem"], [tisch, annaMitStand, ben], "s1")).toEqual([
+  expect(spielerleiste(["Cem"], [tisch, anna, ben], staende, "s1")).toEqual([
     { name: "Cem", verbunden: false, abgehakt: null },
     { name: "Anna", verbunden: true, abgehakt: 3 },
     { name: "Ben", verbunden: true, abgehakt: null },

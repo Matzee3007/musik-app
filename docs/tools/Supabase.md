@@ -32,9 +32,12 @@ Nur für Realtime, ohne Tabellen. Jeder Raum ist ein Kanal `raum:<Code>`, auf de
 - **Kanal (Channel):** ein benannter Treffpunkt in Realtime. Öffentliche Kanäle kann jeder betreten, der den Namen
   kennt, private verlangen Regeln in der Datenbank.
 - **Presence:** Jedes Gerät meldet sich im Kanal an (`track`), alle sehen, wer gerade verbunden ist. Verliert ein
-  Gerät die Verbindung, verschwindet sein Eintrag. Ein weiteres `track()` ersetzt den eigenen Eintrag, darüber läuft
-  der Spielstand ([[0005-spielstand-ueber-presence|ADR 0005]]).
-- **Broadcast:** eine Nachricht an alle im Kanal, wird nicht gespeichert, z. B. „Raum geschlossen“.
+  Gerät die Verbindung, verschwindet sein Eintrag. Ein weiteres `track()` ersetzt den eigenen Eintrag. **Limit:**
+  je Gerät 5 Presence-Änderungen in 30 Sekunden, beim sechsten schließt Supabase den Kanal. Deshalb nur für
+  Anwesenheit, nicht für den Spielstand ([[0006-spielstand-ueber-broadcast|ADR 0006]]).
+- **Broadcast:** eine Nachricht an alle im Kanal, wird nicht gespeichert, z. B. „Raum geschlossen“ oder der
+  Spielstand. Der Absender bekommt seine eigene Nachricht nicht zurück. Limit des Projekts: 100 Nachrichten je
+  Sekunde.
 
 ## Wie haben wir es eingerichtet?
 
@@ -63,9 +66,11 @@ Client für die ganze App).
 1. Der Tisch öffnet den Kanal `raum:ABCD` und meldet sich per Presence als Tisch an.
 2. Ein Handy öffnet denselben Kanal, sieht per Presence den Tisch und meldet sich mit Namen an.
 3. Der Tisch sieht die Presence-Änderung und zeigt den Namen in der Spielerleiste.
-4. Im Spiel meldet der Tisch bei jeder Runde und Auflösung seinen Stand mit einem neuen `track()`, die Handys lesen
-   ihn aus seinem Eintrag. Jedes Handy meldet so die Zahl seiner abgehakten Felder und Bingo.
-5. „Raum schließen“ schickt per Broadcast `geschlossen`, alle Handys zeigen „Raum geschlossen“.
+4. Im Spiel schickt der Tisch bei jeder Runde und Auflösung seinen Stand per Broadcast (`tisch`), jedes Handy so
+   die Zahl seiner abgehakten Felder und Bingo (`spieler`).
+5. Wer neu dazukommt, neu lädt oder nach einer Unterbrechung wieder verbunden ist, schickt `anfrage`. Der Tisch
+   antwortet mit `tisch`, jedes Handy mit `spieler`. So holt jedes Gerät nach, was es verpasst hat.
+6. „Raum schließen“ schickt per Broadcast `geschlossen`, alle Handys zeigen „Raum geschlossen“.
 
 ## Alle bisher benutzten Befehle
 
@@ -82,3 +87,9 @@ bash scripts/supabase-einrichten.sh            # Einrichtung (eigenes Terminal)
   `lib/raum/kanal.ts` merkt sich den angemeldeten Eintrag und ruft bei jedem `SUBSCRIBED` erneut `track()` auf (das
   Muster aus den Supabase-Beispielen). Nachgestellt mit Playwright (`e2e/wiederkommen.spec.ts`, Handy offline und
   wieder online).
+- **`Client presence rate limit exceeded`, danach `phx_close`** (2026-10-22, Test mit echten Handys): In Runde 2 ließ
+  sich am Handy kein Feld mehr abhaken. Ursache: Der Tisch meldete jeden Schritt (Spielstart, Runde, Auflösung) mit
+  `track()`, Supabase erlaubt je Gerät nur 5 Presence-Änderungen in 30 Sekunden und schließt beim sechsten den Kanal
+  ([Supabase: ClientPresenceRateLimitReached](https://supabase.com/docs/guides/troubleshooting/realtime-client-presence-rate-limit-reached)).
+  Gefunden per WebSocket-Mitschnitt. Lösung: Spielstand per Broadcast mit Nachfragen, Presence nur einmal je Gerät
+  ([[0006-spielstand-ueber-broadcast|ADR 0006]]). Prüfen: `npx playwright test e2e/zwei-runden.spec.ts`.

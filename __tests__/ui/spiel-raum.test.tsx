@@ -8,7 +8,7 @@ import {
 } from "@testing-library/react";
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
-import type { Anwesend } from "@/lib/raum/spieler";
+import type { RaumNachricht } from "@/lib/raum/kanal";
 import type { TischStand } from "@/lib/raum/stand";
 import { SONGLISTE } from "@/lib/songliste";
 import type { Abspieler } from "@/lib/spotify/player";
@@ -49,10 +49,9 @@ function spielen(
   return { raum, onStand, stand, unmount };
 }
 
-function mitBingo(name: string, spiel: string): Anwesend {
+function mitBingo(name: string, spiel: string): RaumNachricht {
   return {
-    schluessel: name,
-    rolle: "spieler",
+    art: "spieler",
     name,
     stand: { spiel, abgehakt: 5, bingo: true },
   };
@@ -83,14 +82,14 @@ test("Rad drehen und Lösung anzeigen melden den Stand", () => {
 
 test("Bingo eines Spielers zeigt Bingo! Anna", () => {
   const { raum, stand } = spielen();
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", stand().spiel)]));
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", stand().spiel)));
   expect(screen.getByRole("heading", { name: "Bingo! Anna" })).toBeDefined();
   expect(stand().bingo).toEqual(["Anna"]);
 });
 
 test("Bingo aus einem anderen Spiel zählt nicht", () => {
   const { raum, stand } = spielen();
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", "altes-spiel")]));
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", "altes-spiel")));
   expect(screen.queryByRole("heading", { name: /Bingo/ })).toBeNull();
   expect(stand().bingo).toEqual([]);
 });
@@ -98,10 +97,8 @@ test("Bingo aus einem anderen Spiel zählt nicht", () => {
 test("Bingo zweier Spieler", () => {
   const { raum, stand } = spielen();
   const spiel = stand().spiel;
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", spiel)]));
-  act(() =>
-    raum.anwesendeSetzen([mitBingo("Anna", spiel), mitBingo("Ben", spiel)]),
-  );
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", spiel)));
+  act(() => raum.nachrichtSchicken(mitBingo("Ben", spiel)));
   expect(
     screen.getByRole("heading", { name: "Bingo! Anna, Ben" }),
   ).toBeDefined();
@@ -109,7 +106,7 @@ test("Bingo zweier Spieler", () => {
 
 test("Bingo bleibt, wenn der Spieler geht", () => {
   const { raum, stand } = spielen();
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", stand().spiel)]));
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", stand().spiel)));
   act(() => raum.anwesendeSetzen([]));
   expect(screen.getByRole("heading", { name: "Bingo! Anna" })).toBeDefined();
 });
@@ -117,7 +114,7 @@ test("Bingo bleibt, wenn der Spieler geht", () => {
 test("Neues Spiel bekommt eine neue Kennung und leert Bingo", () => {
   const { raum, stand } = spielen();
   const erstes = stand().spiel;
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", erstes)]));
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", erstes)));
   klick("Neues Spiel");
   expect(stand().spiel).not.toBe(erstes);
   expect(stand().bingo).toEqual([]);
@@ -136,7 +133,7 @@ test("Bingo im Raum hält die Musik an", () => {
   const { raum, stand } = spielen(abspieler);
   drehen("Rad drehen");
   expect(abspieler.abspielen).toHaveBeenCalled();
-  act(() => raum.anwesendeSetzen([mitBingo("Anna", stand().spiel)]));
+  act(() => raum.nachrichtSchicken(mitBingo("Anna", stand().spiel)));
   expect(abspieler.pausieren).toHaveBeenCalled();
 });
 
