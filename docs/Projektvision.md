@@ -194,8 +194,9 @@ Handys `127.0.0.1` nicht erreichen und Spotify außerhalb davon HTTPS verlangt.
   Vorschau-Deployments der PRs laufen nur mit der Demo, weil Spotify nur genau eingetragene Adressen erlaubt.
 - **Tests:** Playwright ab Plan B, vorerst nur lokal (`npm run e2e`) gegen das Supabase-Projekt, mit zwei Browsern
   (Tisch und Handy) im Demo-Raum. In die CI kommt er mit einem GitHub-Secret in Phase 4.
-- **Live-Spiel (2026-10-22, Plan C):** Der Spielstand läuft über Presence statt Broadcast
-  ([[0005-spielstand-ueber-presence|ADR 0005]]). Nach einem Bingo darf in derselben Runde noch abhaken, wer in ihr
+- **Live-Spiel (2026-10-22, Plan C und D):** Der Spielstand läuft über Broadcast mit Nachfragen, Presence zeigt nur,
+  wer da ist ([[0006-spielstand-ueber-broadcast|ADR 0006]], ersetzt
+  [[0005-spielstand-ueber-presence|ADR 0005]] wegen des Presence-Limits von Supabase). Nach einem Bingo darf in derselben Runde noch abhaken, wer in ihr
   noch nicht abgehakt hat, danach ist kein Zurücknehmen mehr möglich. Lädt der Tisch neu, ist das Spiel weg, der Raum
   bleibt (Weitermachen in Phase 4). Ohne Supabase bleibt das Spiel auf einem Gerät mit Karte am Tisch.
 - **Fertig, wenn:** Der Laptop öffnet die Vercel-Adresse als Tisch mit Spotify, zwei echte Handys treten per QR-Code
