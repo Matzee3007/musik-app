@@ -15,14 +15,18 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm test"
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test",
+    "e2e": "playwright test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "next": "16.4.2",
+    "qrcode.react": "4.2.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",

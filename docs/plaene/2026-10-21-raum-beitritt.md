@@ -86,7 +86,8 @@ Vier Stufen, `ENV_DATEI=.env.local` eingeschaltet:
    `env_schreiben` beide.
 3. Realtime → Settings: „Allow public access“ ist an. Den genauen Weg beim Schreiben in der Supabase-Doku prüfen.
 4. Vercel: `https://vercel.com/matzee3007-s-projects/musik-bingo/settings/environment-variables`, beide Variablen für
-   Production und Preview, dann „Redeploy“ der Production.
+   Production und Preview. Kein „Redeploy“ (geändert 2026-10-22): Production nutzt Supabase erst nach dem Merge,
+   und der baut neu.
 
 Prüfen: `bash -n scripts/supabase-einrichten.sh`, Stufen statisch nachverfolgen (Skill, Schritt 4).
 
@@ -263,12 +264,17 @@ git commit -m "Remember room on table and phone"
 
 ### Aufgabe 5: Raum-Kanal über Supabase Realtime
 
-Kein Unit-Test: Die einzige Nahtstelle ist Supabase selbst. Abgedeckt durch den Playwright-Test in Aufgabe 8, die
-Ansichten testen gegen den Nachbau.
+Unit-Test gegen einen nachgebauten Supabase-Client (geändert 2026-10-22 auf Wunsch des Entwicklers, vorher nur
+Playwright): `raumKanalUeber(client)` bekommt den Client übergeben, `supabaseRaumKanal` nutzt den echten. Der Test
+prüft unsere Übersetzung (Kanalname, Presence-Schlüssel, Anwesende ohne `presence_ref`, Broadcast-Ereignis, Fehler
+beim Abonnieren), nicht Supabase selbst. Das zeigt weiter der Playwright-Test in Aufgabe 8. Die Ansichten testen gegen
+den Nachbau `nachgebauterRaum()`.
 
 **Dateien:**
 - Neu: `lib/raum/kanal.ts`
 - Neu: `__tests__/hilfen/raum-kanal.ts` (Nachbau für die Ansichten)
+- Test: `__tests__/lib/raum/kanal.test.ts` (6 Tests: verbinden, verbinden scheitert mit „Keine Verbindung zum Raum.“,
+  beiAnwesenden, anmelden, senden/beiNachricht, trennen)
 
 **Schnittstellen:**
 - Nutzt: `supabaseClient()` (Aufgabe 1), `Anwesend` (Aufgabe 3)
@@ -294,7 +300,9 @@ export const supabaseRaumKanal: KanalOeffnen;
 - Nachbau: `nachgebauterRaum()` liefert `{ oeffnen: KanalOeffnen; anwesendeSetzen(a: Anwesend[]): void;
   nachrichtSchicken(n: RaumNachricht): void; gesendet: RaumNachricht[]; angemeldet: Anwesend[] }`.
 
-- [ ] **Schritt 1: `lib/raum/kanal.ts` umsetzen**
+- [ ] **Schritt 1: `lib/raum/kanal.ts` testgetrieben umsetzen, je Test rot, dann grün**
+
+`npx vitest run __tests__/lib/raum/kanal.test.ts`
 
 Kanal `raum:<Code>` mit `config: { presence: { key: schluessel } }`. Rückrufe für `presence`/`sync` und
 `broadcast`/`nachricht` vor `subscribe()` anmelden. Anwesende aus `presenceState()`: je Schlüssel der erste Eintrag.
@@ -305,7 +313,7 @@ Kanal `raum:<Code>` mit `config: { presence: { key: schluessel } }`. Rückrufe f
 
 ```bash
 npm run check
-git add lib/raum/kanal.ts __tests__/hilfen/raum-kanal.ts
+git add lib/raum/kanal.ts __tests__/lib/raum/kanal.test.ts __tests__/hilfen/raum-kanal.ts
 git commit -m "Add room channel over Supabase Realtime"
 ```
 
@@ -314,7 +322,10 @@ git commit -m "Add room channel over Supabase Realtime"
 **Dateien:**
 - Neu: `app/ui/raum-kopf.tsx`
 - Ändern: `app/ui/start.tsx`, `package.json` und `package-lock.json` (`qrcode.react`)
-- Test: `__tests__/ui/raum-kopf.test.tsx`, Ändern: `__tests__/ui/start.test.tsx`
+- Test: `__tests__/ui/raum-kopf.test.tsx`, Ändern: `__tests__/ui/start.test.tsx`, `__tests__/page.test.tsx` (Nachbau
+  von `next/navigation`, ohne Supabase)
+- Ergänzt 2026-10-22: `verbinden()` abonniert nur beim ersten Aufruf (React ruft Effekte im Strict Mode doppelt auf,
+  Supabase erlaubt nur ein `subscribe()` je Kanal), Test in `__tests__/lib/raum/kanal.test.ts`
 
 **Schnittstellen:**
 - Nutzt: Aufgaben 2 bis 5
