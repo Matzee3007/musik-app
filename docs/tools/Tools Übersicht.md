@@ -27,10 +27,10 @@ alle benutzten Befehle, Fehler.
 | [[Spotify Web API]] | 2026-10-19 | Anmeldung des DJs, seine Playlists und ihre Songs, Abspielen über das Web Playback SDK |
 | [[MusicBrainz]] | 2026-10-19 | Erscheinungsjahr eines Songs über den ISRC |
 | [[projects/musik-app/docs/tools/Vercel\|Vercel]] | 2026-10-20 | bringt die App ins Internet, `musik-bingo.vercel.app` und eine Vorschau je PR |
+| [[projects/musik-app/docs/tools/Supabase\|Supabase]] | 2026-10-22 | Realtime-Kanäle für die Räume: wer ist da, Nachrichten an alle |
 
 ## Geplant
 
 | Werkzeug | Phase | Wofür in einem Satz |
 |---|---|---|
-| Supabase | 3 | Datenbank und Live-Abgleich zwischen den Geräten |
 | Playwright | später | Tests im echten Browser |
