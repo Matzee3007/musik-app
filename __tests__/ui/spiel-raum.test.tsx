@@ -13,7 +13,10 @@ import type { TischStand } from "@/lib/raum/stand";
 import { SONGLISTE } from "@/lib/songliste";
 import type { Abspieler } from "@/lib/spotify/player";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 function klick(name: string) {
   fireEvent.click(screen.getByRole("button", { name }));
@@ -26,20 +29,24 @@ function drehen(knopf: string) {
 }
 
 // Zufall 0: Das Rad wählt immer Titel.
-function spielen(abspieler?: Abspieler) {
+function spielen(
+  abspieler?: Abspieler,
+  onJahrKorrigiert?: (songId: string, jahr: number) => void,
+) {
   const raum = nachgebauterRaum();
-  const onStand = vi.fn<(stand: TischStand) => void>();
-  render(
+  const onStand = vi.fn<(stand: TischStand | null) => void>();
+  const { unmount } = render(
     <SpielAnsicht
       songs={SONGLISTE.slice(0, 5)}
       zufall={() => 0}
       sofort
       abspieler={abspieler}
+      onJahrKorrigiert={onJahrKorrigiert}
       raum={{ kanal: raum.oeffnen("ABCD", "t"), onStand }}
     />,
   );
-  const stand = () => onStand.mock.lastCall![0];
-  return { raum, onStand, stand };
+  const stand = () => onStand.mock.lastCall![0]!;
+  return { raum, onStand, stand, unmount };
 }
 
 function mitBingo(name: string, spiel: string): Anwesend {
@@ -131,4 +138,30 @@ test("Bingo im Raum hält die Musik an", () => {
   expect(abspieler.abspielen).toHaveBeenCalled();
   act(() => raum.anwesendeSetzen([mitBingo("Anna", stand().spiel)]));
   expect(abspieler.pausieren).toHaveBeenCalled();
+});
+
+test("verschwindet die Spielansicht, meldet sie kein Spiel", () => {
+  const { onStand, unmount } = spielen();
+  unmount();
+  expect(onStand.mock.lastCall![0]).toBeNull();
+});
+
+test("eine Jahreskorrektur meldet keinen neuen Stand", () => {
+  const { onStand } = spielen(undefined, () => {});
+  drehen("Rad drehen");
+  klick("Lösung anzeigen");
+  const vorher = onStand.mock.calls.length;
+  klick("Jahr korrigieren");
+  fireEvent.change(screen.getByLabelText("Jahr"), {
+    target: { value: "1980" },
+  });
+  klick("Speichern");
+  expect(onStand.mock.calls.length).toBe(vorher);
+});
+
+test("ohne Raum braucht das Spiel keine Kennung, auch ohne crypto.randomUUID", () => {
+  // Browser bieten randomUUID nur auf sicheren Seiten, nicht unter http im Heimnetz.
+  vi.stubGlobal("crypto", {});
+  render(<SpielAnsicht songs={SONGLISTE.slice(0, 5)} sofort />);
+  expect(screen.getByRole("region", { name: "Karte" })).toBeDefined();
 });

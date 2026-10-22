@@ -44,7 +44,8 @@ export default function SpielAnsicht({
   // Nur mit Spotify: Eine Korrektur aus der Auflösung wird dauerhaft gespeichert.
   onJahrKorrigiert?: (songId: string, jahr: number) => void;
   // Im Raum spielen die Spieler am Handy: Der Tisch meldet seinen Stand, statt der Karte zählen ihre Bingos.
-  raum?: { kanal: RaumKanal; onStand: (stand: TischStand) => void };
+  // onStand(null): Die Spielansicht ist weg, die Handys warten auf das nächste Spiel.
+  raum?: { kanal: RaumKanal; onStand: (stand: TischStand | null) => void };
 }) {
   // Startet sonst erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
   // Browser verschiedene Karten (Hydration-Fehler). Mit sofort erscheint die Ansicht erst nach
@@ -55,7 +56,10 @@ export default function SpielAnsicht({
     sofort ? spielStarten(songs, zufall) : null,
   );
   // Nur im Raum: Kennung des Spiels und die Spieler mit Bingo darin.
-  const [spielId, setSpielId] = useState(() => crypto.randomUUID());
+  // Ohne Raum keine Kennung: randomUUID gibt es nur auf sicheren Seiten, nicht unter http im Heimnetz.
+  const [spielId, setSpielId] = useState(() =>
+    raum ? crypto.randomUUID() : "",
+  );
   const [bingo, setBingo] = useState<string[]>([]);
 
   const [musik, setMusik] = useState<{
@@ -201,14 +205,31 @@ export default function SpielAnsicht({
     );
   }, [kanal, spielId]);
 
-  const standMelden = useEffectEvent((stand: TischStand) =>
+  const standMelden = useEffectEvent((stand: TischStand | null) =>
     raum?.onStand(stand),
   );
+  // Zuletzt gemeldeter Stand als Text, damit nur Änderungen, die die Handys sehen, eine Meldung auslösen.
+  const gemeldet = useRef<string | null>(null);
   const runde = spiel?.runde ?? null;
   const gestartet = spiel !== null;
   useEffect(() => {
-    if (gestartet) standMelden(tischStand(spielId, runde, bingo));
+    if (!gestartet) return;
+    // Eine Jahreskorrektur ändert die Runde, aber nicht, was die Handys sehen: dann nichts melden.
+    const stand = tischStand(spielId, runde, bingo);
+    const text = JSON.stringify(stand);
+    if (text === gemeldet.current) return;
+    gemeldet.current = text;
+    standMelden(stand);
   }, [gestartet, spielId, runde, bingo]);
+
+  // Verschwindet die Spielansicht (z. B. Spotify-Anmeldung abgelaufen), gibt es für die Handys kein Spiel mehr.
+  useEffect(
+    () => () => {
+      gemeldet.current = null;
+      standMelden(null);
+    },
+    [],
+  );
 
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
   const imRaumBingo = bingo.length > 0;
@@ -221,7 +242,7 @@ export default function SpielAnsicht({
 
   function neuesSpiel() {
     setSpiel(spielStarten(spielSongs, zufall));
-    setSpielId(crypto.randomUUID());
+    if (raum) setSpielId(crypto.randomUUID());
     setBingo([]);
   }
 
