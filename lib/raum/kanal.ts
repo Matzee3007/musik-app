@@ -1,10 +1,40 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Anwesend } from "@/lib/raum/spieler";
-import { istSpielerStand, istTischStand } from "@/lib/raum/stand";
+import {
+  istSpielerStand,
+  istTischStand,
+  type SpielerStand,
+  type TischStand,
+} from "@/lib/raum/stand";
 import { supabaseClient } from "@/lib/supabase";
 
-// Runde und Auflösung laufen über Presence (ADR 0005), Broadcast nur für "geschlossen".
-export type RaumNachricht = { art: "geschlossen" };
+// Der Spielstand läuft über Broadcast (ADR 0006). Wer neu dazukommt oder wieder verbunden ist, schickt
+// "anfrage", und jedes Gerät antwortet mit seinem Stand.
+export type RaumNachricht =
+  | { art: "geschlossen" }
+  | { art: "anfrage" }
+  | { art: "tisch"; stand: TischStand | null }
+  | { art: "spieler"; name: string; stand: SpielerStand };
+
+// Nachrichten kommen von anderen Geräten, etwa einer älteren Fassung der App: Form prüfen.
+export function raumNachrichtLesen(wert: unknown): RaumNachricht | null {
+  const n = wert as Record<string, unknown> | null;
+  switch (n?.art) {
+    case "geschlossen":
+    case "anfrage":
+      return { art: n.art };
+    case "tisch":
+      return n.stand === null || istTischStand(n.stand)
+        ? { art: "tisch", stand: n.stand }
+        : null;
+    case "spieler":
+      return typeof n.name === "string" && istSpielerStand(n.stand)
+        ? { art: "spieler", name: n.name, stand: n.stand }
+        : null;
+    default:
+      return null;
+  }
+}
 
 export interface RaumKanal {
   // Abonniert den Kanal und liefert die Anwesenden nach dem ersten Presence-Abgleich ("sync").
@@ -15,6 +45,8 @@ export interface RaumKanal {
   beiAnwesenden(rueckruf: (anwesende: Anwesend[]) => void): () => void;
   senden(nachricht: RaumNachricht): Promise<void>;
   beiNachricht(rueckruf: (nachricht: RaumNachricht) => void): () => void;
+  // Jedes SUBSCRIBED, auch nach einem Wiederbeitritt, liefert eine Funktion zum Abmelden des Rückrufs.
+  beiVerbunden(rueckruf: () => void): () => void;
   trennen(): void;
 }
 
@@ -72,8 +104,11 @@ export function raumKanalUeber(
     });
     const nachrichtRueckrufe = new Set<(nachricht: RaumNachricht) => void>();
     kanal.on("broadcast", { event: NACHRICHT }, ({ payload }) => {
-      for (const rueckruf of nachrichtRueckrufe) rueckruf(payload);
+      const nachricht = raumNachrichtLesen(payload);
+      if (!nachricht) return;
+      for (const rueckruf of nachrichtRueckrufe) rueckruf(nachricht);
     });
+    const verbundenRueckrufe = new Set<() => void>();
 
     // React ruft Effekte im Strict Mode doppelt auf, Supabase erlaubt aber nur ein subscribe() je Kanal.
     let abonniert = false;
@@ -91,6 +126,9 @@ export function raumKanalUeber(
             // Scheitert das, hilft der nächste Wiederbeitritt; der Name bleibt bis dahin grau.
             if (status === "SUBSCRIBED" && angemeldetAls) {
               kanal.track(angemeldetAls).catch(() => {});
+            }
+            if (status === "SUBSCRIBED") {
+              for (const rueckruf of verbundenRueckrufe) rueckruf();
             }
             if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
               abgelehnt(new Error("Keine Verbindung zum Raum."));
@@ -123,6 +161,10 @@ export function raumKanalUeber(
       beiNachricht(rueckruf) {
         nachrichtRueckrufe.add(rueckruf);
         return () => nachrichtRueckrufe.delete(rueckruf);
+      },
+      beiVerbunden(rueckruf) {
+        verbundenRueckrufe.add(rueckruf);
+        return () => verbundenRueckrufe.delete(rueckruf);
       },
       trennen() {
         offen.delete(code);

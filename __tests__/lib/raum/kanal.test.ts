@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { raumKanalUeber } from "@/lib/raum/kanal";
+import { raumKanalUeber, raumNachrichtLesen } from "@/lib/raum/kanal";
 
 type Rueckruf = (daten: { payload?: unknown }) => void;
 
@@ -306,4 +306,64 @@ test("ein Stand in falscher Form wird nicht übernommen", async () => {
     { schluessel: "t", rolle: "tisch" },
     { schluessel: "a", rolle: "spieler", name: "Anna" },
   ]);
+});
+
+test("raumNachrichtLesen nimmt gültige Nachrichten und verwirft andere", () => {
+  const tisch = { art: "tisch", stand: { spiel: "x", runde: null, bingo: [] } };
+  const spieler = {
+    art: "spieler",
+    name: "Anna",
+    stand: { spiel: "x", abgehakt: 1, bingo: false },
+  };
+  for (const gut of [
+    { art: "geschlossen" },
+    { art: "anfrage" },
+    { art: "tisch", stand: null },
+    tisch,
+    spieler,
+  ]) {
+    expect(raumNachrichtLesen(gut)).toEqual(gut);
+  }
+  for (const schlecht of [
+    null,
+    "anfrage",
+    { art: "unbekannt" },
+    { art: "tisch", stand: { spiel: "x" } },
+    { art: "tisch" },
+    { ...spieler, name: 3 },
+    { ...spieler, stand: { spiel: "x" } },
+  ]) {
+    expect(raumNachrichtLesen(schlecht)).toBeNull();
+  }
+});
+
+test("beiNachricht übergeht Nachrichten in falscher Form", () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  const empfangen: unknown[] = [];
+  kanal.beiNachricht((n) => empfangen.push(n));
+  kanal.verbinden();
+
+  welt.ausloesen("broadcast", "nachricht", {
+    art: "tisch",
+    stand: { spiel: "x" },
+  });
+  welt.ausloesen("broadcast", "nachricht", { art: "anfrage" });
+  expect(empfangen).toEqual([{ art: "anfrage" }]);
+});
+
+test("beiVerbunden meldet jedes SUBSCRIBED, bis abgemeldet", () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  let verbunden = 0;
+  const abmelden = kanal.beiVerbunden(() => verbunden++);
+  // CHANNEL_ERROR lehnt verbinden() ab, das zählt hier nicht.
+  kanal.verbinden().catch(() => {});
+
+  welt.status("SUBSCRIBED");
+  welt.status("CHANNEL_ERROR");
+  welt.status("SUBSCRIBED");
+  abmelden();
+  welt.status("SUBSCRIBED");
+  expect(verbunden).toBe(2);
 });
