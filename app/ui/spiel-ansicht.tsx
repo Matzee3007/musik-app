@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
 import {
@@ -11,6 +11,8 @@ import {
   type Ausschnitt,
 } from "@/lib/ausschnitt";
 import { hatBingo } from "@/lib/bingo";
+import type { RaumKanal } from "@/lib/raum/kanal";
+import { bingoNamen, tischStand, type TischStand } from "@/lib/raum/stand";
 import type { Song } from "@/lib/song";
 import {
   abhakenZuruecknehmen,
@@ -31,6 +33,7 @@ export default function SpielAnsicht({
   sofort = false,
   abspieler,
   onJahrKorrigiert,
+  raum,
 }: {
   songs: readonly Song[];
   zufall?: Zufall;
@@ -40,6 +43,8 @@ export default function SpielAnsicht({
   abspieler?: Abspieler;
   // Nur mit Spotify: Eine Korrektur aus der Auflösung wird dauerhaft gespeichert.
   onJahrKorrigiert?: (songId: string, jahr: number) => void;
+  // Im Raum spielen die Spieler am Handy: Der Tisch meldet seinen Stand, statt der Karte zählen ihre Bingos.
+  raum?: { kanal: RaumKanal; onStand: (stand: TischStand) => void };
 }) {
   // Startet sonst erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
   // Browser verschiedene Karten (Hydration-Fehler). Mit sofort erscheint die Ansicht erst nach
@@ -49,6 +54,9 @@ export default function SpielAnsicht({
   const [spiel, setSpiel] = useState<Spiel | null>(() =>
     sofort ? spielStarten(songs, zufall) : null,
   );
+  // Nur im Raum: Kennung des Spiels und die Spieler mit Bingo darin.
+  const [spielId, setSpielId] = useState(() => crypto.randomUUID());
+  const [bingo, setBingo] = useState<string[]>([]);
 
   const [musik, setMusik] = useState<{
     laeuft: boolean;
@@ -180,6 +188,43 @@ export default function SpielAnsicht({
     });
   }
 
+  const kanal = raum?.kanal;
+  useEffect(() => {
+    if (!kanal) return;
+    return kanal.beiAnwesenden((anwesende) =>
+      // Dieselbe Liste, wenn niemand dazukommt: Sonst meldete jeder Abgleich einen neuen Stand, und der
+      // löste wieder einen Abgleich aus.
+      setBingo((alt) => {
+        const neu = bingoNamen(alt, anwesende, spielId);
+        return neu.length === alt.length ? alt : neu;
+      }),
+    );
+  }, [kanal, spielId]);
+
+  const standMelden = useEffectEvent((stand: TischStand) =>
+    raum?.onStand(stand),
+  );
+  const runde = spiel?.runde ?? null;
+  const gestartet = spiel !== null;
+  useEffect(() => {
+    if (gestartet) standMelden(tischStand(spielId, runde, bingo));
+  }, [gestartet, spielId, runde, bingo]);
+
+  // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
+  const imRaumBingo = bingo.length > 0;
+  const beiBingoAnhalten = useEffectEvent(() => {
+    if (musik) musikAnhalten();
+  });
+  useEffect(() => {
+    if (imRaumBingo) beiBingoAnhalten();
+  }, [imRaumBingo]);
+
+  function neuesSpiel() {
+    setSpiel(spielStarten(spielSongs, zufall));
+    setSpielId(crypto.randomUUID());
+    setBingo([]);
+  }
+
   if (!spiel) {
     return (
       <button
@@ -192,15 +237,18 @@ export default function SpielAnsicht({
   }
 
   const spielfeld = (
-    <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
+    <div
+      className={`grid w-full max-w-5xl gap-8 ${raum ? "" : "md:grid-cols-2"}`}
+    >
       <Tisch
         runde={spiel.runde}
         stapelLeer={spiel.stapel.length === 0}
-        bingo={hatBingo(spiel.karte)}
+        bingo={raum ? imRaumBingo : hatBingo(spiel.karte)}
+        gewinner={raum ? bingo : undefined}
         onRadDrehen={radDrehen}
         onLoesungAnzeigen={loesungZeigen}
         onVonVorn={() => setSpiel(stapelNeuMischen(spiel, spielSongs, zufall))}
-        onNeuesSpiel={() => setSpiel(spielStarten(spielSongs, zufall))}
+        onNeuesSpiel={neuesSpiel}
         onRadSteht={songStarten}
         onJahrKorrigieren={onJahrKorrigiert && jahrKorrigiert}
         meldung={meldung}
@@ -210,18 +258,21 @@ export default function SpielAnsicht({
             : undefined
         }
       />
-      <KarteAnsicht
-        karte={spiel.karte}
-        onFeldKlick={(index) => {
-          if (!spiel.karte[index].abgehakt) {
-            const neu = feldAbhaken(spiel, index);
-            setSpiel(neu);
-            if (hatBingo(neu.karte)) musikAnhalten();
-          } else if (window.confirm("Abhaken zurücknehmen?")) {
-            setSpiel(abhakenZuruecknehmen(spiel, index));
-          }
-        }}
-      />
+      {/* Im Raum liegen die Karten auf den Handys. */}
+      {!raum && (
+        <KarteAnsicht
+          karte={spiel.karte}
+          onFeldKlick={(index) => {
+            if (!spiel.karte[index].abgehakt) {
+              const neu = feldAbhaken(spiel, index);
+              setSpiel(neu);
+              if (hatBingo(neu.karte)) musikAnhalten();
+            } else if (window.confirm("Abhaken zurücknehmen?")) {
+              setSpiel(abhakenZuruecknehmen(spiel, index));
+            }
+          }}
+        />
+      )}
     </div>
   );
 

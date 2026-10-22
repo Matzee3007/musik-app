@@ -10,6 +10,7 @@ import {
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import RaumKopf from "@/app/ui/raum-kopf";
 import { tischRaumLaden, tischRaumSpeichern } from "@/lib/raum/speicher";
+import type { TischStand } from "@/lib/raum/stand";
 
 afterEach(() => {
   cleanup();
@@ -17,16 +18,24 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-function kopf(raum = nachgebauterRaum(), onGeschlossen = () => {}) {
+function kopf(
+  raum = nachgebauterRaum(),
+  onGeschlossen = () => {},
+  stand: TischStand | null = null,
+) {
   tischRaumSpeichern({ code: "ABCD", bekannt: [] });
-  render(
+  const zeigen = (stand: TischStand | null) => (
     <RaumKopf
       code="ABCD"
       kanal={raum.oeffnen("ABCD", "t")}
+      stand={stand}
       onGeschlossen={onGeschlossen}
-    />,
+    />
   );
-  return raum;
+  const { rerender } = render(zeigen(stand));
+  return Object.assign(raum, {
+    neuerStand: (stand: TischStand) => rerender(zeigen(stand)),
+  });
 }
 
 test("zeigt Code und QR-Code mit dem Link zum Raum", () => {
@@ -87,4 +96,40 @@ test("ein Abgleich nach dem Schließen speichert den Raum nicht wieder", async (
     ]),
   );
   expect(tischRaumLaden()).toBeNull();
+});
+
+const stand: TischStand = { spiel: "s1", runde: null, bingo: [] };
+
+test("meldet den Tisch mit Stand an, auch nach jeder Änderung", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  await waitFor(() =>
+    expect(raum.angemeldet.at(-1)).toEqual({
+      schluessel: expect.any(String),
+      rolle: "tisch",
+      stand,
+    }),
+  );
+  const runde1: TischStand = {
+    ...stand,
+    runde: { nummer: 1, kategorie: "jahr", aufgeloest: false },
+  };
+  raum.neuerStand(runde1);
+  await waitFor(() =>
+    expect(raum.angemeldet.at(-1)).toMatchObject({ stand: runde1 }),
+  );
+});
+
+test("Leiste zeigt die Zahl abgehakter Felder", () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  act(() =>
+    raum.anwesendeSetzen([
+      {
+        schluessel: "s1",
+        rolle: "spieler",
+        name: "Anna",
+        stand: { spiel: "s1", abgehakt: 7, bingo: false },
+      },
+    ]),
+  );
+  expect(screen.getByText("Anna 7")).toBeDefined();
 });

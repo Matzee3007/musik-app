@@ -7,6 +7,7 @@ import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
 import { neuerRaumCode, raumCodeLesen } from "@/lib/raum/code";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
+import type { TischStand } from "@/lib/raum/stand";
 import {
   tabSchluessel,
   tischRaumLaden,
@@ -45,6 +46,8 @@ export default function Start({
     undefined,
   );
   const [codeEingabe, setCodeEingabe] = useState("");
+  // Spielstand für die Handys, die Spielansicht meldet ihn, der Raum-Kopf trägt ihn in Presence.
+  const [stand, setStand] = useState<TischStand | null>(null);
   const id = clientId();
   const supabase = supabaseKonfiguriert();
 
@@ -129,7 +132,11 @@ export default function Start({
         <RaumKopf
           code={tischRaum.code}
           kanal={kanal}
-          onGeschlossen={() => setTischRaum(null)}
+          stand={stand}
+          onGeschlossen={() => {
+            setTischRaum(null);
+            setStand(null);
+          }}
         />
       ) : (
         raumWahl
@@ -140,13 +147,15 @@ export default function Start({
 
   // Der Ablauf ohne Raum: Anmelden, Playlists, Vorbereiten, Demo.
   function ablauf() {
-    if (demo) return <SpielAnsicht songs={SONGLISTE} />;
+    const raum = kanal ? { kanal, onStand: setStand } : undefined;
+    if (demo) return <SpielAnsicht songs={SONGLISTE} raum={raum} />;
     if (token && gewaehlt) {
       return (
         <VorbereitenAnsicht
           playlist={gewaehlt}
           accessToken={token.accessToken}
           onZurueck={() => setGewaehlt(null)}
+          raum={raum}
         />
       );
     }

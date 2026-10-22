@@ -10,22 +10,27 @@ import {
   tischRaumSpeichern,
 } from "@/lib/raum/speicher";
 import { spielerleiste, type Anwesend } from "@/lib/raum/spieler";
+import type { TischStand } from "@/lib/raum/stand";
 
 // Der Raum am Tisch: Code und QR-Code zum Beitreten, die Spieler und "Raum schließen".
 export default function RaumKopf({
   code,
   kanal,
+  stand,
   onGeschlossen,
 }: {
   code: string;
   kanal: RaumKanal;
+  // Spielstand des Tischs, den die Handys über Presence lesen (ADR 0005). null: noch kein Spiel.
+  stand: TischStand | null;
   onGeschlossen: () => void;
 }) {
-  const [stand, setStand] = useState<{
+  const [liste, setListe] = useState<{
     bekannt: string[];
     anwesende: Anwesend[];
   }>(() => ({ bekannt: tischRaumLaden()?.bekannt ?? [], anwesende: [] }));
   const [fehler, setFehler] = useState<string | null>(null);
+  const [verbunden, setVerbunden] = useState(false);
 
   useEffect(() => {
     // Wer einmal da war, bleibt in der Leiste, auch nach dem Neuladen des Tischs.
@@ -37,18 +42,30 @@ export default function RaumKopf({
         (s) => s.name,
       );
       tischRaumSpeichern({ code, bekannt });
-      setStand({ bekannt, anwesende });
+      setListe({ bekannt, anwesende });
     }
     const abmelden = kanal.beiAnwesenden(neueAnwesende);
     kanal
       .verbinden()
       .then((anwesende) => {
         neueAnwesende(anwesende);
-        return kanal.anmelden({ schluessel: tabSchluessel(), rolle: "tisch" });
+        setVerbunden(true);
       })
       .catch((e: Error) => setFehler(e.message));
     return abmelden;
   }, [code, kanal]);
+
+  // Nach dem Verbinden und bei jedem neuen Stand: Ein weiteres anmelden ersetzt den Eintrag.
+  useEffect(() => {
+    if (!verbunden) return;
+    kanal
+      .anmelden({
+        schluessel: tabSchluessel(),
+        rolle: "tisch",
+        ...(stand && { stand }),
+      })
+      .catch((e: Error) => setFehler(e.message));
+  }, [kanal, verbunden, stand]);
 
   async function schliessen() {
     // Erst wenn alle Bescheid wissen, sonst warten Handys in einem Raum ohne Tisch.
@@ -74,13 +91,17 @@ export default function RaumKopf({
       />
       {fehler && <p className="text-sm">{fehler}</p>}
       <ul className="flex flex-wrap justify-center gap-2">
-        {spielerleiste(stand.bekannt, stand.anwesende, null).map((s) => (
+        {spielerleiste(
+          liste.bekannt,
+          liste.anwesende,
+          stand?.spiel ?? null,
+        ).map((s) => (
           <li
             key={s.name}
             aria-disabled={s.verbunden ? undefined : true}
             className="rounded-full border px-3 py-1 aria-disabled:opacity-40"
           >
-            {s.name}
+            {s.abgehakt === null ? s.name : `${s.name} ${s.abgehakt}`}
           </li>
         ))}
       </ul>

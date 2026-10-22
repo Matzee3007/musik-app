@@ -11,6 +11,7 @@ export default function Tisch({
   runde,
   stapelLeer,
   bingo,
+  gewinner,
   onRadDrehen,
   onLoesungAnzeigen,
   onVonVorn,
@@ -23,6 +24,8 @@ export default function Tisch({
   runde: Runde | null;
   stapelLeer: boolean;
   bingo: boolean;
+  // Nur im Raum: die Spieler mit Bingo.
+  gewinner?: string[];
   onRadDrehen: () => void;
   onLoesungAnzeigen: () => void;
   onVonVorn: () => void;
@@ -71,7 +74,9 @@ export default function Tisch({
 
       {bingo && (
         <>
-          <h2 className="text-5xl font-bold">Bingo!</h2>
+          <h2 className="text-5xl font-bold">
+            {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
+          </h2>
           <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
         </>
       )}

@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { antwort } from "../hilfen/antwort";
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import Start from "@/app/ui/start";
@@ -236,4 +242,21 @@ test("ohne Supabase sind Raum-Knöpfe aus, die Demo geht", async () => {
   ).toBeDefined();
   fireEvent.click(screen.getByRole("button", { name: "Demo starten" }));
   expect(screen.getByRole("button", { name: "Spiel starten" })).toBeDefined();
+});
+
+test("Demo im Raum zeigt den Tisch ohne Karte und meldet den Stand", async () => {
+  mitSupabase();
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  const raum = nachgebauterRaum();
+  render(<Start kanalOeffnen={raum.oeffnen} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Demo starten" }));
+  fireEvent.click(screen.getByRole("button", { name: "Spiel starten" }));
+  expect(screen.getByRole("region", { name: "Tisch" })).toBeDefined();
+  expect(screen.queryByRole("region", { name: "Karte" })).toBeNull();
+  await waitFor(() =>
+    expect(raum.angemeldet.at(-1)).toMatchObject({
+      rolle: "tisch",
+      stand: { runde: null, bingo: [] },
+    }),
+  );
 });

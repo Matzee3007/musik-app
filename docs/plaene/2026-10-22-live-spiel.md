@@ -390,7 +390,7 @@ Verhalten von `SpielAnsicht` mit `raum`:
   `gewinner={bingo}`. Die eigene Karte von `Spiel` bleibt unbenutzt.
 - Ohne `raum` alles wie bisher (Tisch und Karte auf einem Gerät).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 `spiel-raum.test.tsx` mit `nachgebauterRaum()`, `SONGLISTE` und festem `zufall`:
 „im Raum steht keine Karte am Tisch“, „Rad drehen und Lösung anzeigen melden den Stand“ (`onStand` zuletzt mit
@@ -401,19 +401,19 @@ Verhalten von `SpielAnsicht` mit `raum`:
 `rerender` mit neuem Stand), „Leiste zeigt die Zahl abgehakter Felder“ (Anna mit Stand `s1`, 7 → „Anna 7“).
 `start.test.tsx`: „Demo im Raum zeigt den Tisch ohne Karte“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/spiel-raum.test.tsx __tests__/ui/raum-kopf.test.tsx __tests__/ui/start.test.tsx`
 
-- [ ] **Schritt 3: `spiel-ansicht.tsx`, `tisch.tsx`, `raum-kopf.tsx`, `vorbereiten-ansicht.tsx` und `start.tsx`
+- [x] **Schritt 3: `spiel-ansicht.tsx`, `tisch.tsx`, `raum-kopf.tsx`, `vorbereiten-ansicht.tsx` und `start.tsx`
   anpassen**
 
-- [ ] **Schritt 4: Alle Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Alle Tests laufen lassen, sie müssen bestehen**
 
 `npm test`
 Erwartet: alle PASS, auch `spiel-ansicht`, `spiel-musik` und `spiel-aufloesung` (Spiel auf einem Gerät unverändert)
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
