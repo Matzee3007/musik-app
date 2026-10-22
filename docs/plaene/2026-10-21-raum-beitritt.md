@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Raum und Beitritt"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-21
 tags: [plan, phase-3, supabase, realtime, raum, playwright]
 ---
@@ -72,11 +72,11 @@ des Entwicklers am 2026-10-21.
 - Liefert: `supabaseKonfiguriert(): boolean` (beide Variablen gesetzt, bei jedem Aufruf gelesen wie
   `lib/spotify/konfig.ts`), `supabaseClient(): SupabaseClient` (einmal erzeugt, danach derselbe)
 
-- [ ] **Schritt 1: Paket installieren**
+- [x] **Schritt 1: Paket installieren**
 
 `npm install -E @supabase/supabase-js@2.117.2`
 
-- [ ] **Schritt 2: Assistent mit dem Skill `assistent-bauen` schreiben**
+- [x] **Schritt 2: Assistent mit dem Skill `assistent-bauen` schreiben**
 
 Vier Stufen, `ENV_DATEI=.env.local` eingeschaltet:
 1. Projekt anlegen: `https://supabase.com/dashboard/new`, Name `musik-bingo`, Region Frankfurt, Datenbank-Passwort
@@ -91,11 +91,11 @@ Vier Stufen, `ENV_DATEI=.env.local` eingeschaltet:
 
 Prüfen: `bash -n scripts/supabase-einrichten.sh`, Stufen statisch nachverfolgen (Skill, Schritt 4).
 
-- [ ] **Schritt 3 (Entwickler, eigenes Terminal): Assistent ausführen**
+- [x] **Schritt 3 (Entwickler, eigenes Terminal): Assistent ausführen**
 
 `bash scripts/supabase-einrichten.sh` im Projektordner. Erwartet: `.env.local` enthält beide Variablen.
 
-- [ ] **Schritt 4: Tests für `supabaseKonfiguriert` schreiben, rot sehen, umsetzen, grün sehen**
+- [x] **Schritt 4: Tests für `supabaseKonfiguriert` schreiben, rot sehen, umsetzen, grün sehen**
 
 ```ts
 test("ohne URL oder Schlüssel ist Supabase nicht eingerichtet", () => {
@@ -108,7 +108,7 @@ test("mit URL und Schlüssel ist Supabase eingerichtet", () => { /* beide gesetz
 
 `npx vitest run __tests__/lib/supabase.test.ts`
 
-- [ ] **Schritt 5: Tool-Notiz, prüfen, committen**
+- [x] **Schritt 5: Tool-Notiz, prüfen, committen**
 
 `docs/tools/Supabase.md` im Aufbau der Übersicht: Projekt, Schlüsselarten (publishable/secret, anon läuft Ende 2026
 aus), Realtime mit Broadcast und Presence, „Allow public access“, der Assistent als Einrichtungsweg.
@@ -130,7 +130,7 @@ git commit -m "Set up Supabase project and client"
 - Liefert: `RAUM_BUCHSTABEN: string`, `neuerRaumCode(zufall: Zufall = Math.random): string`,
   `raumCodeLesen(eingabe: string): string | null`
 
-- [ ] **Schritt 1: Tests schreiben**
+- [x] **Schritt 1: Tests schreiben**
 
 ```ts
 test("neuerRaumCode nimmt vier Buchstaben aus dem Alphabet", () => {
@@ -149,16 +149,16 @@ test("raumCodeLesen lehnt falsche Länge und verwechselbare Buchstaben ab", () =
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/code.test.ts`
 Erwartet: FAIL, `lib/raum/code` gibt es nicht.
 
-- [ ] **Schritt 3: `lib/raum/code.ts` umsetzen**
+- [x] **Schritt 3: `lib/raum/code.ts` umsetzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -182,7 +182,7 @@ git commit -m "Add room codes"
   - `spielerleiste(bekannt: readonly string[], anwesende: readonly Anwesend[]): { name: string; verbunden: boolean }[]`:
     alle bekannten in ihrer Reihenfolge, dahinter neue verbundene Spieler; der Tisch ist kein Eintrag
 
-- [ ] **Schritt 1: Tests schreiben**
+- [x] **Schritt 1: Tests schreiben**
 
 ```ts
 const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
@@ -210,15 +210,15 @@ test("spielerleiste graut bekannte Spieler aus, die nicht verbunden sind, und h�
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/spieler.test.ts`
 
-- [ ] **Schritt 3: `lib/raum/spieler.ts` umsetzen**
+- [x] **Schritt 3: `lib/raum/spieler.ts` umsetzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -240,21 +240,21 @@ git commit -m "Add player rules for rooms"
     denselben Code), `handyRaumSpeichern(raum: HandyRaum): void`, `handyRaumLoeschen(): void`
   - `tabSchluessel(): string` (beim ersten Aufruf `crypto.randomUUID()` in `sessionStorage`, danach derselbe)
 
-- [ ] **Schritt 1: Tests schreiben**
+- [x] **Schritt 1: Tests schreiben**
 
 Testnamen: „Tischraum übersteht Speichern und Laden“, „ohne gespeicherten Raum liefert das Laden null“,
 „Handyraum gilt nur für denselben Code“, „tabSchluessel bleibt im selben Tab gleich“ (zweimal aufrufen, gleich),
 „ein neuer Tab bekommt einen neuen Schlüssel“ (`sessionStorage.clear()` dazwischen, verschieden).
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/speicher.test.ts`
 
-- [ ] **Schritt 3: `lib/raum/speicher.ts` umsetzen**
+- [x] **Schritt 3: `lib/raum/speicher.ts` umsetzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -300,16 +300,16 @@ export const supabaseRaumKanal: KanalOeffnen;
 - Nachbau: `nachgebauterRaum()` liefert `{ oeffnen: KanalOeffnen; anwesendeSetzen(a: Anwesend[]): void;
   nachrichtSchicken(n: RaumNachricht): void; gesendet: RaumNachricht[]; angemeldet: Anwesend[] }`.
 
-- [ ] **Schritt 1: `lib/raum/kanal.ts` testgetrieben umsetzen, je Test rot, dann grün**
+- [x] **Schritt 1: `lib/raum/kanal.ts` testgetrieben umsetzen, je Test rot, dann grün**
 
 `npx vitest run __tests__/lib/raum/kanal.test.ts`
 
 Kanal `raum:<Code>` mit `config: { presence: { key: schluessel } }`. Rückrufe für `presence`/`sync` und
 `broadcast`/`nachricht` vor `subscribe()` anmelden. Anwesende aus `presenceState()`: je Schlüssel der erste Eintrag.
 
-- [ ] **Schritt 2: Nachbau `__tests__/hilfen/raum-kanal.ts` schreiben**
+- [x] **Schritt 2: Nachbau `__tests__/hilfen/raum-kanal.ts` schreiben**
 
-- [ ] **Schritt 3: Prüfen und committen**
+- [x] **Schritt 3: Prüfen und committen**
 
 ```bash
 npm run check
@@ -343,11 +343,11 @@ Demo ohne Raum.“, und der bisherige Ablauf steht wie heute darunter.
 neue Namen in `bekannt`. „Raum schließen“ sendet `{ art: "geschlossen" }`, trennt, löscht den Tischraum und ruft
 `onGeschlossen`.
 
-- [ ] **Schritt 1: Paket installieren**
+- [x] **Schritt 1: Paket installieren**
 
 `npm install -E qrcode.react@4.2.0`
 
-- [ ] **Schritt 2: Tests schreiben**
+- [x] **Schritt 2: Tests schreiben**
 
 `raum-kopf.test.tsx`: „zeigt Code und QR-Code mit dem Link zum Raum“ (`ABCD`, ein `svg` mit dem Titel
 `QR-Code für Raum ABCD`, gesetzt über die Prop `title`), „meldet den Tisch im Raum an“ (`angemeldet` enthält `rolle: "tisch"`),
@@ -361,15 +361,15 @@ sichtbar), „Beitreten öffnet den Raum mit dem gelesenen Code“ (`ab cd` eint
 sind Raum-Knöpfe aus, die Demo geht“. Bestehende Tests, die „Demo starten“ sofort erwarten, gehen jetzt über
 „Raum eröffnen“ oder laufen ohne Supabase.
 
-- [ ] **Schritt 3: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 3: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/raum-kopf.test.tsx __tests__/ui/start.test.tsx`
 
-- [ ] **Schritt 4: `app/ui/raum-kopf.tsx` und `app/ui/start.tsx` umsetzen**
+- [x] **Schritt 4: `app/ui/raum-kopf.tsx` und `app/ui/start.tsx` umsetzen**
 
-- [ ] **Schritt 5: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 6: Prüfen und committen**
+- [x] **Schritt 6: Prüfen und committen**
 
 ```bash
 npm run check
@@ -396,22 +396,22 @@ git commit -m "Open and close a room at the table"
     Spiel …“ (Plan C zeigt hier die Karte)
   - nach der Nachricht `geschlossen`: „Raum geschlossen“, Handyraum gelöscht
 
-- [ ] **Schritt 1: Tests schreiben**
+- [x] **Schritt 1: Tests schreiben**
 
 Testnamen: „Name eingeben und beitreten meldet den Spieler an“ (`angemeldet` enthält `name: "Anna"`, Handyraum
 gespeichert), „Name schon vergeben“, „Raum-Code klein in der Adresse wird gelesen“ (`code="abcd"` → „Raum ABCD“,
 Prüf-Schwerpunkt 2), „ohne Tisch im Kanal: Kein Tisch mit dem Code“ (Prüf-Schwerpunkt 3), „gespeicherter Raum tritt
 nach dem Neuladen ohne Namensabfrage bei“ (Prüf-Schwerpunkt 1), „Raum geschlossen“, „ungültiger Code“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/handy-raum.test.tsx`
 
-- [ ] **Schritt 3: `app/ui/handy-raum.tsx` und `app/raum/[code]/page.tsx` umsetzen**
+- [x] **Schritt 3: `app/ui/handy-raum.tsx` und `app/raum/[code]/page.tsx` umsetzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -431,26 +431,26 @@ git commit -m "Join a room from the phone"
 - Neu: `docs/tools/Playwright.md`, Ändern: `docs/tools/Tools Übersicht.md`, `CLAUDE.md` (Befehl `npm run e2e`,
   Repo-Struktur mit `lib/raum/`, `e2e/`, `scripts/`)
 
-- [ ] **Schritt 1: Installieren**
+- [x] **Schritt 1: Installieren**
 
 ```bash
 npm install -D -E @playwright/test@1.63.0
 npx playwright install chromium
 ```
 
-- [ ] **Schritt 2: `e2e/raum.spec.ts` schreiben**
+- [x] **Schritt 2: `e2e/raum.spec.ts` schreiben**
 
 Ein Test mit zwei Browser-Kontexten gegen das echte Supabase-Projekt: Tisch „Raum eröffnen“ → Code lesen → Handy 1
 öffnet `/raum/<Code>`, Name „Anna“ → Tisch zeigt „Anna“ → Handy 2 versucht „anna“ → „Name schon vergeben“ → Handy 1
 lädt neu → „Du bist im Raum … als Anna.“ ohne Namensabfrage → Tisch „Raum schließen“ → Handy 1 zeigt „Raum
 geschlossen“.
 
-- [ ] **Schritt 3: Laufen lassen, er muss bestehen**
+- [x] **Schritt 3: Laufen lassen, er muss bestehen**
 
 `npm run e2e`
 Erwartet: `1 passed`
 
-- [ ] **Schritt 4: Doku, prüfen, committen, PR**
+- [x] **Schritt 4: Doku, prüfen, committen, PR**
 
 ```bash
 npm run check
@@ -460,7 +460,7 @@ git commit -m "Add Playwright test for joining a room"
 
 PR öffnen, `gh pr checks <nr>` grün.
 
-- [ ] **Schritt 5 (Entwickler): mit echten Handys unter der Production prüfen**
+- [x] **Schritt 5 (Entwickler): mit echten Handys unter der Production prüfen**
 
 Nach dem Merge am Laptop `https://musik-bingo.vercel.app` → „Raum eröffnen“. Zwei Handys scannen den QR-Code und
 treten mit Namen bei, beide stehen in der Leiste. Ein Handy sperrt den Bildschirm eine Minute (Name grau, danach

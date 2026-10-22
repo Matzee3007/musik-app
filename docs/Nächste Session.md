@@ -1,21 +1,23 @@
 ---
 titel: Nächste Session
 status: aktiv
-erstellt: 2026-10-21
+erstellt: 2026-10-22
 tags: [session, übergabe]
 ---
 
 # Nächste Session
 
-Stand vom 2026-10-21 (Abend). Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
-[[Lernjournal Phase 3 - Mehrspieler]].
+Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
+[[Lernjournal Phase 3 - Raum und Beitritt]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #26)
+- **Branch:** `main` (nach dem Merge von PR #29)
 - **Offene PRs:** keine
-- **Nicht committet:** nichts. `.env.local` mit der Spotify-Client-ID liegt nur lokal und ist von Git ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit Spotify (Plan A fertig, PR #24)
+- **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
+  ignoriert.
+- **Production:** `https://musik-bingo.vercel.app` mit Spotify und Räumen (Plan B fertig, PR #27 und #28), mit zwei
+  echten Handys geprüft
 
 ## Vor dem Start
 
@@ -30,33 +32,35 @@ Stand vom 2026-10-21 (Abend). Gehört zu [[projects/musik-app/docs/Projektvision
 
 ## Womit es weitergeht
 
-**Phase 3 – Mehrspieler, Plan B (Raum und Beitritt):** [[2026-10-21-raum-beitritt|Plan B]] ist geschrieben und
-gemergt (PR #25), aber **noch nicht freigegeben**. Ablauf:
+**Phase 3 – Mehrspieler, Plan C (Live-Spiel):** Karte, Runden und Bingo am Handy, der Tisch schickt Runde und
+Auflösung über den Raum-Kanal (`RaumNachricht` in `lib/raum/kanal.ts` ist dafür vorbereitet). Die Abgrenzung steht in
+der [[projects/musik-app/docs/Projektvision|Projektvision]] („Geklärte Fragen“ zu Phase 3). Ablauf:
 
-1. Plan B lesen und freigeben. Zu prüfen: Mit Supabase zeigt die Startseite zuerst „Raum eröffnen“ und „Raum
-   beitreten“, Anmeldung und Demo kommen erst danach; ohne Supabase sind die Raum-Knöpfe aus und die Demo läuft ohne
-   Raum.
-2. Neuer Branch `feature/raum-beitritt`, dann Aufgabe 1: Claude schreibt mit `assistent-bauen` das Skript
-   `scripts/supabase-einrichten.sh`, du führst es **in einem eigenen Terminal-Fenster** aus (Supabase-Konto nötig).
-3. Aufgaben 2 bis 8, am Ende Test mit zwei echten Handys unter Production.
+1. Plan C mit `plan-schreiben` schreiben, offene Fragen zum Spiel am Handy mit dem Entwickler klären, freigeben.
+2. Plan C umsetzen, am Ende ein Spiel mit echten Handys unter Production. Danach ist Phase 3 abgeschlossen.
+
+**Beim Planen von Plan C mitdenken** (bewusst gelassene Review-Funde, Details im Journal):
+
+- Ein Handy, das „Raum geschlossen“ verpasst (Bildschirm gesperrt), bleibt im Zustand „drin“ (Fund 5, PR #28). Mit
+  Runden vom Tisch fällt das eher auf, z. B. wenn das Handy beim Zurückkommen keinen Tisch mehr sieht.
+- Ein Name wird frei, solange sein Spieler nicht verbunden ist (Fund 6, PR #27). Mit Karten pro Spieler könnte das
+  zählen.
 
 **Nebenbei vorgemerkt, kein Muss:**
 
-- **Funde aus dem Review von PR #24**, nicht umgesetzt: kollaborative Playlist, der du nur folgst, könnte trotz Filter
-  403 liefern (dann kommt die Meldung); bei 401 nutzt „Nochmal versuchen“ das alte Token; scheitert `GET /v1/me`,
-  bleibt die Playlist-Liste leer. Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
-- **Ladezeit beim Vorbereiten** (81 Songs gut anderthalb Minuten wegen 1 Anfrage pro Sekunde bei MusicBrainz): Ideen
-  für später sind Jahre in Supabase (ohnehin in Phase 4 vorgesehen) oder Vorbereiten im Hintergrund.
-- **Test am Laptop mit echtem Player:** Spiel starten, WLAN aus, Pause, „Weiterhören“ und „Nochmal“. Erscheint
-  „Spotify reagiert nicht.“, oder bleibt das SDK hängen? (offene Frage im Journal)
-- **Aufräumen, wenn die Spielansicht für Plan C ohnehin umgebaut wird:** Fehler in `lib/spotify/player.ts` in
-  Meldungen übersetzen statt in der Ansicht, den Startzähler nur einmal führen (Funde #8, #9 aus PR #20).
+- **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
+  (Fund 7, PR #27, schon vor Plan B so). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
+- **Funde aus dem Review von PR #24** (kollaborative Playlists, 401 bei „Nochmal versuchen“, leere Liste bei
+  `GET /v1/me`): Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
+- **Ladezeit beim Vorbereiten** (81 Songs gut anderthalb Minuten): Jahre in Supabase (Phase 4) oder im Hintergrund.
+- **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
+- **Aufräumen bei Plan C:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen
+  (Funde #8, #9 aus PR #20).
 - **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
-- Punkte fürs Ecosystem (Zeile zu `curl` in der globalen `CLAUDE.md`, `receiving-code-review`) stehen in der
-  [[docs/Nächste Session|Übergabe des Ecosystems]].
+- Punkte fürs Ecosystem stehen in der [[docs/Nächste Session|Übergabe des Ecosystems]].
 
 ## Passende Skills
 
-- `assistent-bauen`: Supabase-Einrichtung in Aufgabe 1
-- `tdd`: Aufgaben 1 bis 7
-- `fertig-pruefen`: vor dem Merge von Plan B, danach der Agent `plan-pruefer`
+- `plan-schreiben`: Plan C in kleinen, prüfbaren Aufgaben
+- `tdd`: Spiellogik und Ansichten am Handy
+- `fertig-pruefen`: vor dem Merge, danach der Agent `plan-pruefer`
