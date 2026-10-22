@@ -111,7 +111,7 @@ Titel `#4FC3F7`, Interpret `#FF6FB5`, Jahrzehnt `#FF8C42`, Jahr `#5EE6A8`, Jahr 
   `haupt`: `bg-birne text-nacht`, `neben`: Rahmen `border-licht`, transparent. Beide `font-semibold`, deaktiviert
   `opacity-40`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 // __tests__/page.test.tsx: Erwartung anpassen
@@ -129,12 +129,12 @@ test("Knopf meldet Klick und ist deaktiviert ohne Klick", () => {
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/page.test.tsx __tests__/ui/knopf.test.tsx`
 Erwartet: FAIL, Überschrift „Musik-Bingo“ nicht gefunden, `app/ui/knopf` nicht vorhanden.
 
-- [ ] **Schritt 3: Umsetzen**
+- [x] **Schritt 3: Umsetzen**
   - `globals.css`: `:root`-Variablen und `prefers-color-scheme`-Block durch `@theme` mit den fünf Farben und
     `--font-schild: var(--font-bungee)`, `--font-sans: var(--font-barlow)` ersetzen; `body` in `bg-nacht text-licht`,
     `font-family` aus `body` entfernen (kommt über `font-sans`).
@@ -145,15 +145,15 @@ Erwartet: FAIL, Überschrift „Musik-Bingo“ nicht gefunden, `app/ui/knopf` ni
   - `kategorien.ts`: neue Farben aus der Tabelle oben.
   - `knopf.tsx` nach der Schnittstelle. Noch keine Ansicht umstellen, das machen die Teile 2 bis 4.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm run check`
 Erwartet: Exit-Code 0.
 
-- [ ] **Schritt 5: Screenshots ansehen** (Start, Tisch, Handy): dunkler Grund, Titel als gelbes Schild, Kategorien in
+- [x] **Schritt 5: Screenshots ansehen** (Start, Tisch, Handy): dunkler Grund, Titel als gelbes Schild, Kategorien in
   den neuen Farben. Alte schwarze Knöpfe sind auf dem dunklen Grund noch erwartet.
 
-- [ ] **Schritt 6: Committen, PR**
+- [x] **Schritt 6: Committen, PR**
 
 ```bash
 git add app/globals.css app/layout.tsx app/page.tsx app/callback/page.tsx lib/kategorien.ts app/ui/knopf.tsx \
