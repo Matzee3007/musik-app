@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Live-Spiel"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-22
 tags: [plan, phase-3, supabase, realtime, handy, bingo]
 ---

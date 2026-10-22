@@ -1,9 +1,9 @@
 ---
 titel: Lernjournal Phase 3 - Raum und Beitritt
-status: aktiv
+status: abgeschlossen
 phase: 3
 erstellt: 2026-10-22
-tags: [lernjournal, phase-3, supabase, realtime, presence, broadcast, playwright, tdd, code-review, fehler-diagnose]
+tags: [lernjournal, phase-3, supabase, realtime, presence, broadcast, playwright, playwright-agents, webkit, tdd, code-review, fehler-diagnose]
 ---
 
 # Lernjournal Phase 3: Raum und Beitritt
@@ -11,7 +11,8 @@ tags: [lernjournal, phase-3, supabase, realtime, presence, broadcast, playwright
 Fortsetzung von [[Lernjournal Phase 3 - Mehrspieler]]. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]].
 Plan B ([[2026-10-21-raum-beitritt|Raum und Beitritt]]) von der Freigabe bis zum Test mit echten Handys. Am
 Nachmittag Plan C ([[2026-10-22-live-spiel|Live-Spiel]]) und Plan D
-([[2026-10-22-spielstand-broadcast|Spielstand über Broadcast]]).
+([[2026-10-22-spielstand-broadcast|Spielstand über Broadcast]]), am Abend Spieler-Bots für Browser-Tests und der
+Abschluss von Phase 3.
 
 ## Erledigt
 
@@ -44,9 +45,26 @@ Nachmittag Plan C ([[2026-10-22-live-spiel|Live-Spiel]]) und Plan D
   Rot-Grün mit testweise eingebauter Sperre belegt, danach ERFÜLLT
 - [x] `/code-review` zu PR #30: 10 Funde, auf Wunsch alle angegangen. 8 behoben, Fund 6 teilweise (`karteNeu()`
   geteilt), Fund 2 bleibt nach Entscheidung des Entwicklers. PR #30 gemergt
-- [ ] Test mit echten Handys unter Production: In Runde 2 ließ sich kein Feld abhaken. Diagnose: Supabase-Limit für
-  Presence (siehe Fehler). Plan D (Spielstand über Broadcast) geschrieben, mit „ok“ bestätigt, noch nicht umgesetzt.
-  Regressionstest `e2e/zwei-runden.spec.ts` liegt rot auf dem Branch `fix/spielstand-broadcast` (ohne PR)
+- [x] Test mit echten Handys unter Production: In Runde 2 ließ sich kein Feld abhaken. Diagnose: Supabase-Limit für
+  Presence (siehe Fehler). Plan D (Spielstand über Broadcast) geschrieben und mit „ok“ bestätigt, der
+  Regressionstest `e2e/zwei-runden.spec.ts` lag rot auf dem Branch `fix/spielstand-broadcast`
+- [x] Plan D, Aufgaben 1 bis 4 testgetrieben: Nachrichten `anfrage`, `tisch`, `spieler` im Kanal mit Formprüfung
+  (`raumNachrichtLesen`), `beiVerbunden` für jedes `SUBSCRIBED`, Handy und Tisch über Nachrichten, Presence nur noch
+  einmal je Gerät. ADR 0006 ersetzt ADR 0005. `e2e/zwei-runden.spec.ts` grün, 4 von 4 Playwright-Tests grün
+- [x] `plan-pruefer` zu PR #32: ERFÜLLT. `/code-review`: 8 Funde, 2 behoben (der Tisch schickt nach einem
+  Wiederbeitritt seinen Stand neu, seine Fehlermeldung verschwindet nach erfolgreichem Senden), 6 begründet gelassen.
+  PR #32 gemergt
+- [x] Spieler-Bots (Wunsch des Entwicklers: eigene „Spieler“ als Agents): `Tisch` und `Spieler` in
+  `e2e/hilfen/raum.ts`, `e2e/spieleabend.spec.ts` spielt mit drei Spielern bis zum Bingo (Notizen, Zurücknehmen,
+  Neuladen, Beitritt mitten im Spiel, Verbindungsabbruch, neues Spiel, Raum schließen), zusätzlich im Projekt
+  `iphone` unter WebKit. Kein Fehler der App gefunden
+- [x] Playwright-Test-Agents (Planner, Generator, Healer) mit `init-agents` eingerichtet, im Katalog
+  [[projects/musik-app/docs/Agents|Agents]]. Noch nicht benutzt: Sie brauchen einen Neustart von Claude Code
+- [x] `/code-review` zu PR #33: 8 Funde, 5 behoben (Verbindungsabbruch per `routeWebSocket` in beiden Engines,
+  Kontexte schließen, Fehler ab dem ersten Laden, Bingo-Linien aus `lib/bingo.ts`, Warten auf die Leiste), 3 begründet
+  gelassen. 21 von 21 Läufen grün (`--repeat-each=3`). PR #33 gemergt
+- [x] Test mit echten Handys unter Production: hat geklappt (Rückmeldung des Entwicklers)
+- [x] Plan C und Plan D auf `status: abgeschlossen`, **Phase 3 abgeschlossen**
 
 ## Befehle: Supabase und Pakete
 
@@ -110,6 +128,24 @@ git push -u origin fix/spielstand-broadcast
 - `git push -u origin <branch>`: Branch ohne PR hochladen, damit der rote Regressionstest nicht verloren geht.
 - In Playwright: `page.on("websocket", (ws) => ws.on("framereceived", …))` liest die Nachrichten des Servers mit. Erst
   damit war die Ursache sichtbar.
+
+## Befehle: Plan D und Spieler-Bots
+
+```bash
+npx playwright init-agents --loop=claude
+npx playwright install webkit
+npx playwright test --repeat-each=3
+npx playwright test e2e/spieleabend.spec.ts --project=iphone
+gh pr checks 32 --watch --interval 20
+```
+
+- `npx playwright init-agents --loop=claude`: legt die drei Test-Agents in `.claude/agents/`, einen Seed-Test,
+  `specs/` und die `.mcp.json` für den MCP-Server von Playwright an. Nach jedem Update von Playwright neu ausführen.
+- `npx playwright install webkit`: lädt WebKit (~80 MB), die Engine von Safari, für das Projekt `iphone`.
+- `npx playwright test --repeat-each=3`: jeden Test dreimal. Bei Rad und Karten entscheidet der Zufall, ein einzelnes
+  Grün beweist wenig.
+- `npx playwright test <datei> --project=iphone`: nur ein Projekt aus `playwright.config.ts`.
+- `gh pr checks <nr> --watch --interval 20`: wartet auf die CI, im Hintergrund gestartet, während das Code-Review lief.
 
 ## Neu gelernt
 
@@ -187,6 +223,26 @@ Supabase erlaubt je Gerät nur 5 Presence-Änderungen in 30 Sekunden. In ADR 000
 nachzusehen. Der Nachbau in den Unit-Tests kennt kein Limit, der Playwright-Test endete nach einer Runde, so fiel es
 erst am echten Handy auf. Ein Test über mehrere Runden hätte es gefunden.
 
+### Broadcast mit Nachfragen statt Presence als Gedächtnis
+
+Broadcast speichert nichts: Wer gerade nicht verbunden ist, verpasst die Nachricht. Deshalb fragt jedes Gerät beim
+Erscheinen und nach jedem Wiederbeitritt (`SUBSCRIBED`) mit `anfrage` nach, und alle antworten mit ihrem Stand. Das
+Review fand die Lücke auf der anderen Seite: Auch der Tisch muss nach seinem Wiederbeitritt den eigenen Stand neu
+schicken, sonst blieb ein Handy, das in dieser Zeit gefragt hatte, ohne Antwort.
+
+### Offline ist nicht gleich offline
+
+`context.setOffline(true)` hält unter Chromium eine bestehende WebSocket-Verbindung nur an: Nach einer kurzen Pause
+kamen die Nachrichten nach 6 ms an, der Test prüfte also nicht das Nachholen. Unter WebKit trennt es die Verbindung gar
+nicht. Zuverlässig ist `page.routeWebSocket`: Playwright leitet die Verbindung zu Supabase durch und kann sie gezielt
+schließen. Gelernt mit einem kleinen Probetest, der nur misst.
+
+### Agents, die spielen, oder Agents, die Tests schreiben
+
+KI-Agents als Mitspieler wären langsam, teuer und spielten jedes Mal anders. Besser sind Bots im Testcode: Sie spielen
+nach festen Regeln (das Feld, das dem Bingo am nächsten ist), laufen in einer Minute und zeigen einen Fehler jedes Mal
+gleich. Die Playwright-Agents bedienen nur eine Seite und eignen sich für Einzelansichten und zum Reparieren von Tests.
+
 ### Eine Messung kann selbst den Fehler machen
 
 Die erste Debug-Ausgabe stand vor der Zeile, in der `handy` entsteht, und warf `Cannot access 'handy' before
@@ -262,8 +318,8 @@ fehlschlagende Zeile im Test zeigte, dass die Messung falsch war.
 - **Ursache:** Der Tisch meldete jeden Schritt (Spielstart, Runde, Auflösung) mit `track()`. Supabase erlaubt je
   Gerät 5 Presence-Änderungen in 30 Sekunden und schließt beim sechsten den Kanal. Der Tisch verschwand aus Presence,
   die Handys sahen keinen Stand und keine freien Felder mehr.
-- **Lösung:** offen, Plan D: Spielstand per Broadcast, Presence nur für Anwesenheit (ADR 0006 ersetzt 0005).
-- **Prüfen:** `npx playwright test e2e/zwei-runden.spec.ts` (heute 3 von 3 rot, nach Plan D grün).
+- **Lösung:** Plan D: Spielstand per Broadcast, Presence nur für Anwesenheit (ADR 0006 ersetzt 0005, PR #32).
+- **Prüfen:** `npx playwright test e2e/zwei-runden.spec.ts` (vorher 3 von 3 rot, nach Plan D grün).
 
 ### `Cannot access 'handy' before initialization`
 
@@ -286,6 +342,28 @@ fehlschlagende Zeile im Test zeigte, dass die Messung falsch war.
 - **Lösung:** Befehl abgebrochen, Test mit dem Edit-Werkzeug ergänzt.
 - **Prüfen:** Der Test lief danach rot wie erwartet.
 
+### `Vitest caught 1 unhandled error` mit `Error: Keine Verbindung zum Raum.`
+
+- **Wo:** neuer Test „beiVerbunden meldet jedes SUBSCRIBED“ in `__tests__/lib/raum/kanal.test.ts`
+- **Ursache:** Der Test löste `CHANNEL_ERROR` aus, dadurch wurde das Promise von `verbinden()` abgelehnt, und niemand
+  fing die Ablehnung auf. Alle Tests waren grün, Vitest meldete trotzdem einen Fehler.
+- **Lösung:** `kanal.verbinden().catch(() => {})` im Test.
+- **Prüfen:** `npx vitest run __tests__/lib/raum/kanal.test.ts` ohne „Errors“.
+
+### Spieleabend unter WebKit: `toHaveAttribute` läuft nach 90 Sekunden in den Timeout
+
+- **Wo:** Runde 4 von `e2e/spieleabend.spec.ts` im Projekt `iphone`
+- **Ursache:** `setOffline` trennt unter WebKit bestehende WebSockets nicht, der Tisch zeigte weiter „Ben 3“.
+- **Lösung:** `Spieler.trennen()` schließt die Verbindung über `page.routeWebSocket` (Fund 1 aus dem Review zu PR #33).
+- **Prüfen:** `npx playwright test e2e/spieleabend.spec.ts --project=iphone` grün.
+
+### `[warn] .mcp.json` (Prettier, zum dritten Mal)
+
+- **Wo:** `npm run check` nach `npx playwright init-agents`
+- **Ursache:** Die erzeugte `.mcp.json` ist nicht im Stil von Prettier, der Hook greift bei Dateien aus Shell-Befehlen
+  nicht (steht schon in der `CLAUDE.md`).
+- **Lösung:** `npx prettier --write .mcp.json`.
+- **Prüfen:** `npm run check >/dev/null 2>&1; echo $?` gibt `0` aus.
 
 ## Aus dem Chat
 
@@ -293,7 +371,11 @@ fehlschlagende Zeile im Test zeigte, dass die Messung falsch war.
 
 ## Offene Fragen
 
-- Wie oft reißt die Verbindung eines Handys im echten Spieleabend ab? Plan D holt Verpasstes über „anfrage“ nach.
+- Wie oft reißt die Verbindung eines Handys im echten Spieleabend ab? Plan D holt Verpasstes über „anfrage“ nach,
+  die Bots prüfen das mit `Spieler.trennen()`.
+- Bewusst gelassene Funde aus dem Review zu PR #32: Die erste Anfrage des Handys wird nicht wiederholt, wenn sie
+  scheitert; bei jeder Anfrage antworten alle Handys (bei 8 Spielern 8 Nachrichten, Limit 100 je Sekunde).
+- Die Playwright-Agents sind eingerichtet, aber noch nicht ausprobiert.
 - Fund 6 aus PR #27 bleibt: Ein Name wird frei, solange sein Spieler nicht verbunden ist.
 - Bewusst gelassene Review-Funde, die in Plan C wichtig werden könnten: Ein Handy, das „Raum geschlossen“ verpasst,
   bleibt im Zustand „drin“ (Fund 5 aus PR #28); ein Name wird frei, solange sein Spieler nicht verbunden ist (Fund 6
@@ -306,5 +388,7 @@ fehlschlagende Zeile im Test zeigte, dass die Messung falsch war.
 1. Plan C (Live-Spiel: Karte, Runden und Bingo am Handy) mit `plan-schreiben` schreiben und freigeben. (erledigt)
 2. Plan C umsetzen, am Ende ein Spiel mit echten Handys. (umgesetzt, Handy-Test zeigte den Presence-Fehler)
 3. Plan D (Spielstand über Broadcast) auf dem Branch `fix/spielstand-broadcast` umsetzen, `e2e/zwei-runden.spec.ts`
-   grün machen.
-4. Spiel mit echten Handys über mindestens 6 Runden, danach Phase 3 abschließen.
+   grün machen. (erledigt, PR #32)
+4. Spiel mit echten Handys über mindestens 6 Runden, danach Phase 3 abschließen. (erledigt)
+5. Phase 4 – Eigene Ideen: vorher fragen, ob etwas anderes ansteht, dann `docs/Tools für später.md` prüfen und den
+   Plan mit `plan-schreiben` schreiben.

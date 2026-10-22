@@ -106,8 +106,8 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
   Dazu ein grafisches Rad (abgeschlossen 2026-10-19, PRs #10 und #11)
 - [x] **Phase 2 – Spotify:** Anmeldung des DJs (OAuth), eigene Playlist laden, abspielen (Ausschnitt oder ganz),
   Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch (abgeschlossen 2026-10-20, PRs #13 bis #15)
-- [ ] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
-  Realtime, Deployment auf Vercel
+- [x] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
+  Realtime, Deployment auf Vercel. Dazu Spieler-Bots für Browser-Tests (abgeschlossen 2026-10-22, PRs #21 bis #33)
 - [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy.
   Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar,
   Kategorie und Lösung auch auf dem Handy, Playwright in der CI, Tisch macht nach dem Neuladen im Spiel weiter
