@@ -28,9 +28,9 @@ alle benutzten Befehle, Fehler.
 | [[MusicBrainz]] | 2026-10-19 | Erscheinungsjahr eines Songs über den ISRC |
 | [[projects/musik-app/docs/tools/Vercel\|Vercel]] | 2026-10-20 | bringt die App ins Internet, `musik-bingo.vercel.app` und eine Vorschau je PR |
 | [[projects/musik-app/docs/tools/Supabase\|Supabase]] | 2026-10-22 | Realtime-Kanäle für die Räume: wer ist da, Nachrichten an alle |
+| [[Playwright]] | 2026-10-22 | Tests im echten Browser: Tisch und Handys über das echte Supabase |
 
 ## Geplant
 
 | Werkzeug | Phase | Wofür in einem Satz |
 |---|---|---|
-| Playwright | später | Tests im echten Browser |
