@@ -76,19 +76,12 @@ export default function Tisch({
         </p>
       )}
 
-      {bingo && (
-        <>
-          <h2 className="font-schild text-6xl text-akzent">
-            {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
-          </h2>
-          <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
-        </>
-      )}
-
-      {/* Breit: Rad links, Moderation rechts. Das Rad bleibt immer eingehängt: Ein neu eingehängtes Rad hat keinen
-          alten Winkel, der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie. */}
-      <div className="flex w-full flex-col items-center gap-10 @2xl:flex-row @2xl:justify-center">
-        <div className="relative w-96 max-w-full shrink-0 rounded-full p-1.5 ring-2 ring-akzent/60">
+      {/* Breit: Rad links, rechts der Abschnitt zur Runde. Das Rad bleibt immer eingehängt: Ein neu eingehängtes Rad
+          hat keinen alten Winkel, der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie.
+          Seine Größe richtet sich nach der Höhe des Fensters und der Breite des Tischs (cqw), abzüglich Abstand und
+          Abschnitt (24rem): So scrollt auf dem Laptop nichts, und eingeklappt wächst das Rad mit. */}
+      <div className="flex w-full flex-col items-center gap-8 @2xl:flex-row @2xl:justify-center">
+        <div className="relative w-80 max-w-full shrink-0 rounded-full p-1.5 ring-2 ring-akzent/60 @2xl:w-[min(40rem,68vh,calc(100cqw-24rem))]">
           <RadAnsicht
             runde={runde}
             onStillstand={() => {
@@ -98,20 +91,32 @@ export default function Tisch({
           />
         </div>
 
-        <div className="flex max-w-md flex-col items-center gap-4">
+        <section
+          aria-label="Runde"
+          className="flex w-full max-w-md flex-col items-center gap-3 rounded-xl bg-flaeche p-6 @2xl:w-[22rem]"
+        >
+          {bingo && (
+            <>
+              <h2 className="text-center font-schild text-4xl text-akzent">
+                {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
+              </h2>
+              <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
+            </>
+          )}
+
           {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
 
           {runde && !dreht && (
-            <>
+            <div className="flex items-center gap-3">
               <p className={`text-sm ${etikett}`}>Runde {runde.nummer}</p>
               <p
                 role="status"
                 style={{ backgroundColor: runde.kategorie.farbe }}
-                className="rounded-lg px-6 py-2 font-schild text-3xl text-grund"
+                className="rounded-lg px-4 py-1 font-schild text-2xl text-grund"
               >
                 {runde.kategorie.name}
               </p>
-            </>
+            </div>
           )}
 
           {runde && !runde.aufgeloest && !dreht && (
@@ -125,7 +130,7 @@ export default function Tisch({
                     dauerMs={musik.dauerMs}
                   />
                   {musik.vorbei && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap justify-center gap-2">
                       <Knopf art="neben" onClick={musik.onNochmal}>
                         Nochmal
                       </Knopf>
@@ -140,7 +145,7 @@ export default function Tisch({
               ) : (
                 <p className="text-lg">Song läuft</p>
               )}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 {musik?.laeuft && (
                   <Knopf art="neben" onClick={musik.onAnhalten}>
                     Anhalten
@@ -156,42 +161,35 @@ export default function Tisch({
               <h2 className="text-center font-schild text-4xl text-akzent">
                 {runde.kategorie.loesung(runde.song)}
               </h2>
-              <div className="flex items-center gap-5">
-                {runde.song.cover && (
-                  // Ein Bild von Spotify am Tisch: next/image bräuchte eine Freigabe der Adresse und spart hier nichts.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={runde.song.cover}
-                    alt={`Cover von ${runde.song.titel}`}
-                    className="size-36 rounded-lg object-cover"
-                  />
-                )}
-                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-left">
-                  <dt className={etikett}>Titel</dt>
-                  <dd>{runde.song.titel}</dd>
-                  <dt className={etikett}>Interpret</dt>
-                  <dd>{runde.song.interpret}</dd>
-                  <dt className={etikett}>Jahr</dt>
-                  <dd>{runde.song.jahr}</dd>
-                  <dt className={etikett}>Jahrzehnt</dt>
-                  <dd>{jahrzehnt.loesung(runde.song)}</dd>
-                </dl>
-              </div>
-              {musik && !bingo && (
-                // An derselben Stelle: läuft der Song, "Anhalten", steht er, "Weiterhören".
-                <Knopf
-                  art="neben"
-                  onClick={
-                    musik.laeuft ? musik.onAnhalten : musik.onWeiterhoeren
-                  }
-                >
-                  {musik.laeuft ? "Anhalten" : "Weiterhören"}
-                </Knopf>
+              {/* Bei Bingo zählen "Bingo!" und "Neues Spiel", ohne Cover passt der Abschnitt in die Höhe. */}
+              {runde.song.cover && !bingo && (
+                // Ein Bild von Spotify am Tisch: next/image bräuchte eine Freigabe der Adresse und spart hier nichts.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={runde.song.cover}
+                  alt={`Cover von ${runde.song.titel}`}
+                  className="size-40 rounded-lg object-cover"
+                />
+              )}
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-left text-lg">
+                <dt className={etikett}>Titel</dt>
+                <dd>{runde.song.titel}</dd>
+                <dt className={etikett}>Interpret</dt>
+                <dd>{runde.song.interpret}</dd>
+                <dt className={etikett}>Jahr</dt>
+                <dd>{runde.song.jahr}</dd>
+                <dt className={etikett}>Jahrzehnt</dt>
+                <dd>{jahrzehnt.loesung(runde.song)}</dd>
+              </dl>
+              {!bingo && (
+                <p className="text-sm">
+                  Richtig? Hake ein Feld {runde.kategorie.name} ab.
+                </p>
               )}
               {onJahrKorrigieren &&
                 (jahrFeld === null ? (
                   <button
-                    className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="text-sm text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
                     onClick={() => setJahrFeld("")}
                   >
                     Jahr korrigieren
@@ -202,7 +200,7 @@ export default function Tisch({
                       Jahr
                       <input
                         type="number"
-                        className="w-24 rounded-lg bg-flaeche px-2 py-1 outline-akzent focus-visible:outline-2"
+                        className="w-24 rounded-lg bg-grund px-2 py-1 outline-akzent focus-visible:outline-2"
                         value={jahrFeld}
                         onChange={(e) => setJahrFeld(e.target.value)}
                       />
@@ -224,20 +222,32 @@ export default function Tisch({
                     </Knopf>
                   </div>
                 ))}
-              {!bingo && (
-                <p>Richtig? Hake ein Feld {runde.kategorie.name} ab.</p>
+              {stapelLeer && !bingo && (
+                <p className="font-semibold">Alle Songs gespielt</p>
               )}
-              {bingo ? null : stapelLeer ? (
-                <>
-                  <p className="font-semibold">Alle Songs gespielt</p>
-                  <Knopf onClick={onVonVorn}>Von vorn</Knopf>
-                </>
-              ) : (
-                <Knopf onClick={drehen}>Nächste Runde</Knopf>
+              {!bingo && (
+                // Eine Reihe spart Höhe. Läuft der Song, "Anhalten", steht er, "Weiterhören".
+                <div className="flex flex-wrap justify-center gap-2">
+                  {musik && (
+                    <Knopf
+                      art="neben"
+                      onClick={
+                        musik.laeuft ? musik.onAnhalten : musik.onWeiterhoeren
+                      }
+                    >
+                      {musik.laeuft ? "Anhalten" : "Weiterhören"}
+                    </Knopf>
+                  )}
+                  {stapelLeer ? (
+                    <Knopf onClick={onVonVorn}>Von vorn</Knopf>
+                  ) : (
+                    <Knopf onClick={drehen}>Nächste Runde</Knopf>
+                  )}
+                </div>
               )}
             </>
           )}
-        </div>
+        </section>
       </div>
     </section>
   );

@@ -101,6 +101,11 @@ test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({ browser }) => {
     await expect(
       tisch.seite.getByRole("button", { name: "Nächste Runde" }),
     ).toHaveCount(0);
+    // Mit Bingo ist der Abschnitt der Runde am höchsten: Auch dann passt der Tisch ohne Scrollen auf den Laptop.
+    await tisch.seite.setViewportSize({ width: 1280, height: 800 });
+    expect(
+      await tisch.seite.evaluate(() => document.documentElement.scrollHeight),
+    ).toBeLessThanOrEqual(800);
   });
 
   await test.step("Neues Spiel teilt neue Karten aus", async () => {

@@ -136,7 +136,7 @@ export default function Start({
 
   // Im Raum wie im Studio: links die Kulisse mit Code und Spielern, rechts die Bühne.
   return (
-    <div className="grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[16rem_1fr]">
+    <div className="grid w-full max-w-7xl items-start gap-8 lg:grid-cols-[auto_1fr]">
       <RaumKopf
         code={tischRaum.code}
         kanal={kanal}
