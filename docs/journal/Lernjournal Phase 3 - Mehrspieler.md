@@ -1,6 +1,6 @@
 ---
 titel: Lernjournal Phase 3 - Mehrspieler
-status: aktiv
+status: abgeschlossen
 phase: 3
 erstellt: 2026-10-21
 tags: [lernjournal, phase-3, tdd, code-review, supabase, realtime, vercel, grill-with-docs]

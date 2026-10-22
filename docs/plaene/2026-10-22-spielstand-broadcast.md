@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Spielstand über Broadcast"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-22
 tags: [plan, phase-3, supabase, realtime, fehler]
 ---
@@ -210,7 +210,7 @@ git commit -m "Add Playwright test for two rounds in a room"
 
 PR öffnen, `gh pr checks <nr>` grün, `/code-review`, `plan-pruefer` gegen diesen Plan, mergen.
 
-- [ ] **Schritt 3 (Entwickler): Spiel mit echten Handys unter Production**
+- [x] **Schritt 3 (Entwickler): Spiel mit echten Handys unter Production**
 
 Wie Plan C, Aufgabe 8, Schritt 4: ein komplettes Spiel bis zum Bingo, mindestens 6 Runden, unterwegs neu laden,
 mitten im Spiel beitreten, Bildschirm sperren.
