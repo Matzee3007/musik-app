@@ -12,55 +12,60 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #29)
+- **Branch:** `main` (nach dem Merge von PR #31)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit Spotify und Räumen (Plan B fertig, PR #27 und #28), mit zwei
-  echten Handys geprüft
+- **Branch ohne PR:** `fix/spielstand-broadcast` mit dem Regressionstest `e2e/zwei-runden.spec.ts`. Der ist
+  **absichtlich rot**, bis Plan D umgesetzt ist.
+- **Production:** `https://musik-bingo.vercel.app` hat Plan C (PR #30) und ist **ab Runde 2 nicht spielbar**: Der Tisch
+  überschreitet das Presence-Limit von Supabase und fliegt aus dem Raum (Fehler im Journal, Plan D behebt ihn).
 
 ## Vor dem Start
 
-1. Claude Code im Projektordner starten, damit die Projekt-`CLAUDE.md` und der Prettier-Hook geladen werden:
+1. Claude Code im Projektordner starten, damit Projekt-`CLAUDE.md` und Prettier-Hook geladen werden:
 
    ```bash
    cd ~/claude-ecosystem/projects/musik-app
    claude
    ```
 
-2. `git pull` holt den Stand von GitHub, falls seitdem etwas gemergt wurde.
+2. Auf den Fix-Branch wechseln und `main` hineinholen (dort liegen seit PR #31 Plan D und das Journal):
+
+   ```bash
+   git switch fix/spielstand-broadcast
+   git pull
+   git merge main
+   ```
+
+   `git switch` wechselt auf den Branch mit dem roten Test, `git pull` holt ihn von GitHub, `git merge main` bringt
+   Plan D aus `main` auf den Branch.
 
 ## Womit es weitergeht
 
-**Phase 3 – Mehrspieler, Plan C (Live-Spiel):** Karte, Runden und Bingo am Handy, der Tisch schickt Runde und
-Auflösung über den Raum-Kanal (`RaumNachricht` in `lib/raum/kanal.ts` ist dafür vorbereitet). Die Abgrenzung steht in
-der [[projects/musik-app/docs/Projektvision|Projektvision]] („Geklärte Fragen“ zu Phase 3). Ablauf:
+**Phase 3 – Mehrspieler, Plan D:** [[2026-10-22-spielstand-broadcast|Spielstand über Broadcast]], vom Entwickler mit
+„ok“ bestätigt. Vier Aufgaben, jede mit grünem `npm run check`: Nachrichten im Kanal (ADR 0006 ersetzt
+[[0005-spielstand-ueber-presence|ADR 0005]]), Handy über Nachrichten, Tisch über Nachrichten, dann
+`e2e/zwei-runden.spec.ts` grün, Doku, PR, `/code-review`, `plan-pruefer`, Merge.
 
-1. Plan C mit `plan-schreiben` schreiben, offene Fragen zum Spiel am Handy mit dem Entwickler klären, freigeben.
-2. Plan C umsetzen, am Ende ein Spiel mit echten Handys unter Production. Danach ist Phase 3 abgeschlossen.
-
-**Beim Planen von Plan C mitdenken** (bewusst gelassene Review-Funde, Details im Journal):
-
-- Ein Handy, das „Raum geschlossen“ verpasst (Bildschirm gesperrt), bleibt im Zustand „drin“ (Fund 5, PR #28). Mit
-  Runden vom Tisch fällt das eher auf, z. B. wenn das Handy beim Zurückkommen keinen Tisch mehr sieht.
-- Ein Name wird frei, solange sein Spieler nicht verbunden ist (Fund 6, PR #27). Mit Karten pro Spieler könnte das
-  zählen.
+Danach **Spiel mit echten Handys** über mindestens 6 Runden bis zum Bingo (Plan D, Aufgabe 4, Schritt 3). Klappt es,
+ist Phase 3 abgeschlossen: Plan C und D auf `status: abgeschlossen`, Roadmap abhaken, Journal und Übergabe.
 
 **Nebenbei vorgemerkt, kein Muss:**
 
 - **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
-  (Fund 7, PR #27, schon vor Plan B so). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
+  (Fund 7, PR #27). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
 - **Funde aus dem Review von PR #24** (kollaborative Playlists, 401 bei „Nochmal versuchen“, leere Liste bei
   `GET /v1/me`): Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
 - **Ladezeit beim Vorbereiten** (81 Songs gut anderthalb Minuten): Jahre in Supabase (Phase 4) oder im Hintergrund.
 - **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
-- **Aufräumen bei Plan C:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen
-  (Funde #8, #9 aus PR #20).
+- **Aufräumen:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen (Funde #8,
+  #9 aus PR #20).
 - **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
 - Punkte fürs Ecosystem stehen in der [[docs/Nächste Session|Übergabe des Ecosystems]].
 
 ## Passende Skills
 
-- `plan-schreiben`: Plan C in kleinen, prüfbaren Aufgaben
-- `tdd`: Spiellogik und Ansichten am Handy
-- `fertig-pruefen`: vor dem Merge, danach der Agent `plan-pruefer`
+- `tdd`: jede Aufgabe von Plan D erst rot, dann grün
+- `fertig-pruefen`: vor jedem Commit und vor dem Merge, danach der Agent `plan-pruefer`
+- `fehler-diagnose`: falls der Test mit echten Handys wieder etwas zeigt
