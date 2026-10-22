@@ -213,3 +213,18 @@ test("Raum schließen fragt nach, Abbrechen lässt den Raum offen", async () => 
   expect(onGeschlossen).not.toHaveBeenCalled();
   expect(tischRaumLaden()?.code).toBe("ABCD");
 });
+
+test("QR-Code lässt sich ausblenden, Code und Spieler bleiben", () => {
+  const raum = kopf();
+  act(() =>
+    raum.anwesendeSetzen([
+      { schluessel: "s1", rolle: "spieler", name: "Anna" },
+    ]),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "QR-Code ausblenden" }));
+  expect(screen.queryByTitle("QR-Code für Raum ABCD")).toBeNull();
+  expect(screen.getByText("ABCD")).toBeDefined();
+  expect(screen.getByText("Anna")).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "QR-Code zeigen" }));
+  expect(screen.getByTitle("QR-Code für Raum ABCD")).toBeDefined();
+});

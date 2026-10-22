@@ -33,6 +33,8 @@ export default function RaumKopf({
   const [staende, setStaende] = useState<SpielerStaende>({});
   const [fehler, setFehler] = useState<string | null>(null);
   const [verbunden, setVerbunden] = useState(false);
+  // Eingeklappt bleibt eine schmale Leiste mit Code und Spielern, die Bühne bekommt mehr Platz.
+  const [qrSichtbar, setQrSichtbar] = useState(true);
 
   useEffect(() => {
     // Wer einmal da war, bleibt in der Leiste, auch nach dem Neuladen des Tischs.
@@ -121,18 +123,32 @@ export default function RaumKopf({
   }
 
   return (
-    <section className="flex flex-col items-center gap-4">
-      <p className="font-schild text-6xl tracking-wider text-akzent">{code}</p>
-      {/* QR-Code in den Farben der Show (licht und grund aus globals.css), dunkel auf hell bleibt er lesbar. */}
-      <QRCodeSVG
-        value={`${window.location.origin}/raum/${code}`}
-        title={`QR-Code für Raum ${code}`}
-        size={160}
-        marginSize={2}
-        bgColor="#ece8e1"
-        fgColor="#16171b"
-        className="rounded-lg"
-      />
+    <section
+      className={`flex flex-col items-center gap-4 ${qrSichtbar ? "w-64" : "w-40"}`}
+    >
+      <p
+        className={`font-schild tracking-wider text-akzent ${qrSichtbar ? "text-6xl" : "text-4xl"}`}
+      >
+        {code}
+      </p>
+      {qrSichtbar && (
+        // QR-Code in den Farben der Show (licht und grund aus globals.css), dunkel auf hell bleibt er lesbar.
+        <QRCodeSVG
+          value={`${window.location.origin}/raum/${code}`}
+          title={`QR-Code für Raum ${code}`}
+          size={160}
+          marginSize={2}
+          bgColor="#ece8e1"
+          fgColor="#16171b"
+          className="rounded-lg"
+        />
+      )}
+      <button
+        className="text-sm text-licht/70 underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={() => setQrSichtbar(!qrSichtbar)}
+      >
+        {qrSichtbar ? "QR-Code ausblenden" : "QR-Code zeigen"}
+      </button>
       {fehler && <p className="text-sm text-signal">{fehler}</p>}
       {/* "Anna 3" bleibt ein Text, die Browser-Tests suchen die Zeile so. */}
       <ul className="flex w-full flex-col gap-1.5">
