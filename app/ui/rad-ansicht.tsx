@@ -36,46 +36,50 @@ export default function RadAnsicht({
   return (
     <div className="relative w-full">
       {/* Zeiger oben */}
-      <div className="absolute left-1/2 top-0 z-10 h-0 w-0 -translate-x-1/2 -translate-y-1 border-x-[12px] border-t-[22px] border-x-transparent border-t-birne" />
-      <svg
-        role="img"
-        aria-label="Rad"
-        viewBox="0 0 200 200"
-        onTransitionEnd={onStillstand}
-        style={{
-          transform: `rotate(${winkel}deg)`,
-          transition: runde
-            ? "transform 4s cubic-bezier(0.2, 0.8, 0.2, 1)"
-            : "none",
-        }}
-      >
-        {KATEGORIEN.map((kategorie, i) => {
-          const [x0, y0] = punkt(i * segment, RADIUS);
-          const [x1, y1] = punkt((i + 1) * segment, RADIUS);
-          const mitte = i * segment + segment / 2;
-          const [tx, ty] = punkt(mitte, RADIUS * 0.6);
-          return (
-            <g key={kategorie.id}>
-              <path
-                d={`M${MITTE} ${MITTE} L${x0} ${y0} A${RADIUS} ${RADIUS} 0 0 1 ${x1} ${y1} Z`}
-                fill={kategorie.farbe}
-                className="stroke-nacht"
-                strokeWidth="2"
-              />
-              <text
-                x={tx}
-                y={ty}
-                transform={`rotate(${mitte} ${tx} ${ty})`}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className="fill-nacht font-schild text-[9px]"
-              >
-                {kategorie.name}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+      <div className="absolute left-1/2 top-0 z-10 h-0 w-0 -translate-x-1/2 -translate-y-1 border-x-[12px] border-t-[22px] border-x-transparent border-t-akzent" />
+      {/* Gedreht ragen die Ecken der Grafik über ihren Rahmen hinaus und verlängerten die Seite. Die Scheibe ist rund
+          und liegt ganz innerhalb, der runde Behälter schneidet nur die leeren Ecken ab. */}
+      <div className="overflow-hidden rounded-full">
+        <svg
+          role="img"
+          aria-label="Rad"
+          viewBox="0 0 200 200"
+          onTransitionEnd={onStillstand}
+          style={{
+            transform: `rotate(${winkel}deg)`,
+            transition: runde
+              ? "transform 4s cubic-bezier(0.2, 0.8, 0.2, 1)"
+              : "none",
+          }}
+        >
+          {KATEGORIEN.map((kategorie, i) => {
+            const [x0, y0] = punkt(i * segment, RADIUS);
+            const [x1, y1] = punkt((i + 1) * segment, RADIUS);
+            const mitte = i * segment + segment / 2;
+            const [tx, ty] = punkt(mitte, RADIUS * 0.6);
+            return (
+              <g key={kategorie.id}>
+                <path
+                  d={`M${MITTE} ${MITTE} L${x0} ${y0} A${RADIUS} ${RADIUS} 0 0 1 ${x1} ${y1} Z`}
+                  fill={kategorie.farbe}
+                  className="stroke-grund"
+                  strokeWidth="2"
+                />
+                <text
+                  x={tx}
+                  y={ty}
+                  transform={`rotate(${mitte} ${tx} ${ty})`}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="fill-grund font-schild text-[12px]"
+                >
+                  {kategorie.name}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     </div>
   );
 }

@@ -101,6 +101,11 @@ test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({ browser }) => {
     await expect(
       tisch.seite.getByRole("button", { name: "Nächste Runde" }),
     ).toHaveCount(0);
+    // Mit Bingo ist der Abschnitt der Runde am höchsten: Auch dann passt der Tisch ohne Scrollen auf den Laptop.
+    await tisch.seite.setViewportSize({ width: 1280, height: 800 });
+    expect(
+      await tisch.seite.evaluate(() => document.documentElement.scrollHeight),
+    ).toBeLessThanOrEqual(800);
   });
 
   await test.step("Neues Spiel teilt neue Karten aus", async () => {
@@ -116,6 +121,7 @@ test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({ browser }) => {
     await expect(
       tisch.seite.getByText("Keine Verbindung zum Raum."),
     ).toHaveCount(0);
+    tisch.seite.once("dialog", (dialog) => dialog.accept());
     await tisch.seite.getByRole("button", { name: "Raum schließen" }).click();
     for (const s of spieler) {
       await expect(s.seite.getByText("Raum geschlossen")).toBeVisible();

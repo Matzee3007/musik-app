@@ -12,24 +12,24 @@ export type Kategorie = {
 };
 
 export const KATEGORIEN: readonly Kategorie[] = [
-  { id: "titel", name: "Titel", farbe: "#4fc3f7", loesung: (s) => s.titel },
+  { id: "titel", name: "Titel", farbe: "#6fa8dc", loesung: (s) => s.titel },
   {
     id: "interpret",
     name: "Interpret",
-    farbe: "#ff6fb5",
+    farbe: "#d27ba0",
     loesung: (s) => s.interpret,
   },
   {
     id: "jahrzehnt",
     name: "Jahrzehnt",
-    farbe: "#ff8c42",
+    farbe: "#e0955a",
     loesung: (s) => `${Math.floor(s.jahr / 10) * 10}er`,
   },
-  { id: "jahr", name: "Jahr", farbe: "#5ee6a8", loesung: (s) => `${s.jahr}` },
+  { id: "jahr", name: "Jahr", farbe: "#6dbe9c", loesung: (s) => `${s.jahr}` },
   {
     id: "jahrPlusMinus3",
     name: "Jahr ±3",
-    farbe: "#b78cff",
+    farbe: "#9d8bd8",
     loesung: (s) => `${s.jahr - 3} bis ${s.jahr + 3}`,
   },
 ];

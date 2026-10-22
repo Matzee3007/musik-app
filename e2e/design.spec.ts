@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import { alleSchliessen, Spieler, Tisch } from "./hilfen/raum";
 
-// Anforderungen aus dem Design (docs/plaene/2026-10-22-design-spielshow.md), die sich messen lassen.
+// Anforderungen aus dem Design (docs/plaene/2026-10-22-design-spielshow.md und 2026-10-22-design-ueberarbeitung.md),
+// die sich messen lassen.
 // Tisch und Spieler kommen von den Bots, damit alleSchliessen ihre Kontexte auch nach einem Fehlschlag schließt.
 
 test.afterEach(alleSchliessen);
@@ -24,6 +25,16 @@ test("Tisch passt im Spiel ohne Scrollen auf den Laptop", async ({
   const loesung = seite.getByRole("button", { name: "Lösung anzeigen" });
   await loesung.waitFor({ timeout: 15_000 });
   expect(await hoehe(seite)).toBeLessThanOrEqual(800);
+  // Das Rad ist der Blickfang: groß, aber ohne seitliches Scrollen. Gemessen am Behälter, denn das Rad selbst ist
+  // gedreht und sein Rahmen damit größer als die Scheibe.
+  const rad = await seite
+    .getByRole("img", { name: "Rad" })
+    .locator("..")
+    .boundingBox();
+  expect(rad!.width).toBeGreaterThanOrEqual(480);
+  expect(
+    await seite.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(1280);
   await loesung.click();
   await seite.getByRole("button", { name: "Nächste Runde" }).waitFor();
   expect(await hoehe(seite)).toBeLessThanOrEqual(800);
@@ -37,18 +48,6 @@ test("Tisch scrollt am Handy nicht seitlich", async ({ browser }) => {
   expect(
     await seite.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(360);
-});
-
-test("bei „Bewegung reduzieren“ läuft kein Lauflicht", async ({ browser }) => {
-  const tisch = await Tisch.eroeffnen(browser);
-  const seite = tisch.seite;
-  await seite.emulateMedia({ reducedMotion: "reduce" });
-  await tisch.demoStarten();
-  await seite.getByRole("button", { name: "Rad drehen" }).click();
-  await expect(seite.locator('[data-modus="lauf"] .birne').first()).toHaveCSS(
-    "animation-name",
-    "none",
-  );
 });
 
 test("Felder am Handy zeigen ihr Wort ganz", async ({ browser }) => {

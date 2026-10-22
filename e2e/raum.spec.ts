@@ -31,6 +31,7 @@ test("Spieler treten bei, laden neu und erfahren, dass der Raum geschlossen ist"
   ).toBeVisible();
   await expect(handy1.getByLabel("Dein Name")).toHaveCount(0);
 
+  tisch.once("dialog", (dialog) => dialog.accept());
   await tisch.getByRole("button", { name: "Raum schließen" }).click();
   await expect(handy1.getByText("Raum geschlossen")).toBeVisible();
 });

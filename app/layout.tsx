@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Barlow, Bungee } from "next/font/google";
+import { Barlow, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 
-// Bungee nur für Schilder (Code, Kategorie, Bingo), Barlow für den Text. Barlow ist kein variabler Font.
-const bungee = Bungee({
-  weight: "400",
-  variable: "--font-bungee",
+// Barlow für den Text, die schmale Barlow Condensed für Schilder (Code, Kategorie, Bingo). Beide sind keine
+// variablen Fonts, deshalb die Gewichte einzeln.
+const barlowCondensed = Barlow_Condensed({
+  weight: ["600", "700"],
+  variable: "--font-barlow-condensed",
   subsets: ["latin"],
 });
 
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="de"
-      className={`${bungee.variable} ${barlow.variable} h-full antialiased`}
+      className={`${barlowCondensed.variable} ${barlow.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

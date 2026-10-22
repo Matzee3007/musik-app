@@ -126,11 +126,11 @@ export default function HandySpiel({
         !karte && <p>Warte auf das Spiel …</p>
       )}
       {linie ? (
-        <h2 className="font-schild text-5xl text-birne">Bingo!</h2>
+        <h2 className="font-schild text-5xl text-akzent">Bingo!</h2>
       ) : (
         stand &&
         stand.bingo.length > 0 && (
-          <h2 className="font-schild text-2xl text-birne">
+          <h2 className="font-schild text-2xl text-akzent">
             Bingo! {stand.bingo.join(", ")}
           </h2>
         )
@@ -155,12 +155,12 @@ export default function HandySpiel({
               <textarea
                 key={`${stand.spiel}-${stand.runde?.nummer}`}
                 rows={3}
-                className="rounded-lg bg-boden px-3 py-2 text-licht outline-birne focus-visible:outline-2"
+                className="rounded-lg bg-flaeche px-3 py-2 text-licht outline-akzent focus-visible:outline-2"
               />
             </label>
           )}
           <button
-            className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={() => {
               notizenSpeichern(!notizen);
               setNotizen(!notizen);

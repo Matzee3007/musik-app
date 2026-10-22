@@ -33,6 +33,8 @@ export default function RaumKopf({
   const [staende, setStaende] = useState<SpielerStaende>({});
   const [fehler, setFehler] = useState<string | null>(null);
   const [verbunden, setVerbunden] = useState(false);
+  // Eingeklappt bleibt eine schmale Leiste mit Code und Spielern, die Bühne bekommt mehr Platz.
+  const [qrSichtbar, setQrSichtbar] = useState(true);
 
   useEffect(() => {
     // Wer einmal da war, bleibt in der Leiste, auch nach dem Neuladen des Tischs.
@@ -107,6 +109,7 @@ export default function RaumKopf({
   }, [kanal, verbunden, stand]);
 
   async function schliessen() {
+    if (!window.confirm("Willst du den Raum wirklich schließen?")) return;
     // Erst wenn alle Bescheid wissen, sonst warten Handys in einem Raum ohne Tisch.
     try {
       await kanal.senden({ art: "geschlossen" });
@@ -120,18 +123,32 @@ export default function RaumKopf({
   }
 
   return (
-    <section className="flex flex-col items-center gap-4">
-      <p className="font-schild text-6xl tracking-wider text-birne">{code}</p>
-      {/* QR-Code in den Farben der Show (licht und nacht aus globals.css), dunkel auf hell bleibt er lesbar. */}
-      <QRCodeSVG
-        value={`${window.location.origin}/raum/${code}`}
-        title={`QR-Code für Raum ${code}`}
-        size={160}
-        marginSize={2}
-        bgColor="#fff3d9"
-        fgColor="#1c1e4a"
-        className="rounded-lg"
-      />
+    <section
+      className={`flex flex-col items-center gap-4 w-full max-w-xs ${qrSichtbar ? "lg:w-64" : "lg:w-40"}`}
+    >
+      <p
+        className={`font-schild tracking-wider text-akzent ${qrSichtbar ? "text-6xl" : "text-4xl"}`}
+      >
+        {code}
+      </p>
+      {qrSichtbar && (
+        // QR-Code in den Farben der Show (licht und grund aus globals.css), dunkel auf hell bleibt er lesbar.
+        <QRCodeSVG
+          value={`${window.location.origin}/raum/${code}`}
+          title={`QR-Code für Raum ${code}`}
+          size={160}
+          marginSize={2}
+          bgColor="#ece8e1"
+          fgColor="#16171b"
+          className="rounded-lg"
+        />
+      )}
+      <button
+        className="text-sm text-licht/70 underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={() => setQrSichtbar(!qrSichtbar)}
+      >
+        {qrSichtbar ? "QR-Code ausblenden" : "QR-Code zeigen"}
+      </button>
       {fehler && <p className="text-sm text-signal">{fehler}</p>}
       {/* "Anna 3" bleibt ein Text, die Browser-Tests suchen die Zeile so. */}
       <ul className="flex w-full flex-col gap-1.5">
@@ -144,14 +161,14 @@ export default function RaumKopf({
           <li
             key={s.name}
             aria-disabled={s.verbunden ? undefined : true}
-            className="rounded-lg bg-boden px-4 py-2 text-lg font-semibold aria-disabled:opacity-40"
+            className="rounded-lg bg-flaeche px-4 py-2 text-lg font-semibold aria-disabled:opacity-40"
           >
             {s.abgehakt === null ? s.name : `${s.name} ${s.abgehakt}`}
           </li>
         ))}
       </ul>
       <button
-        className="text-signal underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="text-signal underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={schliessen}
       >
         Raum schließen

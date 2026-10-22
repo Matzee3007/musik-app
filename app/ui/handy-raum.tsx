@@ -103,7 +103,7 @@ export default function HandyRaum({
       <div className="flex flex-col items-center gap-4">
         <p>Ungültiger Raum-Code.</p>
         <Link
-          className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
           href="/"
         >
           Zur Startseite
@@ -134,7 +134,7 @@ export default function HandyRaum({
 
   return (
     <div className="flex w-full flex-col items-center gap-6">
-      <h1 className="font-schild text-4xl text-birne">Raum {raumCode}</h1>
+      <h1 className="font-schild text-4xl text-akzent">Raum {raumCode}</h1>
       {zustand.art === "kein-tisch" && (
         <p className="text-signal">
           Kein Tisch mit dem Code {raumCode}. Code prüfen.
@@ -150,7 +150,7 @@ export default function HandyRaum({
           </label>
           <input
             id="name"
-            className="rounded-lg bg-boden px-4 py-3 text-xl outline-birne focus-visible:outline-2"
+            className="rounded-lg bg-flaeche px-4 py-3 text-xl outline-akzent focus-visible:outline-2"
             value={eingabe}
             onChange={(e) => {
               setEingabe(e.target.value);

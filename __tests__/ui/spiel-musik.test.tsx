@@ -337,3 +337,46 @@ test("beim Drehen verschwindet die Meldung, ein später Fehler der alten Runde e
   await act(async () => startScheitert(new TypeError("Failed to fetch")));
   expect(screen.queryByRole("alert")).toBeNull();
 });
+
+test("Anhalten pausiert den Song, Weiterhören setzt ihn fort", async () => {
+  starten();
+  klick("Anhalten");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole("img", { name: "Musikspur steht" })).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Anhalten" })).toBeNull();
+  klick("Weiterhören");
+  expect(abspieler.fortsetzen).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole("button", { name: "Anhalten" })).toBeDefined();
+  // Das Ende des Ausschnitts ist mit dem Anhalten weg, es pausiert nicht noch einmal.
+  await vergehen(60_000);
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+});
+
+test("nach der Auflösung lässt sich der weiterlaufende Song anhalten", () => {
+  starten();
+  klick("Lösung anzeigen");
+  expect(screen.queryByRole("button", { name: "Anhalten" })).toBeNull();
+  klick("Weiterhören");
+  klick("Anhalten");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
+  expect(screen.getByRole("button", { name: "Weiterhören" })).toBeDefined();
+});
+
+// Die Pause kann den Befehl zum Abspielen überholen, dann liefe der Song, obwohl der Tisch "angehalten" zeigt.
+test("Anhalten, während der Song noch startet, pausiert nach dem Start noch einmal", async () => {
+  let gestartet!: () => void;
+  abspieler.abspielen = vi.fn(
+    () => new Promise<void>((fertig) => (gestartet = fertig)),
+  );
+  starten();
+  klick("Anhalten");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  await act(async () => gestartet());
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
+});
+
+test("ein Start, der normal durchkommt, pausiert nicht", async () => {
+  starten();
+  await act(async () => {});
+  expect(abspieler.pausieren).not.toHaveBeenCalled();
+});

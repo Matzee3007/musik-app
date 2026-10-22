@@ -85,7 +85,7 @@ export default function Songliste({
                 <input
                   type="number"
                   aria-label={`Jahr für ${song.titel}`}
-                  className="w-20 rounded bg-boden px-1 outline-birne focus-visible:outline-2"
+                  className="w-20 rounded bg-flaeche px-1 outline-akzent focus-visible:outline-2"
                   defaultValue={jahre.korrigiert ?? ""}
                   placeholder={String(jahrFuerSpiel(jahre))}
                   onBlur={(e) => korrigieren(song, e.currentTarget)}

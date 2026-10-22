@@ -167,12 +167,3 @@ test("das Rad bleibt über die Auflösung hinweg dasselbe Element", () => {
   klick("Nächste Runde");
   expect(screen.getByRole("img", { name: "Rad", hidden: true })).toBe(rad);
 });
-
-test("Birnenkranz läuft, solange das Rad dreht, und steht danach", () => {
-  starten(FUENF_SONGS);
-  expect(document.querySelector('[data-modus="ruhig"]')).not.toBeNull();
-  klick("Rad drehen");
-  expect(document.querySelector('[data-modus="lauf"]')).not.toBeNull();
-  fireEvent.transitionEnd(screen.getByRole("img", { name: "Rad" }));
-  expect(document.querySelector('[data-modus="ruhig"]')).not.toBeNull();
-});
