@@ -12,60 +12,65 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #31)
+- **Branch:** `main` (nach dem Merge von PR #34)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Branch ohne PR:** `fix/spielstand-broadcast` mit dem Regressionstest `e2e/zwei-runden.spec.ts`. Der ist
-  **absichtlich rot**, bis Plan D umgesetzt ist.
-- **Production:** `https://musik-bingo.vercel.app` hat Plan C (PR #30) und ist **ab Runde 2 nicht spielbar**: Der Tisch
-  überschreitet das Presence-Limit von Supabase und fliegt aus dem Raum (Fehler im Journal, Plan D behebt ihn).
+- **Production:** `https://musik-bingo.vercel.app` mit Plan D (PR #32), mit echten Handys bis zum Bingo geprüft.
+  **Phase 3 ist abgeschlossen.**
 
 ## Vor dem Start
 
-1. Claude Code im Projektordner starten, damit Projekt-`CLAUDE.md` und Prettier-Hook geladen werden:
+1. Claude Code im Projektordner starten, damit Projekt-`CLAUDE.md`, Prettier-Hook und die Playwright-Agents geladen
+   werden:
 
    ```bash
    cd ~/claude-ecosystem/projects/musik-app
    claude
    ```
 
-2. Auf den Fix-Branch wechseln und `main` hineinholen (dort liegen seit PR #31 Plan D und das Journal):
+   Beim ersten Start fragt Claude Code, ob es den MCP-Server `playwright-test` aus der `.mcp.json` nutzen darf. Mit
+   Ja stehen die Agents `playwright-test-planner`, `-generator` und `-healer` bereit
+   ([[projects/musik-app/docs/Agents|Agents]]).
+
+2. Prüfen, dass `main` aktuell ist:
 
    ```bash
-   git switch fix/spielstand-broadcast
+   git switch main
    git pull
-   git merge main
    ```
 
-   `git switch` wechselt auf den Branch mit dem roten Test, `git pull` holt ihn von GitHub, `git merge main` bringt
-   Plan D aus `main` auf den Branch.
+   `git switch main` wechselt auf den Hauptzweig, `git pull` holt den Stand von GitHub.
 
 ## Womit es weitergeht
 
-**Phase 3 – Mehrspieler, Plan D:** [[2026-10-22-spielstand-broadcast|Spielstand über Broadcast]], vom Entwickler mit
-„ok“ bestätigt. Vier Aufgaben, jede mit grünem `npm run check`: Nachrichten im Kanal (ADR 0006 ersetzt
-[[0005-spielstand-ueber-presence|ADR 0005]]), Handy über Nachrichten, Tisch über Nachrichten, dann
-`e2e/zwei-runden.spec.ts` grün, Doku, PR, `/code-review`, `plan-pruefer`, Merge.
+**Phase 4 – Eigene Ideen** (Roadmap in [[projects/musik-app/docs/Projektvision|Projektvision]]): Scoreboard über einen
+Spieleabend, weitere Kategorien, Tisch ganz am Handy. Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase,
+Stechen, Bingo-Erkennung abschaltbar, Kategorie und Lösung auch auf dem Handy, Playwright in der CI, Tisch macht nach
+dem Neuladen im Spiel weiter.
 
-Danach **Spiel mit echten Handys** über mindestens 6 Runden bis zum Bingo (Plan D, Aufgabe 4, Schritt 3). Klappt es,
-ist Phase 3 abgeschlossen: Plan C und D auf `status: abgeschlossen`, Roadmap abhaken, Journal und Übergabe.
+1. **Zuerst fragt Claude, ob vorher etwas anderes ansteht** (neue Ideen, Skills, Tools, Restpunkte). Vorschläge:
+   - **Playwright-Agents ausprobieren:** Planner auf die Startseite oder die Namensabfrage ansetzen (Seed
+     `e2e/seed.spec.ts`), Healer nach der nächsten Änderung an der Oberfläche.
+   - **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
+     (Fund 7, PR #27). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
+   - **Funde aus dem Review von PR #24** (kollaborative Playlists, 401 bei „Nochmal versuchen“, leere Liste bei
+     `GET /v1/me`): Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
+   - **Aufräumen:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen (Funde
+     #8, #9 aus PR #20).
+   - **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
+   - **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
+2. Danach `docs/Tools für später.md` prüfen: Für dieses Projekt ist dort nichts vorgemerkt. Die Einträge in den
+   [[docs/Tools für später|Tools für später des Ecosystems]] für Phase 4 (Multica, OMC, Worktrees) gelten
+   sport-fantasy.
+3. Phase 4 mit `grill-with-docs` schärfen: Welche Ideen kommen zuerst, in welcher Reihenfolge? Die Ladezeit beim
+   Vorbereiten (81 Songs gut anderthalb Minuten) löst „Jahre in Supabase“ mit.
+4. Den ersten Plan mit `plan-schreiben` schreiben.
 
-**Nebenbei vorgemerkt, kein Muss:**
-
-- **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
-  (Fund 7, PR #27). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
-- **Funde aus dem Review von PR #24** (kollaborative Playlists, 401 bei „Nochmal versuchen“, leere Liste bei
-  `GET /v1/me`): Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
-- **Ladezeit beim Vorbereiten** (81 Songs gut anderthalb Minuten): Jahre in Supabase (Phase 4) oder im Hintergrund.
-- **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
-- **Aufräumen:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen (Funde #8,
-  #9 aus PR #20).
-- **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
-- Punkte fürs Ecosystem stehen in der [[docs/Nächste Session|Übergabe des Ecosystems]].
+Offene Fragen aus Phase 3 stehen im [[Lernjournal Phase 3 - Raum und Beitritt|Journal]].
 
 ## Passende Skills
 
-- `tdd`: jede Aufgabe von Plan D erst rot, dann grün
-- `fertig-pruefen`: vor jedem Commit und vor dem Merge, danach der Agent `plan-pruefer`
-- `fehler-diagnose`: falls der Test mit echten Handys wieder etwas zeigt
+- `grill-with-docs`: Phase 4 in Fragerunden schärfen, bevor geplant wird
+- `plan-schreiben`: aus der geklärten Idee den ersten Plan mit prüfbaren Aufgaben
+- `tdd`: jede Aufgabe erst rot, dann grün, im Raum mit den Spieler-Bots aus `e2e/hilfen/raum.ts`
