@@ -24,6 +24,16 @@ test("Tisch passt im Spiel ohne Scrollen auf den Laptop", async ({
   const loesung = seite.getByRole("button", { name: "Lösung anzeigen" });
   await loesung.waitFor({ timeout: 15_000 });
   expect(await hoehe(seite)).toBeLessThanOrEqual(800);
+  // Das Rad ist der Blickfang: groß, aber ohne seitliches Scrollen. Gemessen am Behälter, denn das Rad selbst ist
+  // gedreht und sein Rahmen damit größer als die Scheibe.
+  const rad = await seite
+    .getByRole("img", { name: "Rad" })
+    .locator("..")
+    .boundingBox();
+  expect(rad!.width).toBeGreaterThanOrEqual(480);
+  expect(
+    await seite.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(1280);
   await loesung.click();
   await seite.getByRole("button", { name: "Nächste Runde" }).waitFor();
   expect(await hoehe(seite)).toBeLessThanOrEqual(800);

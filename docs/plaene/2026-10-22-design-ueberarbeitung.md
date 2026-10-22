@@ -165,7 +165,7 @@ Jahr `#6DBE9C`, Jahr ±3 `#9D8BD8`.
   zeigen“. Aufgeklappt `w-64`, eingeklappt `w-40` ohne QR-Code, Code kleiner (`text-3xl`).
 - `start.tsx`: Raster `lg:grid-cols-[auto_1fr]`, damit die Breite der Kulisse den Platz bestimmt.
 
-- [ ] **Schritt 1: Fehlschlagender Test**
+- [x] **Schritt 1: Fehlschlagender Test**
 
 ```tsx
 test("QR-Code lässt sich ausblenden, Code und Spieler bleiben", async () => {
@@ -178,10 +178,10 @@ test("QR-Code lässt sich ausblenden, Code und Spieler bleiben", async () => {
 });
 ```
 
-- [ ] **Schritt 2:** `npx vitest run __tests__/ui/raum-kopf.test.tsx`, erwartet FAIL.
-- [ ] **Schritt 3:** Umsetzen nach der Schnittstelle.
-- [ ] **Schritt 4:** `npm run check`, erwartet Exit 0.
-- [ ] **Schritt 5:** Committen: `Let the side panel hide the QR code`.
+- [x] **Schritt 2:** `npx vitest run __tests__/ui/raum-kopf.test.tsx`, erwartet FAIL.
+- [x] **Schritt 3:** Umsetzen nach der Schnittstelle.
+- [x] **Schritt 4:** `npm run check`, erwartet Exit 0.
+- [x] **Schritt 5:** Committen: `Let the side panel hide the QR code`.
 
 ### Aufgabe 5: Großes Rad und Abschnitt für die Auflösung
 
@@ -195,7 +195,7 @@ test("QR-Code lässt sich ausblenden, Code und Spieler bleiben", async () => {
   `w-[24rem]`: Runde, Kategorie, Musik und Knöpfe vor der Auflösung; danach Lösung `text-4xl`, Cover `size-56`,
   Angaben `text-lg`. „Bingo!“ und „Neues Spiel“ stehen ebenfalls in diesem Abschnitt, nicht mehr über der Bühne.
 
-- [ ] **Schritt 1: Fehlschlagender Test** in `e2e/design.spec.ts`, im Test „Tisch passt …“ zusätzlich:
+- [x] **Schritt 1: Fehlschlagender Test** in `e2e/design.spec.ts`, im Test „Tisch passt …“ zusätzlich:
 
 ```ts
 const rad = await seite.getByRole("img", { name: "Rad" }).boundingBox();
@@ -203,11 +203,21 @@ expect(rad!.width).toBeGreaterThanOrEqual(480);
 expect(await seite.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1280);
 ```
 
-- [ ] **Schritt 2:** `npx playwright test e2e/design.spec.ts --project=chromium`, erwartet FAIL (Rad rund 330 px).
-- [ ] **Schritt 3:** Umsetzen nach der Schnittstelle.
-- [ ] **Schritt 4:** `npm run check && npm run e2e`, erwartet grün.
-- [ ] **Schritt 5:** Screenshots: Runde, Auflösung, Bingo, eingeklappt, jeweils 1280×800; schmal 393 px.
-- [ ] **Schritt 6:** Committen: `Enlarge the wheel and give the solution its own section`, PR.
+- [x] **Schritt 2:** `npx playwright test e2e/design.spec.ts --project=chromium`, erwartet FAIL (Rad rund 330 px).
+- [x] **Schritt 3:** Umsetzen nach der Schnittstelle.
+- [x] **Schritt 4:** `npm run check && npm run e2e`, erwartet grün.
+- [x] **Schritt 5:** Screenshots: Runde, Auflösung, Bingo, eingeklappt, jeweils 1280×800; schmal 393 px.
+- [x] **Schritt 6:** Committen: `Enlarge the wheel and give the solution its own section`, PR.
+
+**Abweichungen bei der Umsetzung (2026-10-22):**
+- Rad `w-[min(34rem,68vh,40vw)]` statt `42vw` und Abschnitt `22rem` statt `24rem`, Abstände `gap-8`: sonst wäre die
+  Bühne mit aufgeklappter Kulisse breiter als 1280 px. Schmal (unter `@2xl`) bleibt das Rad `w-80`.
+- Cover `size-48` statt `size-56`, Kategorie und Runde in einer Zeile: sonst passt die Auflösung nicht in 800 px.
+  Mit Bingo ist die Seite genau 800 px hoch.
+- Der Abschnitt heißt `aria-label="Runde"`, nicht „Auflösung“: Er zeigt die ganze Runde, nicht nur die Auflösung.
+- Der Test misst den ungedrehten Behälter des Rads: Der Rahmen des gedrehten Rads ist größer als die Scheibe.
+- Erst war der Test aus dem falschen Grund rot (Rad 0 px breit): `justify-items-center` im Raster von `start.tsx`
+  ließ die Bühnen-Spalte auf null schrumpfen. Entfernt.
 
 ## Abschluss
 
