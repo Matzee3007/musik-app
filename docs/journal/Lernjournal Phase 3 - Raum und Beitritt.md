@@ -3,13 +3,15 @@ titel: Lernjournal Phase 3 - Raum und Beitritt
 status: aktiv
 phase: 3
 erstellt: 2026-10-22
-tags: [lernjournal, phase-3, supabase, realtime, presence, playwright, tdd, code-review, fehler-diagnose]
+tags: [lernjournal, phase-3, supabase, realtime, presence, broadcast, playwright, tdd, code-review, fehler-diagnose]
 ---
 
 # Lernjournal Phase 3: Raum und Beitritt
 
 Fortsetzung von [[Lernjournal Phase 3 - Mehrspieler]]. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]].
-Plan B ([[2026-10-21-raum-beitritt|Raum und Beitritt]]) von der Freigabe bis zum Test mit echten Handys.
+Plan B ([[2026-10-21-raum-beitritt|Raum und Beitritt]]) von der Freigabe bis zum Test mit echten Handys. Am
+Nachmittag Plan C ([[2026-10-22-live-spiel|Live-Spiel]]) und Plan D
+([[2026-10-22-spielstand-broadcast|Spielstand über Broadcast]]).
 
 ## Erledigt
 
@@ -31,6 +33,20 @@ Plan B ([[2026-10-21-raum-beitritt|Raum und Beitritt]]) von der Freigabe bis zum
   Mit `fehler-diagnose` eingegrenzt und behoben, `/code-review` zu PR #28 (9 Funde, 2 behoben). PR #28 gemergt, am
   Handy erneut geprüft
 - [x] Plan A und Plan B auf `status: abgeschlossen`
+- [x] Plan C geschrieben und freigegeben, vier Entscheidungen vorab: Spielstand über Presence (ADR 0005), Weitermachen
+  nach Neuladen des Tischs erst in Phase 4, nach einem Bingo darf in derselben Runde noch abhaken, wer dort noch nicht
+  abgehakt hat, das Spiel auf einem Gerät ohne Supabase bleibt
+- [x] Plan C, Aufgaben 1 bis 7 testgetrieben: Spielstand im Raum, Kanal mit Stand, Regeln der Handy-Karte, Karte und
+  Notizfläche merken, graue und hervorgehobene Felder, `HandySpiel` am Handy, Tisch im Raum mit Leiste „Anna 7“ und
+  „Bingo! Anna, Ben“
+- [x] Aufgabe 8: `e2e/spiel.spec.ts` (eine Runde, Neuladen, Beitritt mitten im Spiel), Doku, PR #30
+- [x] `plan-pruefer`: erst NICHT ERFÜLLT (kein Test für „nach Bingo in derselben Runde noch abhaken“), Test ergänzt,
+  Rot-Grün mit testweise eingebauter Sperre belegt, danach ERFÜLLT
+- [x] `/code-review` zu PR #30: 10 Funde, auf Wunsch alle angegangen. 8 behoben, Fund 6 teilweise (`karteNeu()`
+  geteilt), Fund 2 bleibt nach Entscheidung des Entwicklers. PR #30 gemergt
+- [ ] Test mit echten Handys unter Production: In Runde 2 ließ sich kein Feld abhaken. Diagnose: Supabase-Limit für
+  Presence (siehe Fehler). Plan D (Spielstand über Broadcast) geschrieben, mit „ok“ bestätigt, noch nicht umgesetzt.
+  Regressionstest `e2e/zwei-runden.spec.ts` liegt rot auf dem Branch `fix/spielstand-broadcast` (ohne PR)
 
 ## Befehle: Supabase und Pakete
 
@@ -77,6 +93,23 @@ gh api repos/Matzee3007/musik-app/commits/<sha>/statuses -q '.[0].description'
 - `gh pr checks --watch`: wartet, bis die CI fertig ist. Direkt nach einem Push zeigt es manchmal noch den alten Lauf,
   dann an der Run-Nummer erkennen und erneut abfragen.
 - `gh api .../commits/<sha>/statuses`: zeigt, ob Vercel den Stand ausgeliefert hat („Deployment has completed“).
+
+## Befehle: Plan C und Diagnose
+
+```bash
+git switch -c feat/live-spiel
+npx playwright test e2e/zwei-runden.spec.ts --repeat-each 2
+gh pr merge 30 --merge --delete-branch
+git push -u origin fix/spielstand-broadcast
+```
+
+- `git switch -c <branch>`: neuen Branch anlegen und auf ihn wechseln, damit `main` bis zum Merge unberührt bleibt.
+- `npx playwright test <datei> --repeat-each 2`: denselben Test mehrmals, um zu sehen, ob ein Fehler verlässlich
+  auftritt.
+- `gh pr merge <nr> --merge --delete-branch`: PR mit Merge-Commit übernehmen und den Branch löschen.
+- `git push -u origin <branch>`: Branch ohne PR hochladen, damit der rote Regressionstest nicht verloren geht.
+- In Playwright: `page.on("websocket", (ws) => ws.on("framereceived", …))` liest die Nachrichten des Servers mit. Erst
+  damit war die Ursache sichtbar.
 
 ## Neu gelernt
 
@@ -127,6 +160,39 @@ Test aus dem richtigen Grund rot.
 
 `context.setOffline(true)` nimmt einem Browser-Kontext das Netz, wie ein gesperrter Handy-Bildschirm. Supabase
 erkennt das nach gut einer Minute, deshalb braucht `e2e/wiederkommen.spec.ts` lange Zeitgrenzen.
+### Zustand während des Renderns anpassen
+
+`HandySpiel` teilt eine neue Karte direkt beim Rendern aus, wenn der Tisch ein anderes Spiel meldet
+(`if (stand && handy?.spiel !== stand.spiel) setHandy(...)`). Ein Effekt dafür würde erst mit der alten Karte rendern
+und dann noch einmal. React erlaubt `setState` beim Rendern, wenn es an eine Bedingung geknüpft ist.
+
+### `useEffectEvent` (React 19.2)
+
+Ein Effekt soll bei Bingo die Musik anhalten, `musikAnhalten` ist aber bei jedem Rendern eine neue Funktion. Mit
+`useEffectEvent` kann der Effekt sie aufrufen, ohne von ihr abzuhängen, und läuft nur, wenn Bingo neu dazukommt.
+
+### Tailwind-Varianten für Attribute
+
+`aria-disabled:opacity-40` und `data-bingo:ring-4` greifen nur, wenn das Feld das Attribut hat. Ein Attribut steuert
+so Barrierefreiheit, Aussehen und Test zugleich.
+
+### Endlosschleife zwischen Presence und Effekten vermeiden
+
+Der Tisch meldet seinen Stand, das löst einen Presence-Abgleich aus, der Abgleich darf keinen neuen Stand erzeugen.
+Deshalb gibt `bingoNamen` im State-Updater dieselbe Liste zurück, wenn niemand dazukommt.
+
+### Limits fremder Dienste nachschlagen, bevor eine Entscheidung darauf baut
+
+Supabase erlaubt je Gerät nur 5 Presence-Änderungen in 30 Sekunden. In ADR 0005 stand „weit unter dem Limit“, ohne
+nachzusehen. Der Nachbau in den Unit-Tests kennt kein Limit, der Playwright-Test endete nach einer Runde, so fiel es
+erst am echten Handy auf. Ein Test über mehrere Runden hätte es gefunden.
+
+### Eine Messung kann selbst den Fehler machen
+
+Die erste Debug-Ausgabe stand vor der Zeile, in der `handy` entsteht, und warf `Cannot access 'handy' before
+initialization`. Der Test brach schon in Runde 1 ab, und es sah aus, als melde der Tisch Runde 2 nie. Erst die
+fehlschlagende Zeile im Test zeigte, dass die Messung falsch war.
+
 
 ## Fehler und Lösungen
 
@@ -189,6 +255,37 @@ erkennt das nach gut einer Minute, deshalb braucht `e2e/wiederkommen.spec.ts` la
 - **Lösung:** zurück mit `cd /Users/matthias/claude-ecosystem/projects/musik-app`, beim Nachlesen absolute Pfade
   nehmen statt `cd`.
 - **Prüfen:** `pwd` zeigt den Projektordner.
+### `Client presence rate limit exceeded`, danach `phx_close`
+
+- **Wo:** Test mit echten Handys unter Production nach dem Merge von PR #30: „Wenn ich als Spieler das erste Feld
+  abgehakt habe und eine neue Runde starte, kann ich dort kein weiteres Kästchen abhaken.“
+- **Ursache:** Der Tisch meldete jeden Schritt (Spielstart, Runde, Auflösung) mit `track()`. Supabase erlaubt je
+  Gerät 5 Presence-Änderungen in 30 Sekunden und schließt beim sechsten den Kanal. Der Tisch verschwand aus Presence,
+  die Handys sahen keinen Stand und keine freien Felder mehr.
+- **Lösung:** offen, Plan D: Spielstand per Broadcast, Presence nur für Anwesenheit (ADR 0006 ersetzt 0005).
+- **Prüfen:** `npx playwright test e2e/zwei-runden.spec.ts` (heute 3 von 3 rot, nach Plan D grün).
+
+### `Cannot access 'handy' before initialization`
+
+- **Wo:** eigene Debug-Ausgabe in `app/ui/handy-spiel.tsx` während der Diagnose
+- **Ursache:** `console.log` mit `handy` vor dem `useState`, das `handy` anlegt
+- **Lösung:** Ausgabe hinter die Zeile gesetzt, nach der Diagnose alle `[DEBUG-c7e1]` entfernt
+- **Prüfen:** `grep -rn "DEBUG-c7e1" app lib e2e` findet nichts.
+
+### `Type 'TischStand | SpielerStand' is not assignable to type 'TischStand | undefined'`
+
+- **Wo:** `npx tsc` nach dem Erweitern von `anwesendeLesen` in `lib/raum/kanal.ts`
+- **Ursache:** `stand` wurde vor der Unterscheidung nach `rolle` herausgezogen, TypeScript kannte seinen Typ nicht mehr.
+- **Lösung:** erst nach `rolle` unterscheiden, dann `stand` lesen.
+- **Prüfen:** `npx tsc --noEmit -p .` ohne Ausgabe.
+
+### Befehl hängt: `cat > /tmp/x` wartet auf Eingabe
+
+- **Wo:** ein Shell-Befehl beim Ergänzen eines Tests
+- **Ursache:** ein überflüssiges `cat > /tmp/x` am Anfang las von der Standardeingabe und wartete.
+- **Lösung:** Befehl abgebrochen, Test mit dem Edit-Werkzeug ergänzt.
+- **Prüfen:** Der Test lief danach rot wie erwartet.
+
 
 ## Aus dem Chat
 
@@ -196,6 +293,8 @@ erkennt das nach gut einer Minute, deshalb braucht `e2e/wiederkommen.spec.ts` la
 
 ## Offene Fragen
 
+- Wie oft reißt die Verbindung eines Handys im echten Spieleabend ab? Plan D holt Verpasstes über „anfrage“ nach.
+- Fund 6 aus PR #27 bleibt: Ein Name wird frei, solange sein Spieler nicht verbunden ist.
 - Bewusst gelassene Review-Funde, die in Plan C wichtig werden könnten: Ein Handy, das „Raum geschlossen“ verpasst,
   bleibt im Zustand „drin“ (Fund 5 aus PR #28); ein Name wird frei, solange sein Spieler nicht verbunden ist (Fund 6
   aus PR #27).
@@ -204,5 +303,8 @@ erkennt das nach gut einer Minute, deshalb braucht `e2e/wiederkommen.spec.ts` la
 
 ## Nächste Schritte
 
-1. Plan C (Live-Spiel: Karte, Runden und Bingo am Handy) mit `plan-schreiben` schreiben und freigeben.
-2. Plan C umsetzen, am Ende ein Spiel mit echten Handys.
+1. Plan C (Live-Spiel: Karte, Runden und Bingo am Handy) mit `plan-schreiben` schreiben und freigeben. (erledigt)
+2. Plan C umsetzen, am Ende ein Spiel mit echten Handys. (umgesetzt, Handy-Test zeigte den Presence-Fehler)
+3. Plan D (Spielstand über Broadcast) auf dem Branch `fix/spielstand-broadcast` umsetzen, `e2e/zwei-runden.spec.ts`
+   grün machen.
+4. Spiel mit echten Handys über mindestens 6 Runden, danach Phase 3 abschließen.
