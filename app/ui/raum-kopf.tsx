@@ -122,15 +122,15 @@ export default function RaumKopf({
 
   return (
     <section className="flex flex-col items-center gap-4">
-      <p className="font-schild text-6xl tracking-wider text-birne">{code}</p>
-      {/* QR-Code in den Farben der Show (licht und nacht aus globals.css), dunkel auf hell bleibt er lesbar. */}
+      <p className="font-schild text-6xl tracking-wider text-akzent">{code}</p>
+      {/* QR-Code in den Farben der Show (licht und grund aus globals.css), dunkel auf hell bleibt er lesbar. */}
       <QRCodeSVG
         value={`${window.location.origin}/raum/${code}`}
         title={`QR-Code für Raum ${code}`}
         size={160}
         marginSize={2}
-        bgColor="#fff3d9"
-        fgColor="#1c1e4a"
+        bgColor="#ece8e1"
+        fgColor="#16171b"
         className="rounded-lg"
       />
       {fehler && <p className="text-sm text-signal">{fehler}</p>}
@@ -145,14 +145,14 @@ export default function RaumKopf({
           <li
             key={s.name}
             aria-disabled={s.verbunden ? undefined : true}
-            className="rounded-lg bg-boden px-4 py-2 text-lg font-semibold aria-disabled:opacity-40"
+            className="rounded-lg bg-flaeche px-4 py-2 text-lg font-semibold aria-disabled:opacity-40"
           >
             {s.abgehakt === null ? s.name : `${s.name} ${s.abgehakt}`}
           </li>
         ))}
       </ul>
       <button
-        className="text-signal underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="text-signal underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={schliessen}
       >
         Raum schließen

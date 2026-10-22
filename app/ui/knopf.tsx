@@ -12,11 +12,11 @@ export default function Knopf({
 }) {
   const farbe =
     art === "haupt"
-      ? "border-2 border-transparent bg-birne text-nacht"
+      ? "border-2 border-transparent bg-akzent text-grund"
       : "border-2 border-licht text-licht";
   return (
     <button
-      className={`${farbe} rounded-lg px-6 py-3 text-lg font-semibold outline-birne focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-40`}
+      className={`${farbe} rounded-lg px-6 py-3 text-lg font-semibold outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-40`}
       disabled={disabled}
       onClick={onClick}
     >

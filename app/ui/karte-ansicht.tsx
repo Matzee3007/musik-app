@@ -28,12 +28,12 @@ export default function KarteAnsicht({
             data-bingo={bingo || undefined}
             onClick={() => onFeldKlick(index)}
             style={{ backgroundColor: kategorie.farbe }}
-            className="relative flex aspect-square items-center justify-center rounded-md p-1 text-center text-xs leading-tight font-bold hyphens-auto text-nacht outline-birne focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50 data-bingo:ring-4 data-bingo:ring-birne data-bingo:ring-offset-2 data-bingo:ring-offset-nacht sm:text-sm"
+            className="relative flex aspect-square items-center justify-center rounded-md p-1 text-center text-xs leading-tight font-bold hyphens-auto text-grund outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50 data-bingo:ring-4 data-bingo:ring-akzent data-bingo:ring-offset-2 data-bingo:ring-offset-grund sm:text-sm"
           >
             {/* Das Wort zuerst: Der Browser-Test misst das erste Kind. Es liegt über dem Stempel. */}
             <span className="relative z-10">{kategorie.name}</span>
             {feld.abgehakt && (
-              <span className="stempel absolute inset-[5%] rounded-full border-[5px] border-birne ring-2 ring-nacht/40" />
+              <span className="stempel absolute inset-[5%] rounded-full border-[5px] border-akzent ring-2 ring-grund/40" />
             )}
           </button>
         );

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Birnenkranz from "@/app/ui/birnenkranz";
 import Knopf from "@/app/ui/knopf";
 import Musikspur from "@/app/ui/musikspur";
 import RadAnsicht from "@/app/ui/rad-ansicht";
@@ -79,7 +78,7 @@ export default function Tisch({
 
       {bingo && (
         <>
-          <h2 className="font-schild text-6xl text-birne">
+          <h2 className="font-schild text-6xl text-akzent">
             {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
           </h2>
           <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
@@ -89,8 +88,7 @@ export default function Tisch({
       {/* Breit: Rad links, Moderation rechts. Das Rad bleibt immer eingehängt: Ein neu eingehängtes Rad hat keinen
           alten Winkel, der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie. */}
       <div className="flex w-full flex-col items-center gap-10 @2xl:flex-row @2xl:justify-center">
-        <div className="relative w-96 max-w-full shrink-0 rounded-full bg-boden p-7">
-          <Birnenkranz modus={bingo ? "bingo" : dreht ? "lauf" : "ruhig"} />
+        <div className="relative w-96 max-w-full shrink-0 rounded-full p-1.5 ring-2 ring-akzent/60">
           <RadAnsicht
             runde={runde}
             onStillstand={() => {
@@ -109,7 +107,7 @@ export default function Tisch({
               <p
                 role="status"
                 style={{ backgroundColor: runde.kategorie.farbe }}
-                className="rounded-lg px-6 py-2 font-schild text-3xl text-nacht"
+                className="rounded-lg px-6 py-2 font-schild text-3xl text-grund"
               >
                 {runde.kategorie.name}
               </p>
@@ -155,7 +153,7 @@ export default function Tisch({
 
           {runde?.aufgeloest && (
             <>
-              <h2 className="text-center font-schild text-4xl text-birne">
+              <h2 className="text-center font-schild text-4xl text-akzent">
                 {runde.kategorie.loesung(runde.song)}
               </h2>
               <div className="flex items-center gap-5">
@@ -193,7 +191,7 @@ export default function Tisch({
               {onJahrKorrigieren &&
                 (jahrFeld === null ? (
                   <button
-                    className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
                     onClick={() => setJahrFeld("")}
                   >
                     Jahr korrigieren
@@ -204,7 +202,7 @@ export default function Tisch({
                       Jahr
                       <input
                         type="number"
-                        className="w-24 rounded-lg bg-boden px-2 py-1 outline-birne focus-visible:outline-2"
+                        className="w-24 rounded-lg bg-flaeche px-2 py-1 outline-akzent focus-visible:outline-2"
                         value={jahrFeld}
                         onChange={(e) => setJahrFeld(e.target.value)}
                       />

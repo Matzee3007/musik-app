@@ -149,12 +149,12 @@ export default function VorbereitenAnsicht({
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <button
-        className="self-start text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="self-start text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onZurueck}
       >
         Zurück
       </button>
-      <h2 className="font-schild text-3xl text-birne">{playlist.name}</h2>
+      <h2 className="font-schild text-3xl text-akzent">{playlist.name}</h2>
       {geladen ? (
         <>
           <p className="text-sm text-licht/70">
@@ -195,7 +195,7 @@ export default function VorbereitenAnsicht({
           <p>{`Erscheinungsjahre: ${fortschritt.fertig} von ${fortschritt.gesamt}`}</p>
           <progress
             aria-label={`Erscheinungsjahre: ${fortschritt.fertig} von ${fortschritt.gesamt}`}
-            className="w-64 accent-birne"
+            className="w-64 accent-akzent"
             value={fortschritt.fertig}
             max={fortschritt.gesamt}
           />

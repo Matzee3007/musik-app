@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-/* Studio einer Spielshow: nur ein dunkles Thema (Plan docs/plaene/2026-10-22-design-spielshow.md). */
+/* Anthrazit und Messing, nur ein dunkles Thema (Plan docs/plaene/2026-10-22-design-ueberarbeitung.md). */
 @theme inline {
-  --color-nacht: #1c1e4a;
-  --color-boden: #2c2f6b;
-  --color-birne: #ffc83d;
-  --color-licht: #fff3d9;
-  --color-signal: #ff5a5f;
+  --color-grund: #16171b;
+  --color-flaeche: #23252b;
+  --color-akzent: #c9a45c;
+  --color-licht: #ece8e1;
+  --color-signal: #e0645c;
   --font-sans: var(--font-barlow);
-  --font-schild: var(--font-bungee);
+  --font-schild: var(--font-barlow-condensed);
 }
 
 /* Auch Auswahllisten, Zahlenfelder und Scrollbalken des Browsers dunkel. */
@@ -17,7 +17,7 @@
 }
 
 body {
-  background: var(--color-nacht);
+  background: var(--color-grund);
   color: var(--color-licht);
 }
 
@@ -59,43 +59,6 @@ body {
   .musikspur-balken {
     animation: none;
     transform: scaleY(0.6);
-  }
-}
-
-/* Birnenkranz ums Rad: Lauflicht beim Drehen, Blinken bei Bingo. --anteil (0 bis 1) setzt birnenkranz.tsx je Birne. */
-.birne {
-  box-shadow: 0 0 8px 1px var(--color-birne);
-}
-
-@keyframes birne-lauf {
-  0% {
-    opacity: 1;
-  }
-  40%,
-  100% {
-    opacity: 0.25;
-  }
-}
-
-@keyframes birne-blinken {
-  50% {
-    opacity: 0.15;
-  }
-}
-
-.birnenkranz[data-modus="lauf"] .birne {
-  animation: birne-lauf 0.8s linear infinite;
-  animation-delay: calc((var(--anteil) - 1) * 0.8s);
-}
-
-.birnenkranz[data-modus="bingo"] .birne {
-  animation: birne-blinken 0.6s steps(1) infinite;
-}
-
-/* Gleich spezifisch wie die Regeln oben, steht danach und gewinnt deshalb. */
-@media (prefers-reduced-motion: reduce) {
-  .birnenkranz[data-modus] .birne {
-    animation: none;
   }
 }
 
