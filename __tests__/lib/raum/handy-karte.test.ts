@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { KATEGORIEN } from "@/lib/kategorien";
 import {
   abhaken,
+  darfZuruecknehmen,
   feldFrei,
   karteFuer,
   spielerStand,
@@ -119,4 +120,18 @@ test("nach einem Bingo darf in derselben Runde noch abgehakt werden", () => {
   const nach = abhaken(handy, { ...stand, bingo: ["Anna"] }, 0);
   expect(nach.karte[0].abgehakt).toBe(true);
   expect(nach.abgehakt).toEqual({ runde: 3, feld: 0 });
+});
+
+test("mit eigenem Bingo geht zurücknehmen nicht, auch bevor der Tisch es meldet", () => {
+  const zeile = {
+    ...handy,
+    karte: handy.karte.map((f, i) => ({ ...f, abgehakt: i < 5 })),
+  };
+  expect(darfZuruecknehmen(zeile, stand)).toBe(false);
+  expect(zuruecknehmen(zeile, stand, 4)).toBe(zeile);
+});
+
+test("darfZuruecknehmen ohne Bingo, mit Bingo eines anderen nicht", () => {
+  expect(darfZuruecknehmen(handy, stand)).toBe(true);
+  expect(darfZuruecknehmen(handy, { ...stand, bingo: ["Ben"] })).toBe(false);
 });

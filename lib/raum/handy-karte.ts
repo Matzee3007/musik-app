@@ -38,14 +38,24 @@ export function abhaken(
   };
 }
 
-// Unverändert, wenn jemand im Spiel Bingo hat oder das Feld nicht abgehakt ist. War es das Feld dieser
-// Runde, darf in ihr wieder eins abgehakt werden.
+// Nach einem Bingo im Spiel nicht mehr. Die eigene Karte zählt auch, denn der Tisch meldet das eigene Bingo
+// erst mit Verzögerung zurück, hat es dann aber schon festgehalten.
+export function darfZuruecknehmen(
+  handy: HandyKarte,
+  stand: TischStand,
+): boolean {
+  return stand.bingo.length === 0 && !hatBingo(handy.karte);
+}
+
+// Unverändert, wenn es nicht erlaubt ist oder das Feld nicht abgehakt ist. War es das Feld dieser Runde,
+// darf in ihr wieder eins abgehakt werden.
 export function zuruecknehmen(
   handy: HandyKarte,
   stand: TischStand,
   index: number,
 ): HandyKarte {
-  if (stand.bingo.length > 0 || !handy.karte[index]?.abgehakt) return handy;
+  if (!darfZuruecknehmen(handy, stand) || !handy.karte[index]?.abgehakt)
+    return handy;
   return {
     ...handy,
     karte: feldSetzen(handy.karte, index, false),

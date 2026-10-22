@@ -5,6 +5,7 @@ import KarteAnsicht from "@/app/ui/karte-ansicht";
 import { bingoLinie } from "@/lib/bingo";
 import {
   abhaken,
+  darfZuruecknehmen,
   feldFrei,
   karteFuer,
   spielerStand,
@@ -78,7 +79,7 @@ export default function HandySpiel({
     if (!karte.karte[index].abgehakt) {
       setHandy(abhaken(karte, stand, index));
     } else if (
-      stand.bingo.length === 0 &&
+      darfZuruecknehmen(karte, stand) &&
       window.confirm("Abhaken zurücknehmen?")
     ) {
       setHandy(zuruecknehmen(karte, stand, index));
