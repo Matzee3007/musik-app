@@ -67,12 +67,18 @@ export function raumKanalUeber(
 
     // React ruft Effekte im Strict Mode doppelt auf, Supabase erlaubt aber nur ein subscribe() je Kanal.
     let abonniert = false;
+    // Supabase vergisst die Presence, wenn die Verbindung abreißt (z. B. gesperrter Bildschirm), und
+    // tritt beim Zurückkommen ohne sie wieder bei. Deshalb bei jedem SUBSCRIBED neu anmelden.
+    let angemeldetAls: Anwesend | null = null;
 
     const raumKanal: RaumKanal = {
       verbinden() {
         if (!abonniert) {
           abonniert = true;
           kanal.subscribe((status) => {
+            if (status === "SUBSCRIBED" && angemeldetAls) {
+              void kanal.track(angemeldetAls);
+            }
             if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
               abgelehnt(new Error("Keine Verbindung zum Raum."));
             }
@@ -84,6 +90,7 @@ export function raumKanalUeber(
         );
       },
       async anmelden(ich) {
+        angemeldetAls = ich;
         pruefen(await kanal.track(ich));
       },
       beiAnwesenden(rueckruf) {

@@ -190,3 +190,19 @@ test("anmelden und senden scheitern, wenn Supabase nicht ok meldet", async () =>
     "Keine Verbindung zum Raum.",
   );
 });
+
+test("nach einem Wiederbeitritt meldet sich das Gerät neu an", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  const verbunden = kanal.verbinden();
+  welt.status("SUBSCRIBED");
+  welt.ausloesen("presence", "sync");
+  await verbunden;
+  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
+  await kanal.anmelden(anna);
+
+  // Bildschirm war gesperrt: Supabase verbindet neu und tritt dem Kanal wieder bei.
+  welt.status("SUBSCRIBED");
+  await Promise.resolve();
+  expect(welt.angemeldet).toEqual([anna, anna]);
+});
