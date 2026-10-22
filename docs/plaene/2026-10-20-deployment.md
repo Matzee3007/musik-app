@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Deployment auf Vercel"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-20
 tags: [plan, vercel, deployment, phase-3]
 ---

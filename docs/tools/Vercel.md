@@ -75,6 +75,10 @@ das HTML aus `curl`.
 
 ## Fehler, die uns passiert sind
 
+- **`gh api repos/<repo>/deployments` liefert nichts, Abfragen pro Deployment `HTTP 404`** (2026-10-22). Ursache:
+  Vercel legt bei GitHub keine Deployments an, sondern meldet sich als Commit-Status. Lösung:
+  `gh api repos/Matzee3007/musik-app/commits/<sha>/statuses -q '.[0].description'` zeigt „Deployment has completed“,
+  sobald der Stand live ist.
 - **Umgebung einer Variable ließ sich nicht ändern** (2026-10-20). Ursache: Die Oberfläche bot für die bestehende
   Variable keine Einschränkung auf eine Umgebung an. Lösung: löschen, neu anlegen mit nur „Production“, „Redeploy“.
 - **`curl` gibt `000` aus, mit `-sS` dazu `curl: (77) error adding trust anchors from file:
