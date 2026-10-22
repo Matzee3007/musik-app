@@ -7,6 +7,7 @@ const HANDY = "musik-app:handy-raum";
 const GERAET = "musik-app:geraet";
 const KARTE = "musik-app:handy-karte";
 const NOTIZEN = "musik-app:notizen";
+const RAUM_SICHTBAR = "musik-app:raum-sichtbar";
 
 export type TischRaum = { code: string; bekannt: string[] };
 export type HandyRaum = { code: string; name: string };
@@ -76,6 +77,16 @@ export function notizenAn(): boolean {
 export function notizenSpeichern(an: boolean): void {
   if (an) localStorage.removeItem(NOTIZEN);
   else localStorage.setItem(NOTIZEN, "aus");
+}
+
+// Am Tisch: Code, QR-Code und Spieler sind sichtbar, bis der DJ sie ausblendet, auch über ein Neuladen hinweg.
+export function raumSichtbar(): boolean {
+  return localStorage.getItem(RAUM_SICHTBAR) !== "aus";
+}
+
+export function raumSichtbarSpeichern(an: boolean): void {
+  if (an) localStorage.removeItem(RAUM_SICHTBAR);
+  else localStorage.setItem(RAUM_SICHTBAR, "aus");
 }
 
 export function tabSchluessel(): string {

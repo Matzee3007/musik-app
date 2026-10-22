@@ -267,7 +267,7 @@ Erwartet: PASS
 > 13rem statt 10rem von der Höhe ab, weil mit Spotify die Auswahl „Ausschnitt“ über dem Tisch steht. Der neue
 > e2e-Test „Abschnitt … gleich groß“ kommt deshalb auch erst in Aufgabe 5.
 
-- [ ] **Schritt 5: Screenshots der Zustände prüfen** (vor Runde 1, Rad dreht, Song läuft, Ausschnitt vorbei,
+- [x] **Schritt 5: Screenshots der Zustände prüfen** (vor Runde 1, Rad dreht, Song läuft, Ausschnitt vorbei,
   Lösung, Bingo; 1280×800 und 1600×900) und mit dem Prototyp vergleichen.
 - [x] **Schritt 6: Prüfen und committen**
 
@@ -295,7 +295,7 @@ git commit -m "Give the round panel a fixed layout with larger answer and cover"
   Ausgeblendet fehlt die Schublade ganz. Die Knöpfe „QR-Code ausblenden“/„QR-Code zeigen“ entfallen.
 - Die Presence- und Nachrichten-Effekte bleiben unverändert und laufen auch bei ausgeblendetem Raum.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 // __tests__/lib/raum/speicher.test.ts
@@ -328,25 +328,29 @@ test("ausgeblendet bleibt der Raum nach dem Neuladen ausgeblendet", () => {
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/speicher.test.ts __tests__/ui/raum-kopf.test.tsx`
 Erwartet: FAIL, `raumSichtbar` fehlt
 
-- [ ] **Schritt 3: Speicherfunktionen, `RaumKopf` und Rahmen in `start.tsx` umbauen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 3: Speicherfunktionen, `RaumKopf` und Rahmen in `start.tsx` umbauen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm test` und `npm run e2e`
 Erwartet: PASS, Bots finden „Raum schließen“ weiterhin (Raum ist beim Start sichtbar)
 
-- [ ] **Schritt 5: Screenshots** mit offenem und ausgeblendetem Raum (1280×800, 1600×900, 390×844)
-- [ ] **Schritt 6: Prüfen, committen, PR**
+- [x] **Schritt 5: Screenshots** mit offenem und ausgeblendetem Raum (1280×800, 1600×900, 390×844)
+- [x] **Schritt 6: Prüfen, committen, PR**
 
 ```bash
 npm run check
 git add lib/raum/speicher.ts app/ui/raum-kopf.tsx app/ui/start.tsx __tests__/lib/raum/speicher.test.ts __tests__/ui/raum-kopf.test.tsx
 git commit -m "Turn the room column into a drawer with one toggle"
 ```
+
+> **Nachtrag (2026-10-23):** Die Screenshots auf 1280×800 zeigten ein zu großes Cover (36vh), das über den Fuß
+> ragte. Das Cover ist jetzt höchstens so groß, wie der Abschnitt Höhe übrig hat:
+> `min(22rem, calc(max(var(--rad), 34rem) - 24.5rem))`.
 
 Danach PR, `gh pr checks <nr>`, `/code-review`, Funde mit dem Entwickler durchgehen, Merge.
 

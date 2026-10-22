@@ -134,9 +134,10 @@ export default function Start({
     );
   }
 
-  // Im Raum wie im Studio: links die Kulisse mit Code und Spielern, rechts die Bühne.
+  // Im Raum wie im Studio: die Bühne über die ganze Breite, links oben die Schublade mit Code und Spielern.
+  // Schmaler als lg steht die Schublade über der Bühne, darüber Platz für den Knopf.
   return (
-    <div className="grid w-full max-w-7xl items-start gap-8 lg:grid-cols-[auto_1fr]">
+    <div className="relative flex w-full flex-col items-center gap-8 pt-14 lg:pt-0">
       <RaumKopf
         code={tischRaum.code}
         kanal={kanal}
@@ -146,7 +147,7 @@ export default function Start({
           setStand(null);
         }}
       />
-      <div className="flex justify-center">{ablauf()}</div>
+      <div className="flex w-full justify-center">{ablauf()}</div>
     </div>
   );
 

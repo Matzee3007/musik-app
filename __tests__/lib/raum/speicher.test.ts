@@ -8,6 +8,8 @@ import {
   handyRaumSpeichern,
   notizenAn,
   notizenSpeichern,
+  raumSichtbar,
+  raumSichtbarSpeichern,
   tabSchluessel,
   tischRaumLaden,
   tischRaumLoeschen,
@@ -112,4 +114,12 @@ test("zwei Tabs behalten nach dem Neuladen jeder Raum und Karte", () => {
   tabWechseln({});
   expect(handyRaumLaden("ABCD")?.name).toBe("Ben");
   expect(handyKarteLaden()).toEqual(karteB);
+});
+
+test("Raum ist sichtbar, bis er ausgeblendet wird, und bleibt es über ein Neuladen", () => {
+  expect(raumSichtbar()).toBe(true);
+  raumSichtbarSpeichern(false);
+  expect(raumSichtbar()).toBe(false);
+  raumSichtbarSpeichern(true);
+  expect(localStorage.getItem("musik-app:raum-sichtbar")).toBeNull();
 });

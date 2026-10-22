@@ -175,8 +175,9 @@ export default function Tisch({
             )}
           </div>
 
-          {/* Mitte: links Cover oder Platte, rechts die vier Angaben, verdeckt bis zur Auflösung. */}
-          <div className="grid min-h-0 grid-cols-1 items-center justify-items-center gap-6 sm:grid-cols-[var(--cover)_minmax(0,1fr)] sm:justify-items-stretch [--cover:clamp(9rem,30vw,15rem)] @5xl:[--cover:clamp(11rem,36vh,22rem)]">
+          {/* Mitte: links Cover oder Platte, rechts die vier Angaben, verdeckt bis zur Auflösung. Breit höchstens so groß,
+              wie der Abschnitt nach Kopf, großem Platz, Fuß, Abständen und Polster (zusammen 24,5rem) Höhe übrig hat. */}
+          <div className="grid min-h-0 grid-cols-1 items-center justify-items-center gap-6 sm:grid-cols-[var(--cover)_minmax(0,1fr)] sm:justify-items-stretch [--cover:clamp(9rem,30vw,15rem)] @5xl:[--cover:min(22rem,calc(max(var(--rad),34rem)-24.5rem))]">
             <div className="grid aspect-square w-[var(--cover)] max-w-full place-items-center overflow-hidden rounded-xl bg-grund shadow-[0_12px_32px_rgb(0_0_0/0.45)]">
               {aufgeloest && runde?.song.cover ? (
                 // Ein Bild von Spotify am Tisch: next/image bräuchte eine Freigabe der Adresse und spart hier nichts.
