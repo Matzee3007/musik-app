@@ -56,3 +56,40 @@ body {
     transform: scaleY(0.6);
   }
 }
+
+/* Birnenkranz ums Rad: Lauflicht beim Drehen, Blinken bei Bingo. --i ist die Nummer der Birne. */
+.birne {
+  box-shadow: 0 0 8px 1px var(--color-birne);
+}
+
+@keyframes birne-lauf {
+  0% {
+    opacity: 1;
+  }
+  40%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes birne-blinken {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+.birnenkranz[data-modus="lauf"] .birne {
+  animation: birne-lauf 0.8s linear infinite;
+  animation-delay: calc(var(--i) * 0.8s / 24 - 0.8s);
+}
+
+.birnenkranz[data-modus="bingo"] .birne {
+  animation: birne-blinken 0.6s steps(1) infinite;
+}
+
+/* Gleich spezifisch wie die Regeln oben, steht danach und gewinnt deshalb. */
+@media (prefers-reduced-motion: reduce) {
+  .birnenkranz[data-modus] .birne {
+    animation: none;
+  }
+}

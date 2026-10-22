@@ -31,7 +31,7 @@ export default function Musikspur({
         ))}
       </div>
       {dauerMs !== null && (
-        <div className="h-1.5 w-full overflow-hidden rounded bg-zinc-300 dark:bg-zinc-700">
+        <div className="h-1.5 w-full overflow-hidden rounded bg-boden">
           <div
             className="musikspur-fortschritt h-full"
             style={{

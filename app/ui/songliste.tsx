@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Knopf from "@/app/ui/knopf";
 import {
   gueltigesJahr,
   jahrFuerSpiel,
@@ -51,21 +52,18 @@ export default function Songliste({
 
   return (
     <div className="flex w-full max-w-4xl flex-col items-center gap-4">
-      <h2 className="text-2xl font-semibold">
+      <h2 className="font-schild text-2xl">
         {songs.length} {songs.length === 1 ? "Song" : "Songs"} bereit,{" "}
         {uebersprungen} übersprungen
       </h2>
       {songs.length === 0 ? (
         <p>Keine spielbaren Songs</p>
       ) : (
-        <button
-          className="rounded-lg bg-foreground px-6 py-3 text-lg font-semibold text-background"
-          onClick={() => onSpielStarten(spielSongs(songs, gespeichert))}
-        >
+        <Knopf onClick={() => onSpielStarten(spielSongs(songs, gespeichert))}>
           Spiel starten
-        </button>
+        </Knopf>
       )}
-      <table className="w-full text-left text-sm">
+      <table className="w-full text-left text-sm [&_td]:py-1 [&_th]:pb-2 [&_th]:text-licht/60">
         <thead>
           <tr>
             <th>Titel</th>
@@ -87,7 +85,7 @@ export default function Songliste({
                 <input
                   type="number"
                   aria-label={`Jahr für ${song.titel}`}
-                  className="w-20 rounded border border-zinc-300 px-1 dark:border-zinc-700"
+                  className="w-20 rounded bg-boden px-1 outline-birne focus-visible:outline-2"
                   defaultValue={jahre.korrigiert ?? ""}
                   placeholder={String(jahrFuerSpiel(jahre))}
                   onBlur={(e) => korrigieren(song, e.currentTarget)}

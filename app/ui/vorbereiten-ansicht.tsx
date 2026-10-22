@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ComponentProps } from "react";
+import Knopf from "@/app/ui/knopf";
 import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import type { Song } from "@/lib/song";
@@ -147,13 +148,13 @@ export default function VorbereitenAnsicht({
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <button className="self-start underline" onClick={onZurueck}>
+      <button className="self-start text-birne underline" onClick={onZurueck}>
         Zurück
       </button>
-      <h2 className="text-3xl font-semibold">{playlist.name}</h2>
+      <h2 className="font-schild text-3xl text-birne">{playlist.name}</h2>
       {geladen ? (
         <>
-          <p className="text-sm">
+          <p className="text-sm text-licht/70">
             {musik === null
               ? "Musik wird verbunden …"
               : "fehler" in musik
@@ -172,10 +173,10 @@ export default function VorbereitenAnsicht({
         </>
       ) : fehler ? (
         <>
-          <p>{fehler.meldung}</p>
+          <p className="text-signal">{fehler.meldung}</p>
           {fehler.nochmal && (
-            <button
-              className="rounded-lg border px-4 py-2"
+            <Knopf
+              art="neben"
               onClick={() => {
                 setFehler(null);
                 setFortschritt(null);
@@ -183,7 +184,7 @@ export default function VorbereitenAnsicht({
               }}
             >
               Nochmal versuchen
-            </button>
+            </Knopf>
           )}
         </>
       ) : fortschritt ? (
@@ -191,7 +192,7 @@ export default function VorbereitenAnsicht({
           <p>{`Erscheinungsjahre: ${fortschritt.fertig} von ${fortschritt.gesamt}`}</p>
           <progress
             aria-label={`Erscheinungsjahre: ${fortschritt.fertig} von ${fortschritt.gesamt}`}
-            className="w-64"
+            className="w-64 accent-birne"
             value={fortschritt.fertig}
             max={fortschritt.gesamt}
           />

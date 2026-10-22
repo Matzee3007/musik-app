@@ -213,7 +213,7 @@ git commit -m "Style start page and joining in game show look"
   `app/ui/birnenkranz.tsx`. Ein `<div aria-hidden data-modus={modus}>` mit 24 Birnen auf einem Kreis um das Rad.
   `lauf`: Lauflicht über `animation-delay` je Birne, `bingo`: alle blinken, `ruhig`: leuchten ohne Bewegung.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 // __tests__/ui/spiel-ansicht.test.tsx
@@ -234,12 +234,12 @@ test("Tisch passt im Spiel ohne Scrollen auf den Laptop", async ({ browser }) =>
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/spiel-ansicht.test.tsx && npx playwright test e2e/design.spec.ts --project=chromium`
 Erwartet: FAIL, kein `data-modus`; `scrollHeight` größer als 800.
 
-- [ ] **Schritt 3: Umsetzen**
+- [x] **Schritt 3: Umsetzen**
   - `start.tsx` mit Raum: Raster `lg:grid-cols-[16rem_1fr]`, links `RaumKopf` (Kulisse), rechts der Ablauf (Bühne).
     Der Titel auf `page.tsx` bleibt. Sprengt er die 800 px, wird er dort `text-3xl` statt `text-5xl` (der e2e-Test
     entscheidet).
@@ -258,15 +258,15 @@ Erwartet: FAIL, kein `data-modus`; `scrollHeight` größer als 800.
     keine `zinc`- und `dark:`-Klassen mehr.
   - `globals.css`: Keyframes `birne-lauf` und `birne-blinken`, unter `prefers-reduced-motion: reduce` keine Animation.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm run check && npm run e2e`
 Erwartet: beide grün.
 
-- [ ] **Schritt 5: Screenshots ansehen:** Tisch vor dem Spiel, während das Rad dreht, mit Kategorie, mit Lösung, bei
+- [x] **Schritt 5: Screenshots ansehen:** Tisch vor dem Spiel, während das Rad dreht, mit Kategorie, mit Lösung, bei
   Bingo, jeweils 1280×800; Vorbereiten und Songliste. Einmal mit `reducedMotion: "reduce"` im Kontext.
 
-- [ ] **Schritt 6: Committen, PR**
+- [x] **Schritt 6: Committen, PR**
 
 ```bash
 git add app/ui/birnenkranz.tsx app/ui/start.tsx app/ui/raum-kopf.tsx app/ui/rad-ansicht.tsx app/ui/tisch.tsx \
@@ -274,6 +274,14 @@ git add app/ui/birnenkranz.tsx app/ui/start.tsx app/ui/raum-kopf.tsx app/ui/rad-
   __tests__/ui/spiel-ansicht.test.tsx e2e/design.spec.ts
 git commit -m "Turn the table into a game show stage with bulb ring"
 ```
+
+**Abweichungen bei der Umsetzung (2026-10-22):**
+- Das Rad bleibt auch in der Auflösung sichtbar. Auf der breiten Bühne steht es links neben der Moderation, der Platz
+  reicht. So entfällt das Verstecken, und bei Bingo blinkt der Kranz sichtbar. Schmal (`@container` unter `@2xl`)
+  stapelt sich alles.
+- Prüf-Schwerpunkt 3 hat einen Fehler gefunden: Die Regel für `prefers-reduced-motion` war weniger spezifisch als die
+  für das Lauflicht und verlor. Behoben, dazu der e2e-Test „bei „Bewegung reduzieren“ läuft kein Lauflicht“.
+- Änderungen an `app/globals.css` übernimmt der laufende Dev-Server nicht, erst nach einem Neustart.
 
 ## Teil 4: Handy (`feat/design-handy`)
 
