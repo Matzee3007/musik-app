@@ -1,7 +1,13 @@
 import { afterEach, expect, test } from "vitest";
+import type { HandyKarte } from "@/lib/raum/handy-karte";
 import {
+  handyKarteLaden,
+  handyKarteSpeichern,
   handyRaumLaden,
+  handyRaumLoeschen,
   handyRaumSpeichern,
+  notizenAn,
+  notizenSpeichern,
   tabSchluessel,
   tischRaumLaden,
   tischRaumLoeschen,
@@ -39,4 +45,32 @@ test("ein neuer Tab bekommt einen neuen Schlüssel", () => {
   const erster = tabSchluessel();
   sessionStorage.clear();
   expect(tabSchluessel()).not.toBe(erster);
+});
+
+const karte: HandyKarte = {
+  spiel: "s1",
+  karte: [{ kategorie: "titel", abgehakt: true }],
+  abgehakt: { runde: 2, feld: 0 },
+};
+
+test("Karte übersteht das Neuladen", () => {
+  expect(handyKarteLaden()).toBeNull();
+  handyKarteSpeichern(karte);
+  expect(handyKarteLaden()).toEqual(karte);
+});
+
+test("Raum löschen löscht auch die Karte", () => {
+  handyRaumSpeichern({ code: "ABCD", name: "Anna" });
+  handyKarteSpeichern(karte);
+  handyRaumLoeschen();
+  expect(handyRaumLaden("ABCD")).toBeNull();
+  expect(handyKarteLaden()).toBeNull();
+});
+
+test("Notizfläche ist anfangs an und merkt sich aus", () => {
+  expect(notizenAn()).toBe(true);
+  notizenSpeichern(false);
+  expect(notizenAn()).toBe(false);
+  notizenSpeichern(true);
+  expect(notizenAn()).toBe(true);
 });

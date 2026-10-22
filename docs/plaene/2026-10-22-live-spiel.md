@@ -249,20 +249,20 @@ git commit -m "Add the phone card rules"
   `notizenAn(): boolean` (wahr, solange nicht `"aus"` gespeichert ist), `notizenSpeichern(an: boolean): void`;
   `handyRaumLoeschen()` löscht zusätzlich die Karte
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 „Karte übersteht das Neuladen“, „Notizfläche ist anfangs an und merkt sich aus“, „Raum löschen löscht auch die
 Karte“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/speicher.test.ts`
 
-- [ ] **Schritt 3: Funktionen in `lib/raum/speicher.ts` ergänzen**
+- [x] **Schritt 3: Funktionen in `lib/raum/speicher.ts` ergänzen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
