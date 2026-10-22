@@ -1,5 +1,6 @@
 import { hatBingo } from "@/lib/bingo";
 import { feldSetzen, karteNeu, type Karte } from "@/lib/karte";
+import { KATEGORIEN } from "@/lib/kategorien";
 import type { SpielerStand, TischStand } from "@/lib/raum/stand";
 import type { Zufall } from "@/lib/zufall";
 
@@ -83,4 +84,21 @@ export function spielerStand(handy: HandyKarte): SpielerStand {
     abgehakt: handy.karte.filter((f) => f.abgehakt).length,
     bingo: hatBingo(handy.karte),
   };
+}
+
+// Form einer gespeicherten Karte, bevor das Handy ihr traut.
+export function istHandyKarte(wert: unknown): wert is HandyKarte {
+  const h = wert as HandyKarte | null;
+  const a = h?.abgehakt;
+  return (
+    typeof h?.spiel === "string" &&
+    Array.isArray(h.karte) &&
+    h.karte.length === 25 &&
+    h.karte.every(
+      (f) =>
+        KATEGORIEN.some((k) => k.id === f?.kategorie) &&
+        typeof f.abgehakt === "boolean",
+    ) &&
+    (a === null || (typeof a?.runde === "number" && typeof a.feld === "number"))
+  );
 }

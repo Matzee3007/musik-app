@@ -1,4 +1,4 @@
-import type { HandyKarte } from "@/lib/raum/handy-karte";
+import { istHandyKarte, type HandyKarte } from "@/lib/raum/handy-karte";
 
 // Merkt den Raum über Neuladen hinweg: am Tisch und am Handy im localStorage, die Kennung des Tabs im
 // sessionStorage. Die ist je Tab verschieden, damit Tisch und Handy im selben Browser getrennt bleiben.
@@ -23,30 +23,49 @@ export function tischRaumLoeschen(): void {
   localStorage.removeItem(TISCH);
 }
 
+// Raum und Karte am Handy liegen in beiden Speichern: Der sessionStorage hält sie je Tab über Neuladen, damit
+// zwei Tabs im selben Browser getrennt bleiben. Ein neuer Tab (z. B. QR-Code erneut gescannt) nimmt den
+// zuletzt gespeicherten Stand aus dem localStorage.
+function handyLesen(schluessel: string): string | null {
+  return sessionStorage.getItem(schluessel) ?? localStorage.getItem(schluessel);
+}
+
+function handySchreiben(schluessel: string, wert: unknown): void {
+  const text = JSON.stringify(wert);
+  sessionStorage.setItem(schluessel, text);
+  localStorage.setItem(schluessel, text);
+}
+
 // Nur für denselben Code: Ein Handy, das einen anderen Raum öffnet, fragt neu nach dem Namen.
 export function handyRaumLaden(code: string): HandyRaum | null {
-  const raum: HandyRaum | null = JSON.parse(
-    localStorage.getItem(HANDY) ?? "null",
-  );
+  const raum: HandyRaum | null = JSON.parse(handyLesen(HANDY) ?? "null");
   return raum?.code === code ? raum : null;
 }
 
 export function handyRaumSpeichern(raum: HandyRaum): void {
-  localStorage.setItem(HANDY, JSON.stringify(raum));
+  handySchreiben(HANDY, raum);
 }
 
 // Mit dem Raum ist auch die Karte vorbei.
 export function handyRaumLoeschen(): void {
-  localStorage.removeItem(HANDY);
-  localStorage.removeItem(KARTE);
+  for (const speicher of [sessionStorage, localStorage]) {
+    speicher.removeItem(HANDY);
+    speicher.removeItem(KARTE);
+  }
 }
 
+// null auch bei einem beschädigten oder veralteten Eintrag, dann teilt das Handy eine neue Karte aus.
 export function handyKarteLaden(): HandyKarte | null {
-  return JSON.parse(localStorage.getItem(KARTE) ?? "null");
+  try {
+    const karte: unknown = JSON.parse(handyLesen(KARTE) ?? "null");
+    return istHandyKarte(karte) ? karte : null;
+  } catch {
+    return null;
+  }
 }
 
 export function handyKarteSpeichern(karte: HandyKarte): void {
-  localStorage.setItem(KARTE, JSON.stringify(karte));
+  handySchreiben(KARTE, karte);
 }
 
 // Die Notizfläche ist an, bis der Spieler sie ausschaltet. Gilt für alle Räume dieses Handys.
