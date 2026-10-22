@@ -8,30 +8,26 @@ tags: [session, übergabe]
 # Nächste Session
 
 Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
-[[Lernjournal Phase 3 - Raum und Beitritt]].
+[[Lernjournal Phase 4 - Design Spielshow]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #34)
+- **Branch:** `main` (nach dem Merge von PR #39)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit Plan D (PR #32), mit echten Handys bis zum Bingo geprüft.
-  **Phase 3 ist abgeschlossen.**
+- **Production:** `https://musik-bingo.vercel.app` mit dem neuen Design „Spielshow im Studio“ (PRs #35–#38). Von
+  Claude aus nicht prüfbar (kein Netz in der Sandbox), an echten Geräten noch nicht getestet.
 
 ## Vor dem Start
 
-1. Claude Code im Projektordner starten, damit Projekt-`CLAUDE.md`, Prettier-Hook und die Playwright-Agents geladen
+1. Claude Code im Projektordner starten, damit Projekt-`CLAUDE.md`, Prettier-Hook und Playwright-Agents geladen
    werden:
 
    ```bash
    cd ~/claude-ecosystem/projects/musik-app
    claude
    ```
-
-   Beim ersten Start fragt Claude Code, ob es den MCP-Server `playwright-test` aus der `.mcp.json` nutzen darf. Mit
-   Ja stehen die Agents `playwright-test-planner`, `-generator` und `-healer` bereit
-   ([[projects/musik-app/docs/Agents|Agents]]).
 
 2. Prüfen, dass `main` aktuell ist:
 
@@ -44,12 +40,14 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Womit es weitergeht
 
-**Phase 4 – Eigene Ideen** (Roadmap in [[projects/musik-app/docs/Projektvision|Projektvision]]): Scoreboard über einen
-Spieleabend, weitere Kategorien, Tisch ganz am Handy. Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase,
-Stechen, Bingo-Erkennung abschaltbar, Kategorie und Lösung auch auf dem Handy, Playwright in der CI, Tisch macht nach
-dem Neuladen im Spiel weiter.
+**Phase 4 – Eigene Ideen** (Roadmap in [[projects/musik-app/docs/Projektvision|Projektvision]]). Vor dem eigentlichen
+Start kam das Design dazwischen ([[2026-10-22-design-spielshow|Plan Design Spielshow]], fertig bis auf die Prüfung an
+echten Geräten). Phase 4 selbst ist noch nicht geschärft.
 
 1. **Zuerst fragt Claude, ob vorher etwas anderes ansteht** (neue Ideen, Skills, Tools, Restpunkte). Vorschläge:
+   - **Design an echten Geräten prüfen** (Abschluss des Design-Plans): ein Spieleabend zur Probe auf Production mit
+     Laptop und Handys. Besonders: Silbentrennung „Jahr-zehnt“ auf iOS und Android, Playlist-Liste nach der
+     Spotify-Anmeldung, Birnenkranz bei Bingo. Danach den Plan auf `status: abgeschlossen`.
    - **Playwright-Agents ausprobieren:** Planner auf die Startseite oder die Namensabfrage ansetzen (Seed
      `e2e/seed.spec.ts`), Healer nach der nächsten Änderung an der Oberfläche.
    - **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
@@ -60,17 +58,17 @@ dem Neuladen im Spiel weiter.
      #8, #9 aus PR #20).
    - **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
    - **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
-2. Danach `docs/Tools für später.md` prüfen: Für dieses Projekt ist dort nichts vorgemerkt. Die Einträge in den
-   [[docs/Tools für später|Tools für später des Ecosystems]] für Phase 4 (Multica, OMC, Worktrees) gelten
-   sport-fantasy.
-3. Phase 4 mit `grill-with-docs` schärfen: Welche Ideen kommen zuerst, in welcher Reihenfolge? Die Ladezeit beim
-   Vorbereiten (81 Songs gut anderthalb Minuten) löst „Jahre in Supabase“ mit.
+2. Danach `docs/Tools für später.md` prüfen: Für dieses Projekt ist dort nichts vorgemerkt.
+3. Phase 4 mit `grill-with-docs` schärfen: Welche Ideen zuerst? Kandidaten: Scoreboard über einen Spieleabend, Songs
+   und Jahre in Supabase (löst auch die Ladezeit beim Vorbereiten), Kategorie und Lösung auf dem Handy, Tisch ganz am
+   Handy, Stechen, Bingo-Erkennung abschaltbar, Playwright in der CI, Tisch macht nach dem Neuladen weiter.
 4. Den ersten Plan mit `plan-schreiben` schreiben.
 
-Offene Fragen aus Phase 3 stehen im [[Lernjournal Phase 3 - Raum und Beitritt|Journal]].
+Offene Fragen aus dieser Session stehen im [[Lernjournal Phase 4 - Design Spielshow|Journal]]. Punkte fürs Ecosystem:
+siehe dessen Übergabe.
 
 ## Passende Skills
 
 - `grill-with-docs`: Phase 4 in Fragerunden schärfen, bevor geplant wird
+- `frontend-design`: neue Oberflächen in Phase 4 im Stil der Spielshow (Tokens in `app/globals.css`)
 - `plan-schreiben`: aus der geklärten Idee den ersten Plan mit prüfbaren Aufgaben
-- `tdd`: jede Aufgabe erst rot, dann grün, im Raum mit den Spieler-Bots aus `e2e/hilfen/raum.ts`
