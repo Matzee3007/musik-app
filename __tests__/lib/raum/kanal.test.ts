@@ -239,41 +239,12 @@ test("scheitert die neue Anmeldung nach dem Wiederbeitritt, bleibt das ohne unbe
   expect(welt.angemeldet).toHaveLength(2);
 });
 
-test("Anwesende behalten ihren Stand", async () => {
-  const { client, welt } = nachgebauterClient();
-  const kanal = raumKanalUeber(client)("ABCD", "s1");
-  const verbunden = kanal.verbinden();
-  const stand = { spiel: "x", runde: null, bingo: [] };
-  welt.zustand = {
-    t: [{ schluessel: "t", rolle: "tisch", stand, presence_ref: "r1" }],
-  };
-  welt.ausloesen("presence", "sync");
-  expect(await verbunden).toEqual([{ schluessel: "t", rolle: "tisch", stand }]);
-});
-
-test("nach erneutem anmelden meldet der Wiederbeitritt den neuen Stand", async () => {
-  const { client, welt } = nachgebauterClient();
-  const kanal = raumKanalUeber(client)("ABCD", "s1");
-  kanal.verbinden();
-  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
-  await kanal.anmelden({
-    ...anna,
-    stand: { spiel: "x", abgehakt: 0, bingo: false },
-  });
-  const neu = { ...anna, stand: { spiel: "x", abgehakt: 1, bingo: false } };
-  await kanal.anmelden(neu);
-
-  welt.status("SUBSCRIBED");
-  expect(welt.angemeldet.at(-1)).toEqual(neu);
-});
-
 test("überholt eine ältere Anmeldung die neuere, meldet der Wiederbeitritt die neuere", async () => {
   const { client, welt } = nachgebauterClient();
   const kanal = raumKanalUeber(client)("ABCD", "s1");
   kanal.verbinden();
-  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
-  const eins = { ...anna, stand: { spiel: "x", abgehakt: 1, bingo: false } };
-  const zwei = { ...anna, stand: { spiel: "x", abgehakt: 2, bingo: false } };
+  const eins = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
+  const zwei = { schluessel: "s1", rolle: "spieler", name: "Ben" } as const;
   welt.zurueckhalten = true;
   const erste = kanal.anmelden(eins);
   const zweite = kanal.anmelden(zwei);
@@ -287,23 +258,21 @@ test("überholt eine ältere Anmeldung die neuere, meldet der Wiederbeitritt die
   expect(welt.angemeldet.at(-1)).toEqual(zwei);
 });
 
-test("ein Stand in falscher Form wird nicht übernommen", async () => {
+test("ein Stand in Presence (ältere Fassung der App) fällt weg", async () => {
   const { client, welt } = nachgebauterClient();
   const verbunden = raumKanalUeber(client)("ABCD", "s1").verbinden();
   welt.zustand = {
-    t: [{ schluessel: "t", rolle: "tisch", stand: { spiel: "x" } }],
     a: [
       {
         schluessel: "a",
         rolle: "spieler",
         name: "Anna",
-        stand: { spiel: "x" },
+        stand: { spiel: "x", abgehakt: 1, bingo: false },
       },
     ],
   };
   welt.ausloesen("presence", "sync");
   expect(await verbunden).toEqual([
-    { schluessel: "t", rolle: "tisch" },
     { schluessel: "a", rolle: "spieler", name: "Anna" },
   ]);
 });

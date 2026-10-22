@@ -195,14 +195,18 @@ export default function SpielAnsicht({
   const kanal = raum?.kanal;
   useEffect(() => {
     if (!kanal) return;
-    return kanal.beiAnwesenden((anwesende) =>
-      // Dieselbe Liste, wenn niemand dazukommt: Sonst meldete jeder Abgleich einen neuen Stand, und der
-      // löste wieder einen Abgleich aus.
+    return kanal.beiNachricht((nachricht) => {
+      if (nachricht.art !== "spieler") return;
+      // Dieselbe Liste, wenn niemand dazukommt: Sonst schickte jede Nachricht einen neuen Stand an alle.
       setBingo((alt) => {
-        const neu = bingoNamen(alt, anwesende, spielId);
+        const neu = bingoNamen(
+          alt,
+          { [nachricht.name]: nachricht.stand },
+          spielId,
+        );
         return neu.length === alt.length ? alt : neu;
-      }),
-    );
+      });
+    });
   }, [kanal, spielId]);
 
   const standMelden = useEffectEvent((stand: TischStand | null) =>

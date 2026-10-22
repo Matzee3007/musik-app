@@ -56,19 +56,14 @@ const NACHRICHT = "nachricht";
 export type KanalOeffnen = (code: string, schluessel: string) => RaumKanal;
 
 // Je Presence-Schlüssel der erste Eintrag, ohne die Felder, die Supabase ergänzt (presence_ref).
-// stand nur, wenn das Gerät einen in gültiger Form gemeldet hat.
 function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
   return Object.values(zustand).map(([a]) => {
     if (a.rolle === "tisch") {
-      const { schluessel, rolle, stand } = a;
-      return istTischStand(stand)
-        ? { schluessel, rolle, stand }
-        : { schluessel, rolle };
+      const { schluessel, rolle } = a;
+      return { schluessel, rolle };
     }
-    const { schluessel, rolle, name, stand } = a;
-    return istSpielerStand(stand)
-      ? { schluessel, rolle, name, stand }
-      : { schluessel, rolle, name };
+    const { schluessel, rolle, name } = a;
+    return { schluessel, rolle, name };
   });
 }
 

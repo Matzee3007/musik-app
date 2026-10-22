@@ -254,8 +254,8 @@ test("Demo im Raum zeigt den Tisch ohne Karte und meldet den Stand", async () =>
   expect(screen.getByRole("region", { name: "Tisch" })).toBeDefined();
   expect(screen.queryByRole("region", { name: "Karte" })).toBeNull();
   await waitFor(() =>
-    expect(raum.angemeldet.at(-1)).toMatchObject({
-      rolle: "tisch",
+    expect(raum.gesendet.at(-1)).toMatchObject({
+      art: "tisch",
       stand: { runde: null, bingo: [] },
     }),
   );

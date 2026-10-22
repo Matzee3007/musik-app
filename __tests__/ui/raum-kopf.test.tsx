@@ -70,7 +70,7 @@ test("Raum schließen sagt es allen und löscht den Raum", async () => {
   const raum = kopf(nachgebauterRaum(), onGeschlossen);
   fireEvent.click(screen.getByRole("button", { name: "Raum schließen" }));
   await waitFor(() => expect(onGeschlossen).toHaveBeenCalled());
-  expect(raum.gesendet).toEqual([{ art: "geschlossen" }]);
+  expect(raum.gesendet).toContainEqual({ art: "geschlossen" });
   expect(tischRaumLaden()).toBeNull();
 });
 
@@ -100,36 +100,69 @@ test("ein Abgleich nach dem Schließen speichert den Raum nicht wieder", async (
 
 const stand: TischStand = { spiel: "s1", runde: null, bingo: [] };
 
-test("meldet den Tisch mit Stand an, auch nach jeder Änderung", async () => {
+function runde(nummer: number): TischStand {
+  return { ...stand, runde: { nummer, kategorie: "jahr", aufgeloest: false } };
+}
+
+test("schickt jeden neuen Stand an alle", async () => {
   const raum = kopf(nachgebauterRaum(), () => {}, stand);
   await waitFor(() =>
-    expect(raum.angemeldet.at(-1)).toEqual({
-      schluessel: expect.any(String),
-      rolle: "tisch",
-      stand,
-    }),
+    expect(raum.gesendet).toContainEqual({ art: "tisch", stand }),
   );
-  const runde1: TischStand = {
-    ...stand,
-    runde: { nummer: 1, kategorie: "jahr", aufgeloest: false },
-  };
-  raum.neuerStand(runde1);
+  raum.neuerStand(runde(1));
   await waitFor(() =>
-    expect(raum.angemeldet.at(-1)).toMatchObject({ stand: runde1 }),
+    expect(raum.gesendet.at(-1)).toEqual({ art: "tisch", stand: runde(1) }),
   );
 });
 
-test("Leiste zeigt die Zahl abgehakter Felder", () => {
+test("der Tisch meldet sich nur einmal per Presence an", async () => {
   const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  for (const nummer of [1, 2, 3]) {
+    raum.neuerStand(runde(nummer));
+    await waitFor(() =>
+      expect(raum.gesendet.at(-1)).toEqual({
+        art: "tisch",
+        stand: runde(nummer),
+      }),
+    );
+  }
+  expect(raum.angemeldet).toEqual([
+    { schluessel: expect.any(String), rolle: "tisch" },
+  ]);
+});
+
+test("beantwortet eine Anfrage mit dem aktuellen Stand", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  raum.neuerStand(runde(2));
+  await waitFor(() =>
+    expect(raum.gesendet.at(-1)).toEqual({ art: "tisch", stand: runde(2) }),
+  );
+  raum.gesendet.length = 0;
+  act(() => raum.nachrichtSchicken({ art: "anfrage" }));
+  await waitFor(() =>
+    expect(raum.gesendet).toEqual([{ art: "tisch", stand: runde(2) }]),
+  );
+});
+
+test("Raum-Kopf fragt nach und zeigt die Antworten in der Leiste", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, stand);
+  await waitFor(() => expect(raum.gesendet).toContainEqual({ art: "anfrage" }));
   act(() =>
     raum.anwesendeSetzen([
-      {
-        schluessel: "s1",
-        rolle: "spieler",
-        name: "Anna",
-        stand: { spiel: "s1", abgehakt: 7, bingo: false },
-      },
+      { schluessel: "s1", rolle: "spieler", name: "Anna" },
     ]),
   );
+  act(() =>
+    raum.nachrichtSchicken({
+      art: "spieler",
+      name: "Anna",
+      stand: { spiel: "s1", abgehakt: 7, bingo: false },
+    }),
+  );
   expect(screen.getByText("Anna 7")).toBeDefined();
+
+  // Wiederbeitritt: Der Tisch fragt erneut nach.
+  raum.gesendet.length = 0;
+  act(() => raum.verbundenMelden());
+  expect(raum.gesendet).toContainEqual({ art: "anfrage" });
 });
