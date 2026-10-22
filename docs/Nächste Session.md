@@ -16,7 +16,8 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit dem neuen Design „Spielshow im Studio“ (PRs #35–#38). Von
+- **Production:** `https://musik-bingo.vercel.app` mit dem neuen Design (PRs #35–#38), am Abend überarbeitet:
+  Anthrazit und Messing, großes Rad, „Anhalten“, Rückfrage beim Schließen, einklappbarer QR-Code (PRs #40–#42). Von
   Claude aus nicht prüfbar (kein Netz in der Sandbox), an echten Geräten noch nicht getestet.
 
 ## Vor dem Start
@@ -41,13 +42,15 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 ## Womit es weitergeht
 
 **Phase 4 – Eigene Ideen** (Roadmap in [[projects/musik-app/docs/Projektvision|Projektvision]]). Vor dem eigentlichen
-Start kam das Design dazwischen ([[2026-10-22-design-spielshow|Plan Design Spielshow]], fertig bis auf die Prüfung an
-echten Geräten). Phase 4 selbst ist noch nicht geschärft.
+Start kam das Design dazwischen ([[2026-10-22-design-spielshow|Plan Design Spielshow]] und
+[[2026-10-22-design-ueberarbeitung|Plan Design überarbeiten]], beide fertig bis auf die Prüfung an echten Geräten).
+Phase 4 selbst ist noch nicht geschärft.
 
 1. **Zuerst fragt Claude, ob vorher etwas anderes ansteht** (neue Ideen, Skills, Tools, Restpunkte). Vorschläge:
-   - **Design an echten Geräten prüfen** (Abschluss des Design-Plans): ein Spieleabend zur Probe auf Production mit
-     Laptop und Handys. Besonders: Silbentrennung „Jahr-zehnt“ auf iOS und Android, Playlist-Liste nach der
-     Spotify-Anmeldung, Birnenkranz bei Bingo. Danach den Plan auf `status: abgeschlossen`.
+   - **Design an echten Geräten prüfen** (Abschluss beider Design-Pläne): ein Spieleabend zur Probe auf Production
+     mit Laptop und Handys. Besonders: „Anhalten“ mit echter Musik, Höhe der Auflösung mit Cover (nur simuliert),
+     Silbentrennung „Jahr-zehnt“ auf iOS und Android, Playlist-Liste nach der Spotify-Anmeldung. Danach beide Pläne
+     auf `status: abgeschlossen`.
    - **Playwright-Agents ausprobieren:** Planner auf die Startseite oder die Namensabfrage ansetzen (Seed
      `e2e/seed.spec.ts`), Healer nach der nächsten Änderung an der Oberfläche.
    - **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer

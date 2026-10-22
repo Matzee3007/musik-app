@@ -3,7 +3,7 @@ titel: Lernjournal Phase 4 - Design Spielshow
 status: aktiv
 phase: 4
 erstellt: 2026-10-22
-tags: [lernjournal, phase-4, design, frontend-design, tailwind, next-font, playwright, code-review, plan-pruefer]
+tags: [lernjournal, phase-4, design, frontend-design, tailwind, next-font, playwright, code-review, plan-pruefer, spotify]
 ---
 
 # Lernjournal Phase 4: Design Spielshow
@@ -11,7 +11,8 @@ tags: [lernjournal, phase-4, design, frontend-design, tailwind, next-font, playw
 Fortsetzung von [[Lernjournal Phase 3 - Raum und Beitritt]]. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]].
 Vor dem Start von Phase 4 stand zuerst die Oberfläche an: Bisher gab es nur das Nötigste, damit die App funktioniert.
 Gewünscht war ein einheitliches, ansprechendes Aussehen für Start, Tisch und Handy. Plan:
-[[2026-10-22-design-spielshow|Design Spielshow im Studio]].
+[[2026-10-22-design-spielshow|Design Spielshow im Studio]]. Am Abend nach Rückmeldung des Entwicklers überarbeitet:
+[[2026-10-22-design-ueberarbeitung|Design überarbeiten und Tisch bedienen]].
 
 ## Erledigt
 
@@ -28,6 +29,14 @@ Gewünscht war ein einheitliches, ansprechendes Aussehen für Start, Tisch und H
       Fokus an Textknöpfen, Test-Aufräumen)
 - [x] Zeile in der Projekt-`CLAUDE.md`: Dev-Server nach Änderungen an `app/globals.css` neu starten
 - [x] Alle PRs gemergt, Prüfungen: 278 Vitest-Tests, 11 Browser-Tests, CI grün
+- [x] Rückmeldung: zu verspielt, Rad zu klein, Auflösung zu klein, Song anhalten, Rückfrage beim Schließen, QR-Code
+      ausblenden. Fragerunde mit vier Entscheidungen, zweiter Plan
+- [x] Teil 1: „Anhalten“ am Tisch, Rückfrage „Willst du den Raum wirklich schließen?“ (PR #40)
+- [x] Teil 2: Anthrazit und Messing, Barlow Condensed statt Bungee, Rad ohne Birnen, Token-Namen nach Rolle (PR #41)
+- [x] Teil 3: Rad rund 540 statt 370 px, eigener Abschnitt „Runde“, Kulisse einklappbar (PR #42)
+- [x] Zweites Review: Pause überholte den Start bei Spotify, Rad nach Bühnenbreite (`cqw`), gedrehtes Rad verlängerte
+      die Seite, Auflösung mit Spotify zu hoch. Alles behoben, 283 Vitest-Tests, 10 Browser-Tests, CI grün
+- [x] Gestapelte PRs diesmal vor dem Merge auf `main` umgestellt, keine geschlossenen PRs
 - [ ] Prüfung an echten Geräten (Laptop und Handys), Production nicht von hier aus prüfbar
 
 ## Befehle: Plugin
@@ -120,6 +129,23 @@ Nur dunkle Farben im CSS reichen nicht: Auswahllisten, Zahlenfelder und Scrollba
 Jeder Teil baut auf dem vorigen auf, jeder PR zielt auf den Branch des Vorgängers. Vorteil: kleine Reviews je Teil,
 Production sieht erst nach dem Merge etwas (Entscheidung: erst nach Teil 3 mergen, dann alle nach Teil 4).
 
+### Container-Einheiten `cqw`
+
+`100cqw` ist die Breite des nächsten Containers (Element mit `@container`), nicht des Fensters wie `vw`. Das Rad nutzt
+`min(40rem, 68vh, calc(100cqw - 24rem))`: höchstens 40rem, höchstens 68 % der Fensterhöhe, und so breit, dass neben ihm
+noch Abstand und Abschnitt (24rem) Platz haben. Damit passt es sich auch der eingeklappten Kulisse an.
+
+### Wettlauf zweier Befehle an Spotify
+
+Befehle an Spotify sind asynchron. Klickt der DJ „Anhalten“, solange „Abspielen“ noch unterwegs ist, kann die Pause
+zuerst ankommen. Statt jede Pause zurückzuhalten (verzögert jeden Klick, sechs Tests erwarteten eine sofortige Pause)
+merkt sich die App `angehalten` und pausiert noch einmal, wenn ein Start danach durchkommt.
+
+### Gedrehte Elemente und die Seitenhöhe
+
+Ein gedrehtes Quadrat ragt mit seinen Ecken über den eigenen Rahmen. Der Browser kann das zur Scrollhöhe zählen, je
+nach Drehwinkel. Ein runder Behälter mit `overflow-hidden` schneidet die leeren Ecken ab, die runde Scheibe bleibt ganz.
+
 ## Fehler und Lösungen
 
 ### Dev-Server liefert altes CSS aus
@@ -167,6 +193,36 @@ Production sieht erst nach dem Merge etwas (Entscheidung: erst nach Teil 3 merge
 - **Lösung:** Ging glatt, war aber gegen die Regel „erst bei `MERGEABLE`“. Bei #38 gewartet.
 - **Prüfen:** `gh pr view <nr> --json mergeable` vor jedem Merge, bei `UNKNOWN` kurz warten.
 
+### Test rot aus dem falschen Grund: `Expected: >= 480, Received: 0`
+
+- **Wo:** Teil 3 der Überarbeitung, Test fürs große Rad.
+- **Ursache:** `justify-items-center` im Raster von `start.tsx` ließ die Bühnen-Spalte auf ihren Inhalt schrumpfen, das
+  Rad (`max-w-full`) schrumpfte mit auf null.
+- **Lösung:** `justify-items-center` entfernt. Danach war der Test aus dem richtigen Grund rot (372 px).
+- **Prüfen:** `npx playwright test e2e/design.spec.ts -g "Laptop" --project=chromium`.
+
+### Gedrehtes Rad misst zu groß: `Received: 468.7`
+
+- **Wo:** gleicher Test, gemessen am Rad selbst.
+- **Ursache:** `boundingBox()` eines gedrehten Elements ist der Rahmen um das gedrehte Quadrat, größer als die Scheibe.
+- **Lösung:** am ungedrehten Behälter messen (`locator("..")`).
+- **Prüfen:** Test misst 372 vor und 544 nach der Änderung.
+
+### Spieleabend: `Expected: <= 800, Received: 812`
+
+- **Wo:** neue Höhenmessung beim Bingo im Spieleabend-Test.
+- **Ursache:** Das gedrehte Rad ragte je nach Winkel bis 816 px hinunter. Nicht jeder Test sah das: Ein eigener Test mit
+  45° blieb grün, weil `scrollHeight` dort bei 800 blieb.
+- **Lösung:** Grafik in einem runden Behälter mit `overflow-hidden`.
+- **Prüfen:** `npx playwright test e2e/spieleabend.spec.ts --repeat-each=3`, 6 von 6 grün.
+
+### Sechs Tests rot nach dem ersten Versuch gegen den Wettlauf
+
+- **Wo:** Fund 1 des zweiten Reviews.
+- **Ursache:** Die Pause wartete auf den Start, die Tests erwarten sie sofort nach dem Klick.
+- **Lösung:** Andersherum: sofort pausieren und nach einem späten Start noch einmal (siehe Neu gelernt).
+- **Prüfen:** Der neue Test ist gegen den alten Code rot (`git stash` nur für `spiel-ansicht.tsx`), mit der Änderung grün.
+
 ## Aus dem Chat
 
 -
@@ -176,9 +232,10 @@ Production sieht erst nach dem Merge etwas (Entscheidung: erst nach Teil 3 merge
 - Warum übernimmt der Dev-Server Änderungen an `app/globals.css` nicht (Turbopack, Next.js 16.4)?
 - Wie sieht die Silbentrennung „Jahr-zehnt“ auf echten Handys aus (Safari auf iOS, Chrome auf Android)?
 - Wie wirkt die Playlist-Liste nach der Spotify-Anmeldung (ohne Anmeldung nicht fotografiert)?
-- `config/settings.json` im Ecosystem hat viele Änderungen, die nicht aus dieser Session stammen. Woher?
+- Wie hoch ist die Auflösung mit echtem Cover und Musik? Nur mit Platzhaltern simuliert (800 px), die Demo hat keins.
 
 ## Nächste Schritte
 
-1. Spieleabend zur Probe mit Laptop und Handys auf Production, Design an echten Geräten prüfen.
+1. Spieleabend zur Probe mit Laptop und Handys auf Production, Design an echten Geräten prüfen, dabei „Anhalten“,
+   Cover und Höhe der Auflösung mit Spotify.
 2. Phase 4 mit `grill-with-docs` schärfen: Scoreboard, Jahre in Supabase, Tisch am Handy, Kategorie auf dem Handy.
