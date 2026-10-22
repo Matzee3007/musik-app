@@ -86,7 +86,7 @@ anderer ihn, zählt der Tisch beide unter einem Namen. Für einen Spieleabend un
   `{ name: string; verbunden: boolean; abgehakt: number | null }[]` (Zahl nur bei verbundenen Spielern mit Stand für
   dieses Spiel)
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("tischStand nimmt Kategorie-Id und lässt den Song weg", () => {
@@ -108,19 +108,19 @@ Weitere: „tischStandLesen liefert null ohne Tisch oder ohne Stand“, „bingo
 nach dem Neuladen). In `spieler.test.ts`: „spielerleiste zeigt die Zahl nur für das laufende Spiel“ (Anna Stand `s1`
 mit 3 → 3, Ben Stand `alt` → `null`, nicht verbundene → `null`); bestehende Erwartungen bekommen `abgehakt: null`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/stand.test.ts __tests__/lib/raum/spieler.test.ts`
 Erwartet: FAIL, `lib/raum/stand.ts` fehlt
 
-- [ ] **Schritt 3: `lib/raum/stand.ts` schreiben, `Anwesend` und `spielerleiste` erweitern**
+- [x] **Schritt 3: `lib/raum/stand.ts` schreiben, `Anwesend` und `spielerleiste` erweitern**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/lib/raum`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check

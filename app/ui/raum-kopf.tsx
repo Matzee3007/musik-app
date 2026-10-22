@@ -33,7 +33,9 @@ export default function RaumKopf({
       // Nach "Raum schließen" ist nichts mehr gespeichert, ein später Abgleich legt den Raum nicht neu an.
       const raum = tischRaumLaden();
       if (!raum) return;
-      const bekannt = spielerleiste(raum.bekannt, anwesende).map((s) => s.name);
+      const bekannt = spielerleiste(raum.bekannt, anwesende, null).map(
+        (s) => s.name,
+      );
       tischRaumSpeichern({ code, bekannt });
       setStand({ bekannt, anwesende });
     }
@@ -72,7 +74,7 @@ export default function RaumKopf({
       />
       {fehler && <p className="text-sm">{fehler}</p>}
       <ul className="flex flex-wrap justify-center gap-2">
-        {spielerleiste(stand.bekannt, stand.anwesende).map((s) => (
+        {spielerleiste(stand.bekannt, stand.anwesende, null).map((s) => (
           <li
             key={s.name}
             aria-disabled={s.verbunden ? undefined : true}
