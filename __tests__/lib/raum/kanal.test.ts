@@ -232,3 +232,31 @@ test("scheitert die neue Anmeldung nach dem Wiederbeitritt, bleibt das ohne unbe
   await new Promise((r) => setTimeout(r, 0));
   expect(welt.angemeldet).toHaveLength(2);
 });
+
+test("Anwesende behalten ihren Stand", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  const verbunden = kanal.verbinden();
+  const stand = { spiel: "x", runde: null, bingo: [] };
+  welt.zustand = {
+    t: [{ schluessel: "t", rolle: "tisch", stand, presence_ref: "r1" }],
+  };
+  welt.ausloesen("presence", "sync");
+  expect(await verbunden).toEqual([{ schluessel: "t", rolle: "tisch", stand }]);
+});
+
+test("nach erneutem anmelden meldet der Wiederbeitritt den neuen Stand", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  kanal.verbinden();
+  const anna = { schluessel: "s1", rolle: "spieler", name: "Anna" } as const;
+  await kanal.anmelden({
+    ...anna,
+    stand: { spiel: "x", abgehakt: 0, bingo: false },
+  });
+  const neu = { ...anna, stand: { spiel: "x", abgehakt: 1, bingo: false } };
+  await kanal.anmelden(neu);
+
+  welt.status("SUBSCRIBED");
+  expect(welt.angemeldet.at(-1)).toEqual(neu);
+});

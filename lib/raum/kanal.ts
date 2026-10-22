@@ -2,7 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Anwesend } from "@/lib/raum/spieler";
 import { supabaseClient } from "@/lib/supabase";
 
-export type RaumNachricht = { art: "geschlossen" }; // Plan C ergänzt Runde und Auflösung
+// Runde und Auflösung laufen über Presence (ADR 0005), Broadcast nur für "geschlossen".
+export type RaumNachricht = { art: "geschlossen" };
 
 export interface RaumKanal {
   // Abonniert den Kanal und liefert die Anwesenden nach dem ersten Presence-Abgleich ("sync").
@@ -22,12 +23,18 @@ const NACHRICHT = "nachricht";
 export type KanalOeffnen = (code: string, schluessel: string) => RaumKanal;
 
 // Je Presence-Schlüssel der erste Eintrag, ohne die Felder, die Supabase ergänzt (presence_ref).
+// stand nur, wenn das Gerät einen gemeldet hat.
 function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
-  return Object.values(zustand).map(([a]) =>
-    a.rolle === "tisch"
-      ? { schluessel: a.schluessel, rolle: "tisch" }
-      : { schluessel: a.schluessel, rolle: "spieler", name: a.name },
-  );
+  return Object.values(zustand).map(([a]) => {
+    if (a.rolle === "tisch") {
+      const { schluessel, rolle, stand } = a;
+      return stand ? { schluessel, rolle, stand } : { schluessel, rolle };
+    }
+    const { schluessel, rolle, name, stand } = a;
+    return stand
+      ? { schluessel, rolle, name, stand }
+      : { schluessel, rolle, name };
+  });
 }
 
 // Supabase meldet nur ok, wenn track() oder send() angekommen sind, statt bei Fehlern zu werfen.

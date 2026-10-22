@@ -143,23 +143,23 @@ git commit -m "Add game state shared through the room"
   `anmelden(ich)` ersetzt den eigenen Eintrag und gilt auch für das Neuanmelden nach dem Wiederbeitritt (so schon
   umgesetzt, nur Test).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 „Anwesende behalten ihren Stand“ (Nachbau-Presence enthält Tisch mit `stand` und `presence_ref` → Ergebnis mit
 `stand`, ohne `presence_ref`), „nach erneutem anmelden meldet der Wiederbeitritt den neuen Stand“ (zweimal
 `anmelden` mit verschiedenem Stand, dann `SUBSCRIBED` → letzter `track` hat den zweiten Stand).
 
-- [ ] **Schritt 2: Tests laufen lassen, der erste muss fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, der erste muss fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/kanal.test.ts`
 
-- [ ] **Schritt 3: `anwesendeLesen` erweitern**
+- [x] **Schritt 3: `anwesendeLesen` erweitern**
 
 `stand` nur übernehmen, wenn vorhanden, damit Einträge ohne Stand weiter gleich aussehen.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: ADR 0005 schreiben**
+- [x] **Schritt 5: ADR 0005 schreiben**
 
 Kontext: Broadcast speichert nichts, ein gesperrtes oder neu geladenes Handy verpasst „Runde“ und „Auflösung“.
 Entscheidung: Stand im Presence-Eintrag (Tisch: `TischStand`, Spieler: `SpielerStand`), Broadcast nur für
@@ -168,7 +168,7 @@ jeder verpasste Fall ein eigener Weg); Tabellen (bleibt bei ADR 0004). Konsequen
 (einige pro Runde, weit unter dem Limit), geht ein Spieler, ist auch seine Zahl weg (Leiste zeigt ihn grau ohne Zahl),
 der Tisch muss Bingo-Namen selbst festhalten.
 
-- [ ] **Schritt 6: Prüfen und committen**
+- [x] **Schritt 6: Prüfen und committen**
 
 ```bash
 npm run check
