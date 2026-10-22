@@ -33,7 +33,8 @@ in ihr noch nicht abgehakt hat, das Spiel auf einem Gerät ohne Supabase bleibt.
   Nummer: Lädt der Tisch neu, beginnt er wieder bei 1, und Handys behielten ihre alte Karte.
 - Pro Runde hakt ein Spieler höchstens ein Feld ab, auch über Neuladen hinweg.
 - Felder ausgegraut (`aria-disabled="true"`, `opacity-40`): vor der Auflösung alle nicht abgehakten; danach alle
-  außer den freien Feldern der gedrehten Kategorie; alle, wenn in dieser Runde schon abgehakt.
+  außer den freien Feldern der gedrehten Kategorie; alle nicht abgehakten, wenn in dieser Runde schon abgehakt.
+  Abgehakte Felder sind nie grau, sie lassen sich zurücknehmen (präzisiert 2026-10-22 nach dem Plan-Prüfer).
 - Nach einem Bingo im Spiel kein Zurücknehmen mehr, auf keiner Karte. Abhaken in der laufenden Runde bleibt erlaubt
   (zwei Bingos in derselben Runde gewinnen beide).
 - Speicher am Handy: `localStorage` `musik-app:handy-karte` (die `HandyKarte`), `musik-app:notizen` (`"aus"` oder
@@ -445,7 +446,7 @@ Handys geprüft.
 `npm run e2e`
 Erwartet: `3 passed` (korrigiert 2026-10-22: `wiederkommen.spec.ts` aus PR #28 läuft mit)
 
-- [ ] **Schritt 3: Doku, prüfen, committen, PR**
+- [x] **Schritt 3: Doku, prüfen, committen, PR**
 
 ```bash
 npm run check

@@ -114,3 +114,9 @@ test("spielerStand zählt die Haken und erkennt Bingo", () => {
     bingo: true,
   });
 });
+
+test("nach einem Bingo darf in derselben Runde noch abgehakt werden", () => {
+  const nach = abhaken(handy, { ...stand, bingo: ["Anna"] }, 0);
+  expect(nach.karte[0].abgehakt).toBe(true);
+  expect(nach.abgehakt).toEqual({ runde: 3, feld: 0 });
+});
