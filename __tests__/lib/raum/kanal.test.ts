@@ -5,7 +5,7 @@ import { raumKanalUeber } from "@/lib/raum/kanal";
 type Rueckruf = (daten: { payload?: unknown }) => void;
 
 // Nachbau des Supabase-Clients: merkt sich, was der Kanal aufruft, und lässt den Test Ereignisse
-// auslösen. Wie das Original lehnt er Rückrufe ab, die erst nach subscribe() kommen.
+// auslösen. Wie das Original lehnt er Rückrufe nach subscribe() und ein zweites subscribe() ab.
 function nachgebauterClient() {
   const rueckrufe: { art: string; event: string; rueckruf: Rueckruf }[] = [];
   let status: (s: string) => void = () => {};
@@ -31,6 +31,7 @@ function nachgebauterClient() {
       return kanal;
     },
     subscribe(rueckruf?: (s: string) => void) {
+      if (abonniert) throw new Error("subscribe() zweimal");
       abonniert = true;
       status = rueckruf ?? (() => {});
       return kanal;
@@ -136,4 +137,13 @@ test("trennen gibt den Kanal bei Supabase frei", () => {
   const { client, welt } = nachgebauterClient();
   raumKanalUeber(client)("ABCD", "s1").trennen();
   expect(welt.entfernt).toBe(true);
+});
+
+test("verbinden zweimal abonniert nur einmal, wie es React im Strict Mode tut", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  const erstes = kanal.verbinden();
+  const zweites = kanal.verbinden();
+  welt.ausloesen("presence", "sync");
+  expect(await zweites).toEqual(await erstes);
 });

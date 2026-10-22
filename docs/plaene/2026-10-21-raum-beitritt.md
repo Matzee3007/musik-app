@@ -322,7 +322,10 @@ git commit -m "Add room channel over Supabase Realtime"
 **Dateien:**
 - Neu: `app/ui/raum-kopf.tsx`
 - Ändern: `app/ui/start.tsx`, `package.json` und `package-lock.json` (`qrcode.react`)
-- Test: `__tests__/ui/raum-kopf.test.tsx`, Ändern: `__tests__/ui/start.test.tsx`
+- Test: `__tests__/ui/raum-kopf.test.tsx`, Ändern: `__tests__/ui/start.test.tsx`, `__tests__/page.test.tsx` (Nachbau
+  von `next/navigation`, ohne Supabase)
+- Ergänzt 2026-10-22: `verbinden()` abonniert nur beim ersten Aufruf (React ruft Effekte im Strict Mode doppelt auf,
+  Supabase erlaubt nur ein `subscribe()` je Kanal), Test in `__tests__/lib/raum/kanal.test.ts`
 
 **Schnittstellen:**
 - Nutzt: Aufgaben 2 bis 5

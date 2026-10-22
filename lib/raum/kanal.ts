@@ -55,8 +55,13 @@ export function raumKanalUeber(
       for (const rueckruf of nachrichtRueckrufe) rueckruf(payload);
     });
 
+    // React ruft Effekte im Strict Mode doppelt auf, Supabase erlaubt aber nur ein subscribe() je Kanal.
+    let abonniert = false;
+
     return {
       verbinden() {
+        if (abonniert) return abgeglichen;
+        abonniert = true;
         kanal.subscribe((status) => {
           if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
             abgelehnt(new Error("Keine Verbindung zum Raum."));
