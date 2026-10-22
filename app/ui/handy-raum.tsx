@@ -71,7 +71,7 @@ export default function HandyRaum({
         setZustand({ art: "name" });
         return;
       }
-      // Erst danach "drin": HandySpiel meldet sich dann mit Stand an, und diese Anmeldung bleibt die letzte.
+      // Erst danach "drin": HandySpiel schickt seinen Stand per Nachricht, erst wenn das Gerät sichtbar ist.
       k.anmelden({
         schluessel: tabSchluessel(),
         rolle: "spieler",
