@@ -281,22 +281,22 @@ git commit -m "Remember the phone card and notes setting"
   Ausgegraut: `aria-disabled="true"` und `opacity-40`, der Klick kommt trotzdem an (die Spielansicht entscheidet).
   Hervorgehoben: deutlicher Rahmen (`ring-4 ring-foreground`) und `data-bingo="true"`. Ohne beide Props wie bisher.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 „graut die genannten Felder aus“ (`ausgegraut={(i) => i > 0}` → 24 Felder mit `aria-disabled="true"`),
 „hebt die Bingo-Reihe hervor“ (`hervorgehoben={[0, 1, 2, 3, 4]}` → 5 Felder mit `data-bingo`).
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/karte-ansicht.test.tsx`
 
-- [ ] **Schritt 3: Props in `app/ui/karte-ansicht.tsx` ergänzen**
+- [x] **Schritt 3: Props in `app/ui/karte-ansicht.tsx` ergänzen**
 
-- [ ] **Schritt 4: Alle UI-Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Alle UI-Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
