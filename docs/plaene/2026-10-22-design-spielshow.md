@@ -294,7 +294,7 @@ git commit -m "Turn the table into a game show stage with bulb ring"
 - Nutzt: Tokens (Aufgabe 1), `Spieler`-Bot (`Spieler.beitreten`) und `e2e/design.spec.ts` (Aufgabe 3).
 - `KarteAnsicht` behält ihre Props.
 
-- [ ] **Schritt 1: Fehlschlagenden Test schreiben**
+- [x] **Schritt 1: Fehlschlagenden Test schreiben**
 
 ```ts
 // e2e/design.spec.ts
@@ -307,36 +307,66 @@ test("Felder am Handy zeigen ihr Wort ganz", async ({ browser }) => {
 });
 ```
 
-- [ ] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
+- [x] **Schritt 2: Test laufen lassen, er muss fehlschlagen**
 
 `npx playwright test e2e/design.spec.ts --project=chromium`
 Erwartet: FAIL, mindestens ein „Jahrzehnt“-Feld ist breiter als sein Platz.
 
-- [ ] **Schritt 3: Umsetzen**
+- [x] **Schritt 3: Umsetzen**
   - `karte-ansicht.tsx`: Felder `rounded-md`, Kategorie-Farbe als Grund, Wort in `text-nacht font-bold` mit
     `text-[clamp(0.6rem,3.2vw,0.9rem)]` und `break-words hyphens-auto` (Silbentrennung über `lang="de"`), Abstand
-    `gap-1.5`. Ausgegraut: `opacity-35` statt grauer Schrift. Abgehakt statt „✓“-Fläche: runder Stempelpunkt
-    (`absolute inset-[12%] rounded-full bg-nacht/70`, Rand `birne`), das Wort bleibt darunter lesbar.
+    `gap-1.5`. Ausgegraut: `opacity-50` statt grauer Schrift. Abgehakt statt „✓“-Fläche: runder Stempelpunkt
+    (`absolute inset-[5%] rounded-full bg-birne`) unter dem Wort, das Wort bleibt lesbar.
     Bingo-Reihe: `ring-birne`.
   - `globals.css`: Keyframe `stempel` (kurz von groß auf normal), nur beim Abhaken, aus bei `prefers-reduced-motion`.
   - `handy-spiel.tsx`: Kopf als eine Zeile mit Raum-Code als Schild und Namen, der Satz „Du bist im Raum … als …“
     bleibt als Text (Bot sucht ihn) in `text-sm`. „Bingo!“ als `font-schild text-birne`. Notizen `bg-boden`, Schalter
     „Notizen an/aus“ als Textknopf in `text-birne`. Meldungen in `text-signal`.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm run check && npm run e2e`
 Erwartet: beide grün.
 
-- [ ] **Schritt 5: Screenshots ansehen** in 393×852 und 360×780: wartend, im Spiel mit ausgegrauten Feldern, mit
+- [x] **Schritt 5: Screenshots ansehen** in 393×852 und 360×780: wartend, im Spiel mit ausgegrauten Feldern, mit
   Stempeln, mit Bingo-Reihe, mit und ohne Notizen.
 
-- [ ] **Schritt 6: Committen, PR**
+- [x] **Schritt 6: Committen, PR**
 
 ```bash
 git add app/ui/karte-ansicht.tsx app/ui/handy-spiel.tsx app/globals.css e2e/design.spec.ts
 git commit -m "Style the phone card with bingo stamps"
 ```
+
+**Abweichungen bei der Umsetzung (2026-10-22):**
+- Der Test war bei 393 px sofort grün, „Jahrzehnt“ passt dort knapp. Er prüft jetzt 360 px (häufige Android-Breite)
+  und misst die Breite des Worts selbst gegen die Innenbreite des Felds: `scrollWidth` übersieht zentrierten Text,
+  der nach beiden Seiten hinausragt.
+- Statt Schriftgröße mit `clamp`: Silbentrennung (`hyphens-auto`, „Jahr-zehnt“) und weniger Seitenrand am Handy
+  (`px-4` in `app/raum/[code]/page.tsx`).
+
+## Review (2026-10-22)
+
+`plan-pruefer` und `/code-review` über alle vier Teile (`main...feat/design-handy`). Behoben in Teil 4:
+
+- Rahmen ums Rad `w-96 max-w-full` statt `w-80`: Das Rad war mit Birnenrand kaum größer als vorher (264 px). Der
+  befürchtete seitliche Scroll bei 360 px trat nicht auf, der e2e-Test „Tisch scrollt am Handy nicht seitlich“ wacht
+  jetzt darüber.
+- `color-scheme: dark`, damit Auswahllisten, Zahlenfelder und Scrollbalken des Browsers dunkel sind.
+- `Knopf` „haupt“ mit durchsichtigem Rahmen, sonst 4 px niedriger als „neben“.
+- Sichtbarer Fokus auch an Textknöpfen und Links.
+- `e2e/design.spec.ts` öffnet den Tisch über den Bot `Tisch.eroeffnen`, damit `alleSchliessen` ihn nach einem
+  Fehlschlag schließt.
+- Anzahl der Birnen nur in `birnenkranz.tsx` (`--anteil`), Dauer des Lauflichts nur in `globals.css`.
+- Stempel als gelber Ring statt Scheibe: Die Kategorie-Farbe bleibt sichtbar (Entscheidung des Entwicklers).
+
+Bewusst gelassen:
+
+- Spielerzeile „Anna 3“ bleibt ein Text ohne Zahl rechts und ohne `font-schild`: Die Bots suchen sie so.
+- Lösung `text-4xl` und Cover `size-36` statt `text-5xl` und `w-40`: damit die Auflösung in 800 px passt.
+- Am Handy kein einzeiliger Kopf: Die Überschrift „Raum XXXX“ steht schon darüber, der Satz mit dem Namen bleibt klein.
+- Kein `break-words` an den Feldern: Silbentrennung reicht, der Test bei 360 px ist grün.
+- QR-Farben als Hex-Werte und Titel in zwei Seiten: je zwei Stellen, eine gemeinsame Konstante lohnt nicht.
 
 ## Abschluss
 

@@ -88,7 +88,7 @@ export default function Tisch({
       {/* Breit: Rad links, Moderation rechts. Das Rad bleibt immer eingehängt: Ein neu eingehängtes Rad hat keinen
           alten Winkel, der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie. */}
       <div className="flex w-full flex-col items-center gap-10 @2xl:flex-row @2xl:justify-center">
-        <div className="relative w-80 shrink-0 rounded-full bg-boden p-7">
+        <div className="relative w-96 max-w-full shrink-0 rounded-full bg-boden p-7">
           <Birnenkranz modus={bingo ? "bingo" : dreht ? "lauf" : "ruhig"} />
           <RadAnsicht
             runde={runde}
@@ -179,7 +179,7 @@ export default function Tisch({
               {onJahrKorrigieren &&
                 (jahrFeld === null ? (
                   <button
-                    className="text-birne underline"
+                    className="text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
                     onClick={() => setJahrFeld("")}
                   >
                     Jahr korrigieren

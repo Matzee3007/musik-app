@@ -24,7 +24,8 @@ export default function Birnenkranz({
               {
                 left: `${50 + RADIUS * Math.sin(bogen)}%`,
                 top: `${50 - RADIUS * Math.cos(bogen)}%`,
-                "--i": i,
+                // Stelle der Birne im Kreis von 0 bis 1, daraus rechnet globals.css die Verzögerung des Lauflichts.
+                "--anteil": i / ANZAHL,
               } as React.CSSProperties
             }
           />

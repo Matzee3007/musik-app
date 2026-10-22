@@ -122,7 +122,7 @@ export default function RaumKopf({
   return (
     <section className="flex flex-col items-center gap-4">
       <p className="font-schild text-6xl tracking-wider text-birne">{code}</p>
-      {/* QR-Code in den Farben der Show, dunkel auf hell bleibt er für jede Kamera lesbar. */}
+      {/* QR-Code in den Farben der Show (licht und nacht aus globals.css), dunkel auf hell bleibt er lesbar. */}
       <QRCodeSVG
         value={`${window.location.origin}/raum/${code}`}
         title={`QR-Code für Raum ${code}`}
@@ -150,7 +150,10 @@ export default function RaumKopf({
           </li>
         ))}
       </ul>
-      <button className="text-signal underline" onClick={schliessen}>
+      <button
+        className="text-signal underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={schliessen}
+      >
         Raum schließen
       </button>
     </section>

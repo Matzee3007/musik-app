@@ -148,7 +148,10 @@ export default function VorbereitenAnsicht({
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <button className="self-start text-birne underline" onClick={onZurueck}>
+      <button
+        className="self-start text-birne underline outline-birne focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={onZurueck}
+      >
         Zurück
       </button>
       <h2 className="font-schild text-3xl text-birne">{playlist.name}</h2>

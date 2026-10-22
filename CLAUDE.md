@@ -83,6 +83,9 @@ gh pr checks <nr>          # CI-Ergebnis eines PRs (GitHub Actions)
 Nach Änderungen per Shell (Heredoc, Python, `sed`) `npx prettier --write <dateien>` ausführen: Der Prettier-Hook
 greift nur bei Edit und Write.
 
+Änderungen an `app/globals.css` übernimmt ein laufender `npm run dev` nicht: Server neu starten, bevor Screenshots oder
+`npm run e2e` laufen.
+
 Vor jedem Commit: `npm run check` muss mit Exit-Code 0 durchlaufen. Vor jedem Merge: `gh pr checks <nr>` muss grün
 sein (privates Repo mit GitHub Free, daher kein Branch-Schutz).
 
