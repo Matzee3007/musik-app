@@ -53,7 +53,8 @@ app/              Next.js App Router: layout.tsx, page.tsx, globals.css, raum/[c
 lib/              Spiellogik als reine Funktionen: Rad, Karte, Bingo, Songliste, Spielzüge (spiel.ts);
                   raum/ für Räume (Code, Spieler, Speicher, Kanal über Supabase Realtime)
 __tests__/        Vitest-Tests, lib/ für die Spiellogik, hilfen/ für Testhilfen und Nachbauten
-e2e/              Playwright-Tests im Browser gegen das echte Supabase
+e2e/              Playwright-Tests im Browser gegen das echte Supabase, hilfen/ mit den Bots Tisch und Spieler
+specs/            Testpläne der Playwright-Agents (.claude/agents/playwright-test-*.md)
 scripts/          Assistenten für Einrichtungen von Hand (supabase-einrichten.sh)
 docs/             Obsidian-Vault: adr/, journal/, plaene/, tools/
 .github/          workflows/ci.yml: CI mit GitHub Actions
@@ -75,6 +76,7 @@ npm test                   # Vitest einmal ausführen (npm run test:watch: bei j
 npm run build              # Produktionsfassung bauen
 npm run check              # alle Prüfungen: lint, format:check, typecheck, test
 npm run e2e                # Playwright, nur lokal: braucht Supabase in .env.local, nicht in der CI
+npx playwright test --repeat-each=3   # jeden Browser-Test dreimal, nach Änderungen am Raum
 gh pr checks <nr>          # CI-Ergebnis eines PRs (GitHub Actions)
 ```
 
