@@ -58,3 +58,28 @@ export function bingoNamen(
   }
   return namen;
 }
+
+// Presence-Einträge kommen von anderen Geräten, etwa einer älteren Fassung der App: Form prüfen, bevor
+// ein Stand zählt.
+export function istTischStand(wert: unknown): wert is TischStand {
+  const s = wert as TischStand | null;
+  const r = s?.runde;
+  return (
+    typeof s?.spiel === "string" &&
+    Array.isArray(s.bingo) &&
+    s.bingo.every((n) => typeof n === "string") &&
+    (r === null ||
+      (typeof r?.nummer === "number" &&
+        typeof r.kategorie === "string" &&
+        typeof r.aufgeloest === "boolean"))
+  );
+}
+
+export function istSpielerStand(wert: unknown): wert is SpielerStand {
+  const s = wert as SpielerStand | null;
+  return (
+    typeof s?.spiel === "string" &&
+    typeof s.abgehakt === "number" &&
+    typeof s.bingo === "boolean"
+  );
+}

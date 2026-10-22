@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Anwesend } from "@/lib/raum/spieler";
+import { istSpielerStand, istTischStand } from "@/lib/raum/stand";
 import { supabaseClient } from "@/lib/supabase";
 
 // Runde und Auflösung laufen über Presence (ADR 0005), Broadcast nur für "geschlossen".
@@ -23,15 +24,17 @@ const NACHRICHT = "nachricht";
 export type KanalOeffnen = (code: string, schluessel: string) => RaumKanal;
 
 // Je Presence-Schlüssel der erste Eintrag, ohne die Felder, die Supabase ergänzt (presence_ref).
-// stand nur, wenn das Gerät einen gemeldet hat.
+// stand nur, wenn das Gerät einen in gültiger Form gemeldet hat.
 function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
   return Object.values(zustand).map(([a]) => {
     if (a.rolle === "tisch") {
       const { schluessel, rolle, stand } = a;
-      return stand ? { schluessel, rolle, stand } : { schluessel, rolle };
+      return istTischStand(stand)
+        ? { schluessel, rolle, stand }
+        : { schluessel, rolle };
     }
     const { schluessel, rolle, name, stand } = a;
-    return stand
+    return istSpielerStand(stand)
       ? { schluessel, rolle, name, stand }
       : { schluessel, rolle, name };
   });
@@ -77,6 +80,8 @@ export function raumKanalUeber(
     // Supabase vergisst die Presence, wenn die Verbindung abreißt (z. B. gesperrter Bildschirm), und
     // tritt beim Zurückkommen ohne sie wieder bei. Deshalb bei jedem SUBSCRIBED neu anmelden.
     let angemeldetAls: Anwesend | null = null;
+    // Laufen zwei Anmeldungen gleichzeitig, kann die ältere zuletzt fertig werden. Gemerkt wird nur die neueste.
+    let anmeldungen = 0;
 
     const raumKanal: RaumKanal = {
       verbinden() {
@@ -98,8 +103,9 @@ export function raumKanalUeber(
         );
       },
       async anmelden(ich) {
+        const nummer = ++anmeldungen;
         pruefen(await kanal.track(ich));
-        angemeldetAls = ich;
+        if (nummer === anmeldungen) angemeldetAls = ich;
       },
       beiAnwesenden(rueckruf) {
         anwesendeRueckrufe.add(rueckruf);
