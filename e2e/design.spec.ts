@@ -39,18 +39,6 @@ test("Tisch scrollt am Handy nicht seitlich", async ({ browser }) => {
   ).toBeLessThanOrEqual(360);
 });
 
-test("bei „Bewegung reduzieren“ läuft kein Lauflicht", async ({ browser }) => {
-  const tisch = await Tisch.eroeffnen(browser);
-  const seite = tisch.seite;
-  await seite.emulateMedia({ reducedMotion: "reduce" });
-  await tisch.demoStarten();
-  await seite.getByRole("button", { name: "Rad drehen" }).click();
-  await expect(seite.locator('[data-modus="lauf"] .birne').first()).toHaveCSS(
-    "animation-name",
-    "none",
-  );
-});
-
 test("Felder am Handy zeigen ihr Wort ganz", async ({ browser }) => {
   const tisch = await Tisch.eroeffnen(browser);
   const anna = await Spieler.beitreten(browser, tisch.code, "Anna");

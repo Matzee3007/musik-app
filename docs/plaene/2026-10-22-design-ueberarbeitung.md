@@ -142,14 +142,14 @@ Die drei vorhandenen Tests zu „Raum schließen“ bekommen `vi.spyOn(window, "
 Kategorien gedeckter, Schrift darauf in `grund`: Titel `#6FA8DC`, Interpret `#D27BA0`, Jahrzehnt `#E0955A`,
 Jahr `#6DBE9C`, Jahr ±3 `#9D8BD8`.
 
-- [ ] **Schritt 1:** Tokens umbenennen und Werte setzen (`grep -rl` über `app/`, dann ersetzen), `Bungee` durch
+- [x] **Schritt 1:** Tokens umbenennen und Werte setzen (`grep -rl` über `app/`, dann ersetzen), `Bungee` durch
   `Barlow_Condensed({ weight: ["600", "700"], variable: "--font-schild-familie" })`, `--font-schild` darauf.
-- [ ] **Schritt 2:** Rad: Birnenkranz und Birnen-CSS entfernen, Rahmen als feiner Ring `ring-2 ring-akzent/60` um
+- [x] **Schritt 2:** Rad: Birnenkranz und Birnen-CSS entfernen, Rahmen als feiner Ring `ring-2 ring-akzent/60` um
   die Scheibe, Trennlinien `stroke-grund`, Schrift auf dem Rad `font-schild` in `grund`.
-- [ ] **Schritt 3:** `npm run check && npm run e2e`, erwartet grün. Server vorher neu starten.
-- [ ] **Schritt 4:** Screenshots Start, Tisch, Handy (1280×800, 393, 360). Kein Rest von `nacht`, `boden`, `birne`:
+- [x] **Schritt 3:** `npm run check && npm run e2e`, erwartet grün. Server vorher neu starten.
+- [x] **Schritt 4:** Screenshots Start, Tisch, Handy (1280×800, 393, 360). Kein Rest von `nacht`, `boden`, `birne`:
   `grep -rnE "nacht|boden|birne" app` ohne Treffer.
-- [ ] **Schritt 5:** Committen: `Switch to anthracite and brass, plain wheel`, PR auf `feat/tisch-bedienung` oder
+- [x] **Schritt 5:** Committen: `Switch to anthracite and brass, plain wheel`, PR auf `feat/tisch-bedienung` oder
   `main`, je nachdem, ob Teil 1 schon gemergt ist.
 
 ## Teil 3: Große Bühne (`feat/buehne-gross`)

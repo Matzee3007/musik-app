@@ -315,7 +315,7 @@ export default function SpielAnsicht({
       <label className="flex items-center gap-2 text-licht/70">
         Ausschnitt
         <select
-          className="rounded-lg bg-boden px-2 py-1 outline-birne focus-visible:outline-2"
+          className="rounded-lg bg-flaeche px-2 py-1 outline-akzent focus-visible:outline-2"
           value={String(ausschnitt)}
           onChange={(e) =>
             setAusschnitt(

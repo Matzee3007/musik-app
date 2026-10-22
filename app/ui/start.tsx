@@ -100,7 +100,7 @@ export default function Start({
         <div className="flex flex-wrap items-center justify-center gap-3">
           <input
             id="raum-code"
-            className="w-48 rounded-lg bg-boden px-4 py-2 text-center font-schild text-3xl tracking-[0.3em] uppercase outline-birne focus-visible:outline-2 disabled:opacity-40"
+            className="w-48 rounded-lg bg-flaeche px-4 py-2 text-center font-schild text-3xl tracking-[0.3em] uppercase outline-akzent focus-visible:outline-2 disabled:opacity-40"
             value={codeEingabe}
             onChange={(e) => setCodeEingabe(e.target.value)}
             disabled={!supabase}
@@ -189,7 +189,7 @@ export default function Start({
             {playlists.map((p) => (
               <li key={p.id}>
                 <button
-                  className="w-full rounded-lg bg-boden px-4 py-3 text-left font-semibold outline-birne focus-visible:outline-2"
+                  className="w-full rounded-lg bg-flaeche px-4 py-3 text-left font-semibold outline-akzent focus-visible:outline-2"
                   onClick={() => setGewaehlt(p)}
                 >
                   {p.name} ({p.anzahlSongs} Songs)

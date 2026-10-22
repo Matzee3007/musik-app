@@ -36,7 +36,7 @@ export default function RadAnsicht({
   return (
     <div className="relative w-full">
       {/* Zeiger oben */}
-      <div className="absolute left-1/2 top-0 z-10 h-0 w-0 -translate-x-1/2 -translate-y-1 border-x-[12px] border-t-[22px] border-x-transparent border-t-birne" />
+      <div className="absolute left-1/2 top-0 z-10 h-0 w-0 -translate-x-1/2 -translate-y-1 border-x-[12px] border-t-[22px] border-x-transparent border-t-akzent" />
       <svg
         role="img"
         aria-label="Rad"
@@ -59,7 +59,7 @@ export default function RadAnsicht({
               <path
                 d={`M${MITTE} ${MITTE} L${x0} ${y0} A${RADIUS} ${RADIUS} 0 0 1 ${x1} ${y1} Z`}
                 fill={kategorie.farbe}
-                className="stroke-nacht"
+                className="stroke-grund"
                 strokeWidth="2"
               />
               <text
@@ -68,7 +68,7 @@ export default function RadAnsicht({
                 transform={`rotate(${mitte} ${tx} ${ty})`}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="fill-nacht font-schild text-[9px]"
+                className="fill-grund font-schild text-[12px]"
               >
                 {kategorie.name}
               </text>
