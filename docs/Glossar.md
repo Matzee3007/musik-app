@@ -49,8 +49,8 @@ Playlist.
 _Nicht verwenden_: Queue, Warteschlange
 
 **Bingo**:
-Fünf abgehakte Felder in einer Reihe auf einer Karte, waagerecht, senkrecht oder diagonal; wer es zuerst hat, gewinnt
-das Spiel.
+Fünf abgehakte Felder in einer Reihe auf einer Karte, waagerecht, senkrecht oder diagonal; wer es in der Runde des
+ersten Bingos hat, gewinnt das Spiel.
 
 **Stechen**:
 Eine einstellbare Verlängerung, wenn mehrere Spieler in derselben Runde Bingo haben: Nur sie spielen weiter, und wer

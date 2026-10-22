@@ -428,9 +428,10 @@ git commit -m "Run the game from the table in a room"
 - Ändern: `docs/Projektvision.md` (Phase 4: „Tisch macht nach dem Neuladen weiter“; Geklärte Fragen zu Phase 3:
   Bingo-Regel in derselben Runde, Spielstand über Presence mit Link auf ADR 0005), `docs/Glossar.md` (Bingo: „wer es
   zuerst hat“ → „wer es in der Runde des ersten Bingos hat“), `CLAUDE.md` (Repo-Struktur nur, falls sich etwas
-  ändert), `docs/tools/Supabase.md` (Presence trägt den Spielstand, `track()` ersetzt den Eintrag)
+  ändert), `docs/tools/Supabase.md` (Presence trägt den Spielstand, `track()` ersetzt den Eintrag). `CLAUDE.md` blieb
+  unverändert: Die Repo-Struktur hat sich nicht geändert.
 
-- [ ] **Schritt 1: `e2e/spiel.spec.ts` schreiben**
+- [x] **Schritt 1: `e2e/spiel.spec.ts` schreiben**
 
 Ein Test, drei Browser-Kontexte gegen das echte Supabase-Projekt: Tisch „Raum eröffnen“ → Handy 1 tritt als „Anna“
 bei → Tisch „Demo starten“, „Spiel starten“ → Handy 1 zeigt 25 Felder, alle mit `aria-disabled="true"` → Tisch „Rad
@@ -439,10 +440,10 @@ Tisch zeigt „Anna 1“ → Handy 1 lädt neu, das Feld ist weiter `aria-presse
 sieht 25 Felder (mitten im Spiel) → Tisch zeigt „Ben 0“. Bingo hängt vom Zufall ab und wird in Vitest und mit echten
 Handys geprüft.
 
-- [ ] **Schritt 2: Laufen lassen, beide Tests müssen bestehen**
+- [x] **Schritt 2: Laufen lassen, alle Tests müssen bestehen**
 
 `npm run e2e`
-Erwartet: `2 passed`
+Erwartet: `3 passed` (korrigiert 2026-10-22: `wiederkommen.spec.ts` aus PR #28 läuft mit)
 
 - [ ] **Schritt 3: Doku, prüfen, committen, PR**
 
