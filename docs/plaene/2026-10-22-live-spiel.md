@@ -467,3 +467,21 @@ der Tisch den Namen und die Musik hört auf.
 **Fertig, wenn:** Das Spiel aus Schritt 4 läuft bis zum Bingo, der Tisch zeigt den Namen. `npm run e2e`,
 `npm run check` und `gh pr checks` grün, `plan-pruefer` hat den Branch gegen diesen Plan geprüft. Damit ist Phase 3
 abgeschlossen.
+
+## Nachträge aus dem Review (2026-10-22)
+
+`/code-review` von PR #30 fand 10 Punkte, der Entwickler wollte alle angehen. Je Fund ein Test, dann der Fix:
+
+1. Eigenes Bingo zurücknehmen, bevor der Tisch es meldet: `darfZuruecknehmen(handy, stand)` in
+   `lib/raum/handy-karte.ts` sperrt auch bei eigenem Bingo (Commit 92917b0).
+2. Abhaken minutenlang nach dem ersten Bingo: **bleibt so**, Entscheidung des Entwicklers (bis „Neues Spiel“).
+3. `crypto.randomUUID()` fehlt unter http im Heimnetz: ohne Raum keine Kennung (Commit 4466249).
+4. Spielansicht verschwindet ohne „Raum schließen“: sie meldet `onStand(null)`, die Handys warten (4466249).
+5. Jahreskorrektur meldete den Stand erneut: nur noch Änderungen, die die Handys sehen (4466249).
+6. Doppelte Regeln zu `lib/spiel.ts`: nur das Austeilen geteilt, `karteNeu()` in `lib/karte.ts` (Entscheidung des
+   Entwicklers, Commit d8da8bf).
+7. Ältere Anmeldung überholt neuere: Der Kanal merkt sich nur die neueste für den Wiederbeitritt (7da3f00).
+8. Stand fremder Geräte ohne Formprüfung: `istTischStand`, `istSpielerStand` in `lib/raum/stand.ts` (7da3f00).
+9. Beschädigte Karte im Speicher: `istHandyKarte`, `handyKarteLaden` liefert dann `null` (287b0cc).
+10. Zwei Tabs im selben Browser teilten Karte und Namen: Raum und Karte am Handy zusätzlich im `sessionStorage`,
+    der eigene Tab geht vor, ein neuer Tab nimmt den zuletzt gespeicherten Stand (287b0cc).
