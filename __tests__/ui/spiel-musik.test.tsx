@@ -361,3 +361,22 @@ test("nach der Auflösung lässt sich der weiterlaufende Song anhalten", () => {
   expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
   expect(screen.getByRole("button", { name: "Weiterhören" })).toBeDefined();
 });
+
+// Die Pause kann den Befehl zum Abspielen überholen, dann liefe der Song, obwohl der Tisch "angehalten" zeigt.
+test("Anhalten, während der Song noch startet, pausiert nach dem Start noch einmal", async () => {
+  let gestartet!: () => void;
+  abspieler.abspielen = vi.fn(
+    () => new Promise<void>((fertig) => (gestartet = fertig)),
+  );
+  starten();
+  klick("Anhalten");
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(1);
+  await act(async () => gestartet());
+  expect(abspieler.pausieren).toHaveBeenCalledTimes(2);
+});
+
+test("ein Start, der normal durchkommt, pausiert nicht", async () => {
+  starten();
+  await act(async () => {});
+  expect(abspieler.pausieren).not.toHaveBeenCalled();
+});

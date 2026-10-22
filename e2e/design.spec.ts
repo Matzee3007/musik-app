@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import { alleSchliessen, Spieler, Tisch } from "./hilfen/raum";
 
-// Anforderungen aus dem Design (docs/plaene/2026-10-22-design-spielshow.md), die sich messen lassen.
+// Anforderungen aus dem Design (docs/plaene/2026-10-22-design-spielshow.md und 2026-10-22-design-ueberarbeitung.md),
+// die sich messen lassen.
 // Tisch und Spieler kommen von den Bots, damit alleSchliessen ihre Kontexte auch nach einem Fehlschlag schließt.
 
 test.afterEach(alleSchliessen);

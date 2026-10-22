@@ -219,6 +219,33 @@ expect(await seite.evaluate(() => document.documentElement.scrollWidth)).toBeLes
 - Erst war der Test aus dem falschen Grund rot (Rad 0 px breit): `justify-items-center` im Raster von `start.tsx`
   ließ die Bühnen-Spalte auf null schrumpfen. Entfernt.
 
+## Review (2026-10-22)
+
+`plan-pruefer` und `/code-review` über alle drei Teile (`main...feat/buehne-gross`). Behoben in Teil 3:
+
+- „Anhalten“, während der Befehl zum Abspielen noch unterwegs ist: Die Pause überholte ihn, der Song lief weiter.
+  Jetzt merkt sich `angehalten`, dass gestoppt ist, und ein später durchkommender Start pausiert noch einmal. Ein
+  Zurückhalten der Pause bis nach dem Start wäre die Alternative gewesen, verzögert aber jeden Klick.
+- Gemeinsames `stoppen()` für `anhalten()` und `musikAnhalten()`.
+- Knopfreihen im Abschnitt brechen um (`flex-wrap`), „Anhalten“ und „Lösung anzeigen“ passten nicht in 22rem.
+- Rad `w-[min(40rem,68vh,calc(100cqw-24rem))]`: nach der Breite des Tischs statt des Fensters. Bei 1024 und 1100 px
+  scrollte es sonst seitlich. Bei 1280×800 begrenzt die Höhe (544 px), auf größeren Bildschirmen wird es größer.
+- Jahresfeld in `grund`, sonst unsichtbar auf der Fläche des Abschnitts.
+- Kulisse nur im breiten Layout fest breit (`lg:w-64`/`lg:w-40`).
+- Bingo-Höhe in 1280×800 wird jetzt im Spieleabend-Test gemessen.
+- Code eingeklappt `text-4xl` statt `text-3xl`: besser lesbar, passt in die 160 px.
+- Neu gefunden durch die Bingo-Messung im Spieleabend (812 px): Das gedrehte Rad ragte mit den leeren Ecken seiner
+  Grafik über den Rahmen und verlängerte die Seite, je nach Drehwinkel. Jetzt in einem runden Behälter mit
+  `overflow-hidden`. Ein Test mit dem Rad auf 45° in `design.spec.ts` blieb dort grün (`scrollHeight` zählte die Ecken
+  in diesem Aufbau nicht mit) und wurde wieder entfernt. Beleg: Spieleabend mit `--repeat-each=3` in beiden Browsern grün.
+- Nachgerechnet: Mit Spotify (Cover, „Weiterhören“, „Jahr korrigieren“) wäre die Auflösung rund 100 px zu hoch
+  gewesen. Verdichtet: Cover `size-40`, „Weiterhören“/„Anhalten“ und „Nächste Runde“ in einer Reihe, Hinweise `text-sm`,
+  bei Bingo kein Cover, „Bingo!“ `text-4xl`. Mit Platzhaltern für Cover und Knöpfe simuliert: 800 px. Ein echter Test
+  mit Spotify fehlt, die Demo hat weder Cover noch Musik.
+
+Bewusst gelassen: „Weiterhören“ spielt bis zum Ende (wie schon immer, Test hält es fest), Doppelklick auf den
+wechselnden Knopf in der Auflösung, eingeklappt bleibt nach dem Neuladen nicht erhalten (vereinbart).
+
 ## Abschluss
 
 - `plan-pruefer` und `/code-review` über alle drei Teile, Funde mit dem Entwickler durchgehen.

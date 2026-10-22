@@ -124,7 +124,7 @@ export default function RaumKopf({
 
   return (
     <section
-      className={`flex flex-col items-center gap-4 ${qrSichtbar ? "w-64" : "w-40"}`}
+      className={`flex flex-col items-center gap-4 w-full max-w-xs ${qrSichtbar ? "lg:w-64" : "lg:w-40"}`}
     >
       <p
         className={`font-schild tracking-wider text-akzent ${qrSichtbar ? "text-6xl" : "text-4xl"}`}
