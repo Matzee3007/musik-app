@@ -32,6 +32,7 @@ afterEach(() => {
   sessionStorage.clear();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+  vi.restoreAllMocks();
 });
 
 test("abgemeldet: Anmelden und Demo, die Demo startet das Spiel aus Phase 1", async () => {
@@ -201,6 +202,7 @@ test("gespeicherter Raum ist nach dem Neuladen wieder da", async () => {
 test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {
   mitSupabase();
   tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  vi.spyOn(window, "confirm").mockReturnValue(true);
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   fireEvent.click(
     await screen.findByRole("button", { name: "Raum schließen" }),

@@ -107,6 +107,7 @@ export default function RaumKopf({
   }, [kanal, verbunden, stand]);
 
   async function schliessen() {
+    if (!window.confirm("Willst du den Raum wirklich schließen?")) return;
     // Erst wenn alle Bescheid wissen, sonst warten Handys in einem Raum ohne Tisch.
     try {
       await kanal.senden({ art: "geschlossen" });

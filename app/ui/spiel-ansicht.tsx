@@ -159,14 +159,19 @@ export default function SpielAnsicht({
     neuerStart();
   }
 
-  // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
-  function loesungZeigen() {
-    if (!spiel) return;
-    setSpiel(loesungAnzeigen(spiel));
+  // Der Song steht, "Weiterhören" spielt ihn weiter. Das Ende des Ausschnitts entfällt.
+  function anhalten() {
     if (!musik?.laeuft) return;
     if (zeitgeber.current) clearTimeout(zeitgeber.current);
     abspieler?.pausieren().catch(spotifyFehler(startNr.current, false));
     setMusik({ ...musik, laeuft: false, vorbei: true });
+  }
+
+  // Beim Aufdecken hört die Musik auf, "Weiterhören" in der Auflösung spielt sie weiter.
+  function loesungZeigen() {
+    if (!spiel) return;
+    setSpiel(loesungAnzeigen(spiel));
+    anhalten();
   }
 
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
@@ -277,7 +282,12 @@ export default function SpielAnsicht({
         meldung={meldung}
         musik={
           musik
-            ? { ...musik, onNochmal: nochmal, onWeiterhoeren: weiterhoeren }
+            ? {
+                ...musik,
+                onNochmal: nochmal,
+                onWeiterhoeren: weiterhoeren,
+                onAnhalten: anhalten,
+              }
             : undefined
         }
       />

@@ -37,7 +37,7 @@ export default function Tisch({
   // Nur mit Spotify, sonst steht dort wie in der Demo "Song läuft".
   musik?: {
     laeuft: boolean;
-    // Der Ausschnitt ist zu Ende, der Song pausiert.
+    // Der Ausschnitt ist zu Ende oder der DJ hat angehalten, der Song pausiert.
     vorbei: boolean;
     dauerMs: number | null;
     // Neuer Wert: Musikspur beginnt von vorn.
@@ -45,6 +45,7 @@ export default function Tisch({
     // Der Start ist gescheitert: Nur "Nochmal" startet den Song neu.
     fehler: boolean;
     onNochmal: () => void;
+    onAnhalten: () => void;
     onWeiterhoeren: () => void;
   };
   // Nur mit Spotify: Der DJ korrigiert in der Auflösung das Jahr.
@@ -141,7 +142,14 @@ export default function Tisch({
               ) : (
                 <p className="text-lg">Song läuft</p>
               )}
-              <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
+              <div className="flex gap-2">
+                {musik?.laeuft && (
+                  <Knopf art="neben" onClick={musik.onAnhalten}>
+                    Anhalten
+                  </Knopf>
+                )}
+                <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
+              </div>
             </>
           )}
 
@@ -171,9 +179,15 @@ export default function Tisch({
                   <dd>{jahrzehnt.loesung(runde.song)}</dd>
                 </dl>
               </div>
-              {musik && !musik.laeuft && !bingo && (
-                <Knopf art="neben" onClick={musik.onWeiterhoeren}>
-                  Weiterhören
+              {musik && !bingo && (
+                // An derselben Stelle: läuft der Song, "Anhalten", steht er, "Weiterhören".
+                <Knopf
+                  art="neben"
+                  onClick={
+                    musik.laeuft ? musik.onAnhalten : musik.onWeiterhoeren
+                  }
+                >
+                  {musik.laeuft ? "Anhalten" : "Weiterhören"}
                 </Knopf>
               )}
               {onJahrKorrigieren &&

@@ -116,6 +116,7 @@ test("Spieleabend: drei Spieler spielen bis zum Bingo", async ({ browser }) => {
     await expect(
       tisch.seite.getByText("Keine Verbindung zum Raum."),
     ).toHaveCount(0);
+    tisch.seite.once("dialog", (dialog) => dialog.accept());
     await tisch.seite.getByRole("button", { name: "Raum schließen" }).click();
     for (const s of spieler) {
       await expect(s.seite.getByText("Raum geschlossen")).toBeVisible();
