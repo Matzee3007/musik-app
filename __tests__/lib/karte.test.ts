@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { KATEGORIEN } from "@/lib/kategorien";
-import { feldSetzen, karteAusteilen } from "@/lib/karte";
+import { feldSetzen, karteAusteilen, karteNeu } from "@/lib/karte";
 import { zufallsfolge } from "../hilfen/zufallsfolge";
 
 const ids = KATEGORIEN.map((k) => k.id);
@@ -26,4 +26,9 @@ test("feldSetzen hakt ein Feld ab und lässt die alte Karte unverändert", () =>
   expect(neu[7].abgehakt).toBe(true);
   expect(karte[7].abgehakt).toBe(false);
   expect(feldSetzen(neu, 7, false)[7].abgehakt).toBe(false);
+});
+
+test("karteNeu teilt alle Kategorien aus wie karteAusteilen", () => {
+  const ids = KATEGORIEN.map((k) => k.id);
+  expect(karteNeu(() => 0.3)).toEqual(karteAusteilen(ids, () => 0.3));
 });

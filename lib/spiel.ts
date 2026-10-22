@@ -1,5 +1,5 @@
 import { hatBingo } from "@/lib/bingo";
-import { feldSetzen, karteAusteilen, type Karte } from "@/lib/karte";
+import { feldSetzen, karteNeu, type Karte } from "@/lib/karte";
 import { KATEGORIEN, type Kategorie } from "@/lib/kategorien";
 import { radDrehen } from "@/lib/rad";
 import type { Song } from "@/lib/song";
@@ -28,10 +28,7 @@ export function spielStarten(
   zufall: Zufall = Math.random,
 ): Spiel {
   return {
-    karte: karteAusteilen(
-      KATEGORIEN.map((k) => k.id),
-      zufall,
-    ),
+    karte: karteNeu(zufall),
     stapel: mischen(songs, zufall),
     runde: null,
   };

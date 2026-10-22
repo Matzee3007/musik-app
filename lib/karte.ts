@@ -1,4 +1,4 @@
-import type { KategorieId } from "@/lib/kategorien";
+import { KATEGORIEN, type KategorieId } from "@/lib/kategorien";
 import { mischen, type Zufall } from "@/lib/zufall";
 
 export type Feld = { kategorie: KategorieId; abgehakt: boolean };
@@ -15,6 +15,14 @@ export function karteAusteilen(
     kategorie,
     abgehakt: false,
   }));
+}
+
+// Eine Karte mit allen Kategorien, für das Spiel am Tisch und am Handy.
+export function karteNeu(zufall: Zufall = Math.random): Karte {
+  return karteAusteilen(
+    KATEGORIEN.map((k) => k.id),
+    zufall,
+  );
 }
 
 export function feldSetzen(

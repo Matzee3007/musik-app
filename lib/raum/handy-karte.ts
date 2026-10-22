@@ -1,6 +1,5 @@
 import { hatBingo } from "@/lib/bingo";
-import { feldSetzen, karteAusteilen, type Karte } from "@/lib/karte";
-import { KATEGORIEN } from "@/lib/kategorien";
+import { feldSetzen, karteNeu, type Karte } from "@/lib/karte";
 import type { SpielerStand, TischStand } from "@/lib/raum/stand";
 import type { Zufall } from "@/lib/zufall";
 
@@ -73,10 +72,7 @@ export function karteFuer(
   if (gemerkt?.spiel === spiel) return gemerkt;
   return {
     spiel,
-    karte: karteAusteilen(
-      KATEGORIEN.map((k) => k.id),
-      zufall,
-    ),
+    karte: karteNeu(zufall),
     abgehakt: null,
   };
 }
