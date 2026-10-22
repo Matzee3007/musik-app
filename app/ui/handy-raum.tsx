@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import HandySpiel from "@/app/ui/handy-spiel";
+import Knopf from "@/app/ui/knopf";
 import { raumCodeLesen } from "@/lib/raum/code";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
 import {
@@ -129,32 +130,34 @@ export default function HandyRaum({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <h1 className="text-3xl font-semibold">Raum {raumCode}</h1>
+    <div className="flex w-full flex-col items-center gap-6">
+      <h1 className="font-schild text-4xl text-birne">Raum {raumCode}</h1>
       {zustand.art === "kein-tisch" && (
-        <p>Kein Tisch mit dem Code {raumCode}. Code prüfen.</p>
+        <p className="text-signal">
+          Kein Tisch mit dem Code {raumCode}. Code prüfen.
+        </p>
       )}
-      {zustand.art === "fehler" && <p>{zustand.text}</p>}
+      {zustand.art === "fehler" && (
+        <p className="text-signal">{zustand.text}</p>
+      )}
       {zustand.art === "name" && (
-        <div className="flex flex-col items-center gap-2">
-          <label htmlFor="name">Dein Name</label>
+        <div className="flex w-full max-w-xs flex-col items-stretch gap-3">
+          <label htmlFor="name" className="text-licht/70">
+            Dein Name
+          </label>
           <input
             id="name"
-            className="rounded border px-2 py-1"
+            className="rounded-lg bg-boden px-4 py-3 text-xl outline-birne focus-visible:outline-2"
             value={eingabe}
             onChange={(e) => {
               setEingabe(e.target.value);
               setMeldung(null);
             }}
           />
-          <button
-            className="rounded-lg bg-foreground px-6 py-3 text-lg font-semibold text-background disabled:opacity-40"
-            disabled={!name}
-            onClick={beitreten}
-          >
+          <Knopf disabled={!name} onClick={beitreten}>
             Beitreten
-          </button>
-          {meldung && <p>{meldung}</p>}
+          </Knopf>
+          {meldung && <p className="text-signal">{meldung}</p>}
         </div>
       )}
       {zustand.art === "drin" && kanal && (
