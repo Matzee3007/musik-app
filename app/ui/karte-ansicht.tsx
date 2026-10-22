@@ -15,7 +15,7 @@ export default function KarteAnsicht({
   hervorgehoben?: number[];
 }) {
   return (
-    <section aria-label="Karte" className="grid grid-cols-5 gap-2">
+    <section aria-label="Karte" className="grid grid-cols-5 gap-1.5">
       {karte.map((feld, index) => {
         const kategorie = KATEGORIEN.find((k) => k.id === feld.kategorie)!;
         const bingo = hervorgehoben?.includes(index);
@@ -28,13 +28,12 @@ export default function KarteAnsicht({
             data-bingo={bingo || undefined}
             onClick={() => onFeldKlick(index)}
             style={{ backgroundColor: kategorie.farbe }}
-            className="relative flex aspect-square items-center justify-center rounded-lg p-1 text-center text-xs font-semibold text-zinc-950 aria-disabled:opacity-40 data-bingo:ring-4 data-bingo:ring-foreground sm:text-sm"
+            className="relative flex aspect-square items-center justify-center rounded-md p-1 text-center text-xs leading-tight font-bold hyphens-auto text-nacht outline-birne focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50 data-bingo:ring-4 data-bingo:ring-birne data-bingo:ring-offset-2 data-bingo:ring-offset-nacht sm:text-sm"
           >
-            {kategorie.name}
+            {/* Das Wort zuerst: Der Browser-Test misst das erste Kind. Es liegt über dem Stempel. */}
+            <span className="relative z-10">{kategorie.name}</span>
             {feld.abgehakt && (
-              <span className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/40 text-4xl text-zinc-950">
-                ✓
-              </span>
+              <span className="stempel absolute inset-[5%] rounded-full bg-birne ring-2 ring-nacht/40" />
             )}
           </button>
         );

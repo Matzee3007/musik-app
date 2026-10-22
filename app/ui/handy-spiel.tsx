@@ -112,21 +112,25 @@ export default function HandySpiel({
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <p>
+      <p className="text-sm text-licht/70">
         Du bist im Raum {code} als {name}.
       </p>
-      {fehler && <p role="alert">{fehler}</p>}
+      {fehler && (
+        <p role="alert" className="text-signal">
+          {fehler}
+        </p>
+      )}
       {!tischDa(anwesende) ? (
-        <p>Der Tisch ist gerade nicht verbunden.</p>
+        <p className="text-signal">Der Tisch ist gerade nicht verbunden.</p>
       ) : (
         !karte && <p>Warte auf das Spiel …</p>
       )}
       {linie ? (
-        <h2 className="text-4xl font-bold">Bingo!</h2>
+        <h2 className="font-schild text-5xl text-birne">Bingo!</h2>
       ) : (
         stand &&
         stand.bingo.length > 0 && (
-          <h2 className="text-2xl font-bold">
+          <h2 className="font-schild text-2xl text-birne">
             Bingo! {stand.bingo.join(", ")}
           </h2>
         )
@@ -145,18 +149,18 @@ export default function HandySpiel({
             />
           </div>
           {notizen && (
-            <label className="flex w-full max-w-sm flex-col gap-1 text-left">
+            <label className="flex w-full max-w-sm flex-col gap-1 text-left text-licht/70">
               Notizen
               {/* Neuer key bei jeder Runde und jedem Spiel: Die Notizfläche beginnt leer. */}
               <textarea
                 key={`${stand.spiel}-${stand.runde?.nummer}`}
                 rows={3}
-                className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700"
+                className="rounded-lg bg-boden px-3 py-2 text-licht outline-birne focus-visible:outline-2"
               />
             </label>
           )}
           <button
-            className="underline"
+            className="text-birne underline"
             onClick={() => {
               notizenSpeichern(!notizen);
               setNotizen(!notizen);

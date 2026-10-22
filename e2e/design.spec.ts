@@ -48,3 +48,33 @@ test("bei „Bewegung reduzieren“ läuft kein Lauflicht", async ({ browser }) 
   );
   await tisch.context().close();
 });
+
+test("Felder am Handy zeigen ihr Wort ganz", async ({ browser }) => {
+  const tisch = await (await browser.newContext()).newPage();
+  await tisch.goto("/");
+  await tisch.getByRole("button", { name: "Raum eröffnen" }).click();
+  const code = (await tisch.getByText(/^[A-Z]{4}$/).textContent())!;
+  const anna = await Spieler.beitreten(browser, code, "Anna");
+  await anna.seite.setViewportSize({ width: 360, height: 780 });
+  await tisch.getByRole("button", { name: "Demo starten" }).click();
+  await tisch.getByRole("button", { name: "Spiel starten" }).click();
+  await expect(anna.felder()).toHaveCount(25);
+  // Das Wort muss innerhalb des Polsters bleiben. scrollWidth genügt nicht: Zentrierter Text ragt nach beiden
+  // Seiten hinaus, und nur der Teil rechts zählt.
+  const zuBreit = await anna.felder().evaluateAll(
+    (felder) =>
+      felder.filter((feld) => {
+        const text = document.createRange();
+        // Nur das Wort, das erste Kind des Felds, ohne den Stempel.
+        text.selectNodeContents(feld.firstChild!);
+        const stil = getComputedStyle(feld);
+        const innen =
+          feld.clientWidth -
+          parseFloat(stil.paddingLeft) -
+          parseFloat(stil.paddingRight);
+        return text.getBoundingClientRect().width > innen;
+      }).length,
+  );
+  expect(zuBreit).toBe(0);
+  await tisch.context().close();
+});

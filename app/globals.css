@@ -93,3 +93,21 @@ body {
     animation: none;
   }
 }
+
+/* Stempel beim Abhaken, wie vom Bingo-Marker: kurz größer, dann aufgedrückt. */
+@keyframes stempel {
+  from {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.stempel {
+  animation: stempel 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stempel {
+    animation: none;
+  }
+}
