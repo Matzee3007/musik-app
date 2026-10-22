@@ -196,7 +196,7 @@ git commit -m "Carry game state in room presence"
     oder nicht abgehaktem Feld; war es das Feld dieser Runde, wird `abgehakt` wieder `null`)
   - `spielerStand(handy: HandyKarte): SpielerStand`
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 Testhilfe im Test: eine Karte, deren Felder 0 bis 4 `titel` sind, und
 `stand = { spiel: "s1", runde: { nummer: 3, kategorie: "titel", aufgeloest: true }, bingo: [] }`.
@@ -219,17 +219,17 @@ Feld frei“, „zuruecknehmen des Felds dieser Runde gibt die Runde frei“, �
 „karteFuer teilt für ein anderes Spiel neu aus“, „spielerStand zählt Haken und erkennt Bingo“. In `bingo.test.ts`:
 „bingoLinie liefert die Diagonale“ (`[0, 6, 12, 18, 24]`), „bingoLinie ohne Bingo ist null“.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/handy-karte.test.ts __tests__/lib/bingo.test.ts`
 
-- [ ] **Schritt 3: `lib/raum/handy-karte.ts` schreiben, `bingoLinie` ergänzen**
+- [x] **Schritt 3: `lib/raum/handy-karte.ts` schreiben, `bingoLinie` ergänzen**
 
 `hatBingo` bleibt und nutzt dieselbe Liste `LINIEN`.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check

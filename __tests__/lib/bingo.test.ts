@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { hatBingo } from "@/lib/bingo";
+import { bingoLinie, hatBingo } from "@/lib/bingo";
 import { KATEGORIEN } from "@/lib/kategorien";
 import { feldSetzen, karteAusteilen, type Karte } from "@/lib/karte";
 
@@ -36,4 +36,12 @@ test("vier in einer Reihe sind kein Bingo", () => {
 
 test("Reihe über den Zeilenumbruch ist kein Bingo", () => {
   expect(hatBingo(abgehakt(3, 4, 5, 6, 7))).toBe(false);
+});
+
+test("bingoLinie liefert die volle Reihe", () => {
+  expect(bingoLinie(abgehakt(3, 0, 6, 12, 18, 24))).toEqual([0, 6, 12, 18, 24]);
+});
+
+test("bingoLinie ohne Bingo ist null", () => {
+  expect(bingoLinie(abgehakt(0, 6, 12, 18))).toBeNull();
 });
