@@ -125,22 +125,28 @@ export default function Start({
   // Mit Supabase zuerst der Raum, Anmelden und Demo erst danach.
   if (supabase && !tischRaum) return raumWahl;
 
+  if (!tischRaum || !kanal) {
+    return (
+      <div className="flex flex-col items-center gap-8">
+        {raumWahl}
+        {ablauf()}
+      </div>
+    );
+  }
+
+  // Im Raum wie im Studio: links die Kulisse mit Code und Spielern, rechts die Bühne.
   return (
-    <div className="flex flex-col items-center gap-8">
-      {tischRaum && kanal ? (
-        <RaumKopf
-          code={tischRaum.code}
-          kanal={kanal}
-          stand={stand}
-          onGeschlossen={() => {
-            setTischRaum(null);
-            setStand(null);
-          }}
-        />
-      ) : (
-        raumWahl
-      )}
-      {ablauf()}
+    <div className="grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[16rem_1fr]">
+      <RaumKopf
+        code={tischRaum.code}
+        kanal={kanal}
+        stand={stand}
+        onGeschlossen={() => {
+          setTischRaum(null);
+          setStand(null);
+        }}
+      />
+      <div className="flex justify-center">{ablauf()}</div>
     </div>
   );
 

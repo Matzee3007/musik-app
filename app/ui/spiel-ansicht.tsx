@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
+import Knopf from "@/app/ui/knopf";
 import Tisch from "@/app/ui/tisch";
 import {
   AUSSCHNITTE,
@@ -252,12 +253,9 @@ export default function SpielAnsicht({
 
   if (!spiel) {
     return (
-      <button
-        className="rounded-lg bg-foreground px-6 py-3 text-lg font-semibold text-background"
-        onClick={() => setSpiel(spielStarten(spielSongs, zufall))}
-      >
+      <Knopf onClick={() => setSpiel(spielStarten(spielSongs, zufall))}>
         Spiel starten
-      </button>
+      </Knopf>
     );
   }
 
@@ -304,10 +302,10 @@ export default function SpielAnsicht({
   if (!abspieler) return spielfeld;
   return (
     <div className="flex w-full max-w-5xl flex-col items-center gap-4">
-      <label className="flex items-center gap-2">
+      <label className="flex items-center gap-2 text-licht/70">
         Ausschnitt
         <select
-          className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700"
+          className="rounded-lg bg-boden px-2 py-1 outline-birne focus-visible:outline-2"
           value={String(ausschnitt)}
           onChange={(e) =>
             setAusschnitt(
