@@ -117,7 +117,7 @@ git commit -m "Use stronger category colors"
   `46 · sin(π · (i + 0.5) / 11)^1.6 · wackeln · staerke`, `wackeln` aus zwei Sinus je Zacke wie im Prototyp
   (Werte zwischen 0,1 und 1). `staerke` 1 = läuft, 0,18 = steht.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("außen flach, 11 Zacken abwechselnd oben und unten", () => {
@@ -141,14 +141,14 @@ test("Stärke 0 ist eine flache Linie, kein Ausschlag geht über das Feld hinaus
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/welle.test.ts`
 Erwartet: FAIL, Modul `@/app/ui/welle` fehlt
 
-- [ ] **Schritt 3: `wellenPunkte` in `app/ui/welle.ts` schreiben**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 3: `wellenPunkte` in `app/ui/welle.ts` schreiben**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
