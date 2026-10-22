@@ -9,7 +9,7 @@ test("Startseite zeigt Überschrift und „Demo starten“", async () => {
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
   render(<Page />);
   expect(
-    screen.getByRole("heading", { level: 1, name: "Musik-App" }),
+    screen.getByRole("heading", { level: 1, name: "Musik-Bingo" }),
   ).toBeDefined();
   expect(
     await screen.findByRole("button", { name: "Demo starten" }),

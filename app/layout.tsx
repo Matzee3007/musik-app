@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Barlow, Bungee } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Bungee nur für Schilder (Code, Kategorie, Bingo), Barlow für den Text. Barlow ist kein variabler Font.
+const bungee = Bungee({
+  weight: "400",
+  variable: "--font-bungee",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const barlow = Barlow({
+  weight: ["400", "600", "700"],
+  variable: "--font-barlow",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Musik-App",
+  title: "Musik-Bingo",
   description: "Hitster Bingo mit Freunden",
 };
 
@@ -21,9 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="de"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${bungee.variable} ${barlow.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );
 }
