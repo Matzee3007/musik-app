@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import type { Song } from "@/lib/song";
@@ -36,6 +36,7 @@ export default function VorbereitenAnsicht({
   onZurueck,
   warten,
   verbinden = standardVerbinden,
+  raum,
 }: {
   playlist: Playlist;
   accessToken: string;
@@ -44,6 +45,8 @@ export default function VorbereitenAnsicht({
   warten?: (ms: number) => Promise<void>;
   // Tests setzen einen nachgebauten Player ein.
   verbinden?: () => Promise<Abspieler>;
+  // Im Raum: wird an die Spielansicht durchgereicht.
+  raum?: ComponentProps<typeof SpielAnsicht>["raum"];
 }) {
   const [geladen, setGeladen] = useState<Geladen | null>(null);
   const [spielSongs, setSpielSongs] = useState<Song[] | null>(null);
@@ -137,6 +140,7 @@ export default function VorbereitenAnsicht({
         sofort
         abspieler={abspieler}
         onJahrKorrigiert={korrekturSpeichern}
+        raum={raum}
       />
     );
   }

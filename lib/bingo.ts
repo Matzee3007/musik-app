@@ -11,5 +11,10 @@ const LINIEN: number[][] = [
 ];
 
 export function hatBingo(karte: Karte): boolean {
-  return LINIEN.some((linie) => linie.every((i) => karte[i].abgehakt));
+  return bingoLinie(karte) !== null;
+}
+
+// Die erste volle Linie, damit das Handy sie hervorheben kann.
+export function bingoLinie(karte: Karte): number[] | null {
+  return LINIEN.find((linie) => linie.every((i) => karte[i].abgehakt)) ?? null;
 }

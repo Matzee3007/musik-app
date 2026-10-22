@@ -32,7 +32,8 @@ Nur für Realtime, ohne Tabellen. Jeder Raum ist ein Kanal `raum:<Code>`, auf de
 - **Kanal (Channel):** ein benannter Treffpunkt in Realtime. Öffentliche Kanäle kann jeder betreten, der den Namen
   kennt, private verlangen Regeln in der Datenbank.
 - **Presence:** Jedes Gerät meldet sich im Kanal an (`track`), alle sehen, wer gerade verbunden ist. Verliert ein
-  Gerät die Verbindung, verschwindet sein Eintrag.
+  Gerät die Verbindung, verschwindet sein Eintrag. Ein weiteres `track()` ersetzt den eigenen Eintrag, darüber läuft
+  der Spielstand ([[0005-spielstand-ueber-presence|ADR 0005]]).
 - **Broadcast:** eine Nachricht an alle im Kanal, wird nicht gespeichert, z. B. „Raum geschlossen“.
 
 ## Wie haben wir es eingerichtet?
@@ -62,7 +63,9 @@ Client für die ganze App).
 1. Der Tisch öffnet den Kanal `raum:ABCD` und meldet sich per Presence als Tisch an.
 2. Ein Handy öffnet denselben Kanal, sieht per Presence den Tisch und meldet sich mit Namen an.
 3. Der Tisch sieht die Presence-Änderung und zeigt den Namen in der Spielerleiste.
-4. „Raum schließen“ schickt per Broadcast `geschlossen`, alle Handys zeigen „Raum geschlossen“.
+4. Im Spiel meldet der Tisch bei jeder Runde und Auflösung seinen Stand mit einem neuen `track()`, die Handys lesen
+   ihn aus seinem Eintrag. Jedes Handy meldet so die Zahl seiner abgehakten Felder und Bingo.
+5. „Raum schließen“ schickt per Broadcast `geschlossen`, alle Handys zeigen „Raum geschlossen“.
 
 ## Alle bisher benutzten Befehle
 

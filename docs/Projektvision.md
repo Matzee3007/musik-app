@@ -110,7 +110,7 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
   Realtime, Deployment auf Vercel
 - [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy.
   Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar,
-  Kategorie und Lösung auch auf dem Handy, Playwright in der CI
+  Kategorie und Lösung auch auf dem Handy, Playwright in der CI, Tisch macht nach dem Neuladen im Spiel weiter
 
 ## Stolpersteine
 
@@ -194,6 +194,10 @@ Handys `127.0.0.1` nicht erreichen und Spotify außerhalb davon HTTPS verlangt.
   Vorschau-Deployments der PRs laufen nur mit der Demo, weil Spotify nur genau eingetragene Adressen erlaubt.
 - **Tests:** Playwright ab Plan B, vorerst nur lokal (`npm run e2e`) gegen das Supabase-Projekt, mit zwei Browsern
   (Tisch und Handy) im Demo-Raum. In die CI kommt er mit einem GitHub-Secret in Phase 4.
+- **Live-Spiel (2026-10-22, Plan C):** Der Spielstand läuft über Presence statt Broadcast
+  ([[0005-spielstand-ueber-presence|ADR 0005]]). Nach einem Bingo darf in derselben Runde noch abhaken, wer in ihr
+  noch nicht abgehakt hat, danach ist kein Zurücknehmen mehr möglich. Lädt der Tisch neu, ist das Spiel weg, der Raum
+  bleibt (Weitermachen in Phase 4). Ohne Supabase bleibt das Spiel auf einem Gerät mit Karte am Tisch.
 - **Fertig, wenn:** Der Laptop öffnet die Vercel-Adresse als Tisch mit Spotify, zwei echte Handys treten per QR-Code
   bei, ein komplettes Spiel läuft bis zum Bingo, und der Tisch zeigt den Namen. Unterwegs lädt ein Handy neu und
   behält seine Karte, ein drittes tritt mitten im Spiel bei. Playwright-Test für den Demo-Raum und `npm run check`

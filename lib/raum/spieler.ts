@@ -1,7 +1,15 @@
+import type { SpielerStand, TischStand } from "@/lib/raum/stand";
+
 // Ein Gerät im Raum laut Presence. schluessel ist die Kennung des Tabs, zugleich der Presence-Schlüssel.
+// stand fehlt, solange das Gerät noch keinen gemeldet hat.
 export type Anwesend =
-  | { schluessel: string; rolle: "tisch" }
-  | { schluessel: string; rolle: "spieler"; name: string };
+  | { schluessel: string; rolle: "tisch"; stand?: TischStand }
+  | {
+      schluessel: string;
+      rolle: "spieler";
+      name: string;
+      stand?: SpielerStand;
+    };
 
 const NAME_MAX = 20;
 
@@ -32,10 +40,12 @@ export function tischDa(anwesende: readonly Anwesend[]): boolean {
 }
 
 // Alle bekannten Spieler in ihrer Reihenfolge, dahinter neue verbundene. Der Tisch ist kein Eintrag.
+// abgehakt nur bei verbundenen Spielern, die einen Stand für das laufende Spiel gemeldet haben.
 export function spielerleiste(
   bekannt: readonly string[],
   anwesende: readonly Anwesend[],
-): { name: string; verbunden: boolean }[] {
+  spiel: string | null,
+): { name: string; verbunden: boolean; abgehakt: number | null }[] {
   const verbunden = anwesende.flatMap((a) =>
     a.rolle === "spieler" ? [a.name] : [],
   );
@@ -43,8 +53,19 @@ export function spielerleiste(
   const neu = verbunden.filter(
     (name, i) => !bekannt.includes(name) && verbunden.indexOf(name) === i,
   );
+  function abgehakt(name: string): number | null {
+    for (const a of anwesende) {
+      if (a.rolle === "spieler" && a.name === name && a.stand?.spiel === spiel)
+        return a.stand.abgehakt;
+    }
+    return null;
+  }
   return [
-    ...bekannt.map((name) => ({ name, verbunden: verbunden.includes(name) })),
-    ...neu.map((name) => ({ name, verbunden: true })),
+    ...bekannt.map((name) => ({
+      name,
+      verbunden: verbunden.includes(name),
+      abgehakt: abgehakt(name),
+    })),
+    ...neu.map((name) => ({ name, verbunden: true, abgehakt: abgehakt(name) })),
   ];
 }

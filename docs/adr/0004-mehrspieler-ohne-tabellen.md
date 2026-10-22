@@ -22,6 +22,9 @@ Ein Raum ist ein Realtime-Kanal mit dem Raum-Code. Der Tisch gibt den Takt vor u
 an und speichert die Karte im eigenen `localStorage`, damit sie ein Neuladen übersteht. Die Handys melden dem Tisch
 nur die Zahl der abgehakten Felder und „Bingo“. Presence liefert die Liste der Spieler. Es gibt keine Tabellen.
 
+> Geändert durch [[0005-spielstand-ueber-presence|ADR 0005]]: Runde, Auflösung, Zahl und Bingo laufen über Presence,
+> Broadcast nur noch für „Raum geschlossen“.
+
 ## Alternativen
 
 - **Tabellen in Postgres für Räume, Spieler und Karten (mit Postgres Changes):** robuster, wenn ein Gerät ausfällt,
