@@ -174,14 +174,14 @@ git commit -m "Add zigzag wave shape for the music track"
   `window.matchMedia?.`, jsdom kennt es nicht) ein einziges Bild mit `sekunden = 0`. Die Schleife setzt nur das
   Attribut `points` über eine Ref, kein React-State je Bild.
 
-- [ ] **Schritt 1: `npx vitest run __tests__/ui/spiel-musik.test.tsx` laufen lassen, er muss vor der Änderung bestehen**
-- [ ] **Schritt 2: `Musikspur` umbauen, CSS der Balken entfernen**
-- [ ] **Schritt 3: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 1: `npx vitest run __tests__/ui/spiel-musik.test.tsx` laufen lassen, er muss vor der Änderung bestehen**
+- [x] **Schritt 2: `Musikspur` umbauen, CSS der Balken entfernen**
+- [x] **Schritt 3: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 Erwartet: PASS
 
-- [ ] **Schritt 4: Prüfen und committen**
+- [x] **Schritt 4: Prüfen und committen**
 
 ```bash
 npm run check
