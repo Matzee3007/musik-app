@@ -76,8 +76,9 @@ export function raumKanalUeber(
         if (!abonniert) {
           abonniert = true;
           kanal.subscribe((status) => {
+            // Scheitert das, hilft der nächste Wiederbeitritt; der Name bleibt bis dahin grau.
             if (status === "SUBSCRIBED" && angemeldetAls) {
-              void kanal.track(angemeldetAls);
+              kanal.track(angemeldetAls).catch(() => {});
             }
             if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
               abgelehnt(new Error("Keine Verbindung zum Raum."));
@@ -90,8 +91,8 @@ export function raumKanalUeber(
         );
       },
       async anmelden(ich) {
-        angemeldetAls = ich;
         pruefen(await kanal.track(ich));
+        angemeldetAls = ich;
       },
       beiAnwesenden(rueckruf) {
         anwesendeRueckrufe.add(rueckruf);
