@@ -58,6 +58,13 @@ test("Rad drehen zeigt Runde und Kategorie, verrät den Song aber nicht", () => 
   expect(screen.queryByText(/Bohemian Rhapsody|Queen|1975/)).toBeNull();
 });
 
+test("vor der Auflösung stehen alle vier Angaben verdeckt, die gesuchte ist markiert", () => {
+  starten([bohemian], () => 0);
+  drehen("Rad drehen");
+  expect(tisch().getAllByText("· · ·")).toHaveLength(4);
+  expect(tisch().getByText("Titel · gesucht")).toBeDefined();
+});
+
 test("Kategorie und „Lösung anzeigen“ erscheinen erst, wenn das Rad steht", () => {
   starten([bohemian], () => 0);
   klick("Rad drehen");

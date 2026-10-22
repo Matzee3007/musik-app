@@ -212,12 +212,12 @@ git commit -m "Show the music track as a moving zigzag line"
      mit „ · gesucht“ hinter dem Etikett.
   4. **Fuß:** eine Zeile Hinweis (Auflösung: „Richtig? Hake ein Feld … ab.“ links, „Jahr korrigieren“ rechts; Bingo:
      leer; sonst leer mit fester Höhe), darunter die Knöpfe rechtsbündig mit fester Mindesthöhe.
-- Maße: Der Tisch-Container setzt `--rad: min(48rem, calc(100dvh - 10rem), calc(100cqw - 38.5rem))`. Ab `@5xl`
+- Maße: Der Tisch-Container setzt `--rad: min(48rem, calc(100dvh - 13rem), calc(100cqw - 38.5rem))`. Ab `@5xl`
   nebeneinander: Rad `w-[var(--rad)]`, Abschnitt `w-[36rem] h-[max(var(--rad),34rem)]` mit
   `grid-rows-[auto_auto_1fr_auto]`. Darunter untereinander wie bisher, Abschnitt `min-h-[34rem]`.
 - `Musikspur`, `Knopf`, `onJahrKorrigieren` und alle Rückrufe bleiben, wie sie sind.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 In `__tests__/ui/spiel-ansicht.test.tsx`:
 
@@ -251,20 +251,25 @@ test("Abschnitt zur Runde bleibt in jedem Zustand gleich groß", async ({ browse
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/spiel-ansicht.test.tsx __tests__/ui/spiel-aufloesung.test.tsx`
 Erwartet: FAIL, kein „· · ·“ und kein Cover bei Bingo
 
-- [ ] **Schritt 3: `Tisch` auf das Gerüst umbauen, `max-w-5xl` im Raum entfernen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 3: `Tisch` auf das Gerüst umbauen, `max-w-5xl` im Raum entfernen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-`npm test` und `npx playwright test e2e/design.spec.ts`
-Erwartet: PASS, auch „Tisch passt im Spiel ohne Scrollen auf den Laptop“
+`npm test`
+Erwartet: PASS
+
+> **Abweichung (2026-10-23):** `e2e/design.spec.ts` und die Screenshots (Schritt 5) erst am Ende von Aufgabe 5:
+> Solange die Raum-Spalte Breite nimmt, ist der Tisch zu schmal für Rad und Abschnitt nebeneinander. `--rad` zieht
+> 13rem statt 10rem von der Höhe ab, weil mit Spotify die Auswahl „Ausschnitt“ über dem Tisch steht. Der neue
+> e2e-Test „Abschnitt … gleich groß“ kommt deshalb auch erst in Aufgabe 5.
 
 - [ ] **Schritt 5: Screenshots der Zustände prüfen** (vor Runde 1, Rad dreht, Song läuft, Ausschnitt vorbei,
   Lösung, Bingo; 1280×800 und 1600×900) und mit dem Prototyp vergleichen.
-- [ ] **Schritt 6: Prüfen und committen**
+- [x] **Schritt 6: Prüfen und committen**
 
 ```bash
 npm run check

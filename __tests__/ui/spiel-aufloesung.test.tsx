@@ -56,6 +56,25 @@ test("die Auflösung zeigt das Cover", () => {
   expect(cover.getAttribute("src")).toBe(bohemian.cover);
 });
 
+test("bei Bingo bleibt das Cover sichtbar", () => {
+  // Mit Zufall 0,999 ist die letzte Zeile der Karte ganz „Jahr ±3“, und das Rad wählt immer „Jahr ±3“.
+  const songs = [1, 2, 3, 4, 5].map((n) => ({
+    ...bohemian,
+    id: `t${n}`,
+    titel: `Song ${n}`,
+  }));
+  render(<SpielAnsicht songs={songs} zufall={() => 0.999} sofort />);
+  for (let runde = 0; runde < 5; runde++) {
+    drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    klick("Lösung anzeigen");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
+    );
+  }
+  expect(screen.getByRole("heading", { name: "Bingo!" })).toBeDefined();
+  expect(tisch().getByRole("img", { name: /^Cover von / })).toBeDefined();
+});
+
 function jahrEintragen(wert: string) {
   klick("Jahr korrigieren");
   fireEvent.change(tisch().getByRole("spinbutton", { name: "Jahr" }), {

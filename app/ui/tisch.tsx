@@ -64,6 +64,28 @@ export default function Tisch({
   }
 
   const etikett = "text-licht/60";
+  // Die Runde ist offen: Das Rad steht, die Lösung ist noch nicht da.
+  const offen = runde !== null && !dreht && !runde.aufgeloest;
+  const aufgeloest = runde?.aufgeloest ?? false;
+  // Bei "Jahr ±3" ist die Zeile Jahr gesucht.
+  const gesucht =
+    runde && !dreht
+      ? runde.kategorie.id === "jahrPlusMinus3"
+        ? "jahr"
+        : runde.kategorie.id
+      : null;
+  const angaben = [
+    { id: "titel", name: "Titel", wert: runde?.song.titel },
+    { id: "interpret", name: "Interpret", wert: runde?.song.interpret },
+    { id: "jahr", name: "Jahr", wert: runde && String(runde.song.jahr) },
+    {
+      id: "jahrzehnt",
+      name: "Jahrzehnt",
+      wert: runde && jahrzehnt.loesung(runde.song),
+    },
+  ];
+  const loesung = runde ? runde.kategorie.loesung(runde.song) : "";
+  const leise = "font-schild text-[2.4rem] font-semibold text-licht/60";
 
   return (
     <section
@@ -78,10 +100,11 @@ export default function Tisch({
 
       {/* Breit: Rad links, rechts der Abschnitt zur Runde. Das Rad bleibt immer eingehängt: Ein neu eingehängtes Rad
           hat keinen alten Winkel, der Browser spielt dann keinen Übergang ab, und "Rad steht" (transitionend) käme nie.
-          Seine Größe richtet sich nach der Höhe des Fensters und der Breite des Tischs (cqw), abzüglich Abstand und
-          Abschnitt (24rem): So scrollt auf dem Laptop nichts, und eingeklappt wächst das Rad mit. */}
-      <div className="flex w-full flex-col items-center gap-8 @2xl:flex-row @2xl:justify-center">
-        <div className="relative w-80 max-w-full shrink-0 rounded-full p-1.5 ring-2 ring-akzent/60 @2xl:w-[min(40rem,68vh,calc(100cqw-24rem))]">
+          --rad richtet sich nach der Höhe des Fensters (abzüglich Überschrift, Ausschnitt und Abständen) und der Breite
+          des Tischs (cqw) abzüglich Abschnitt und Abstand. Der Abschnitt ist so hoch wie das Rad und behält in jedem
+          Zustand seine Größe, weil alle vier Plätze immer da sind. */}
+      <div className="flex w-full flex-col items-center gap-8 [--rad:min(48rem,calc(100dvh-13rem),calc(100cqw-38.5rem))] @5xl:flex-row @5xl:justify-center @5xl:gap-10">
+        <div className="relative w-80 max-w-full shrink-0 rounded-full p-1.5 ring-2 ring-akzent/60 @5xl:w-[var(--rad)]">
           <RadAnsicht
             runde={runde}
             onStillstand={() => {
@@ -93,103 +116,136 @@ export default function Tisch({
 
         <section
           aria-label="Runde"
-          className="flex w-full max-w-md flex-col items-center gap-3 rounded-xl bg-flaeche p-6 @2xl:w-[22rem]"
+          className="relative grid min-h-[34rem] w-full max-w-xl grid-rows-[auto_auto_1fr_auto] gap-5 rounded-2xl bg-flaeche p-5 @5xl:h-[max(var(--rad),34rem)] @5xl:w-[36rem] @5xl:max-w-none @5xl:p-7"
         >
           {bingo && (
-            <>
-              <h2 className="text-center font-schild text-4xl text-akzent">
-                {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
-              </h2>
-              <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>
-            </>
+            <div className="pointer-events-none absolute inset-0 rounded-2xl ring-[3px] ring-akzent ring-inset" />
           )}
 
-          {!runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
-
-          {runde && !dreht && (
-            <div className="flex items-center gap-3">
-              <p className={`text-sm ${etikett}`}>Runde {runde.nummer}</p>
+          {/* Kopf: Runde und Kategorie. Ohne Kategorie ein leeres Schild gleicher Höhe. */}
+          <div className="flex min-h-11 items-center justify-between gap-3">
+            <p className={`text-sm tracking-wider uppercase ${etikett}`}>
+              {runde ? `Runde ${runde.nummer}` : "Noch keine Runde"}
+            </p>
+            {runde && !dreht ? (
               <p
                 role="status"
                 style={{ backgroundColor: runde.kategorie.farbe }}
-                className="rounded-lg px-4 py-1 font-schild text-2xl text-grund"
+                className="rounded-lg px-4 py-1.5 font-schild text-[1.9rem] leading-none font-semibold text-grund"
               >
                 {runde.kategorie.name}
               </p>
-            </div>
-          )}
+            ) : (
+              <span className="rounded-lg bg-grund px-4 py-1.5 font-schild text-[1.9rem] leading-none text-licht/60">
+                –
+              </span>
+            )}
+          </div>
 
-          {runde && !runde.aufgeloest && !dreht && (
-            <>
-              {musik ? (
-                <>
-                  <Musikspur
-                    key={musik.start}
-                    farbe={runde.kategorie.farbe}
-                    laeuft={musik.laeuft}
-                    dauerMs={musik.dauerMs}
-                  />
-                  {musik.vorbei && (
-                    <div className="flex flex-wrap justify-center gap-2">
-                      <Knopf art="neben" onClick={musik.onNochmal}>
-                        Nochmal
-                      </Knopf>
-                      {!musik.fehler && (
-                        <Knopf art="neben" onClick={musik.onWeiterhoeren}>
-                          Weiterhören
-                        </Knopf>
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-lg">Song läuft</p>
-              )}
-              <div className="flex flex-wrap justify-center gap-2">
-                {musik?.laeuft && (
-                  <Knopf art="neben" onClick={musik.onAnhalten}>
-                    Anhalten
-                  </Knopf>
-                )}
-                <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
-              </div>
-            </>
-          )}
-
-          {runde?.aufgeloest && (
-            <>
-              <h2 className="text-center font-schild text-4xl text-akzent">
-                {runde.kategorie.loesung(runde.song)}
+          {/* Großer Platz: immer zwei Zeilen hoch. */}
+          <div className="flex h-[8.4rem] flex-col items-center justify-center rounded-xl bg-grund px-4 py-2 text-center">
+            {bingo ? (
+              <h2 className="line-clamp-2 font-schild text-[3.6rem] leading-none font-bold text-balance text-akzent">
+                {gewinner ? `Bingo! ${gewinner.join(", ")}` : "Bingo!"}
               </h2>
-              {/* Bei Bingo zählen "Bingo!" und "Neues Spiel", ohne Cover passt der Abschnitt in die Höhe. */}
-              {runde.song.cover && !bingo && (
+            ) : !runde ? (
+              <p className={leise}>Bereit?</p>
+            ) : dreht ? (
+              <p className={leise}>Das Rad dreht …</p>
+            ) : aufgeloest ? (
+              <>
+                <p className={`text-xs tracking-widest uppercase ${etikett}`}>
+                  Lösung · {runde.kategorie.name}
+                </p>
+                <h2
+                  className={`line-clamp-2 font-schild leading-none font-bold text-balance text-akzent ${loesung.length > 16 ? "text-[2.7rem]" : "text-[3.6rem]"}`}
+                >
+                  {loesung}
+                </h2>
+              </>
+            ) : musik ? (
+              <Musikspur
+                key={musik.start}
+                farbe={runde.kategorie.farbe}
+                laeuft={musik.laeuft}
+                dauerMs={musik.dauerMs}
+              />
+            ) : (
+              <p className="text-lg">Song läuft</p>
+            )}
+          </div>
+
+          {/* Mitte: links Cover oder Platte, rechts die vier Angaben, verdeckt bis zur Auflösung. */}
+          <div className="grid min-h-0 grid-cols-1 items-center justify-items-center gap-6 sm:grid-cols-[var(--cover)_minmax(0,1fr)] sm:justify-items-stretch [--cover:clamp(9rem,30vw,15rem)] @5xl:[--cover:clamp(11rem,36vh,22rem)]">
+            <div className="grid aspect-square w-[var(--cover)] max-w-full place-items-center overflow-hidden rounded-xl bg-grund shadow-[0_12px_32px_rgb(0_0_0/0.45)]">
+              {aufgeloest && runde?.song.cover ? (
                 // Ein Bild von Spotify am Tisch: next/image bräuchte eine Freigabe der Adresse und spart hier nichts.
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={runde.song.cover}
                   alt={`Cover von ${runde.song.titel}`}
-                  className="size-40 rounded-lg object-cover"
+                  className="size-full object-cover"
                 />
+              ) : (
+                // Platte, bis das Cover kommt. Sie dreht sich, solange der Song läuft.
+                <div
+                  className={`relative aspect-square w-[78%] rounded-full bg-[repeating-radial-gradient(circle,var(--color-grund)_0_2px,var(--color-flaeche)_2px_4px)] ${offen && (musik ? musik.laeuft : true) ? "animate-[spin_2.4s_linear_infinite] motion-reduce:animate-none" : ""}`}
+                >
+                  <span
+                    className="absolute inset-[36%] rounded-full bg-flaeche"
+                    style={
+                      runde && !dreht
+                        ? { backgroundColor: runde.kategorie.farbe }
+                        : undefined
+                    }
+                  />
+                </div>
               )}
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-left text-lg">
-                <dt className={etikett}>Titel</dt>
-                <dd>{runde.song.titel}</dd>
-                <dt className={etikett}>Interpret</dt>
-                <dd>{runde.song.interpret}</dd>
-                <dt className={etikett}>Jahr</dt>
-                <dd>{runde.song.jahr}</dd>
-                <dt className={etikett}>Jahrzehnt</dt>
-                <dd>{jahrzehnt.loesung(runde.song)}</dd>
-              </dl>
-              {!bingo && (
-                <p className="text-sm">
-                  Richtig? Hake ein Feld {runde.kategorie.name} ab.
-                </p>
+            </div>
+            <dl className="grid w-full min-w-0 gap-3.5 text-left">
+              {angaben.map(({ id, name, wert }) => {
+                const markiert = id === gesucht;
+                const farbe =
+                  markiert && runde ? { color: runde.kategorie.farbe } : {};
+                return (
+                  <div
+                    key={id}
+                    data-gesucht={markiert || undefined}
+                    className="grid min-w-0 gap-0.5"
+                  >
+                    <dt
+                      style={farbe}
+                      className={`text-xs tracking-widest uppercase ${markiert ? "font-semibold" : etikett}`}
+                    >
+                      {name}
+                      {markiert && !aufgeloest && " · gesucht"}
+                    </dt>
+                    <dd
+                      style={aufgeloest ? farbe : {}}
+                      className={`line-clamp-2 text-[1.55rem] leading-tight font-semibold break-words ${aufgeloest ? "" : "tracking-[0.2em] text-licht/25"}`}
+                    >
+                      {aufgeloest ? wert : "· · ·"}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+
+          {/* Fuß: Hinweis und Knöpfe, beide mit fester Mindesthöhe. */}
+          <div className="grid gap-3">
+            <div className="flex min-h-6 flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm text-licht/70">
+              {aufgeloest && !bingo && (
+                <p>Richtig? Hake ein Feld {runde!.kategorie.name} ab.</p>
               )}
-              {onJahrKorrigieren &&
+              {aufgeloest && stapelLeer && !bingo && (
+                <p className="font-semibold text-licht">Alle Songs gespielt</p>
+              )}
+              {aufgeloest &&
+                onJahrKorrigieren &&
                 (jahrFeld === null ? (
                   <button
-                    className="text-sm text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
                     onClick={() => setJahrFeld("")}
                   >
                     Jahr korrigieren
@@ -200,7 +256,7 @@ export default function Tisch({
                       Jahr
                       <input
                         type="number"
-                        className="w-24 rounded-lg bg-grund px-2 py-1 outline-akzent focus-visible:outline-2"
+                        className="w-24 rounded-lg bg-grund px-2 py-1 text-licht outline-akzent focus-visible:outline-2"
                         value={jahrFeld}
                         onChange={(e) => setJahrFeld(e.target.value)}
                       />
@@ -222,12 +278,36 @@ export default function Tisch({
                     </Knopf>
                   </div>
                 ))}
-              {stapelLeer && !bingo && (
-                <p className="font-semibold">Alle Songs gespielt</p>
+            </div>
+
+            <div className="flex min-h-[3.4rem] flex-wrap items-center justify-end gap-2.5">
+              {bingo && <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>}
+              {!bingo && !runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
+              {!bingo && offen && (
+                <>
+                  {musik?.vorbei && (
+                    <>
+                      <Knopf art="neben" onClick={musik.onNochmal}>
+                        Nochmal
+                      </Knopf>
+                      {!musik.fehler && (
+                        <Knopf art="neben" onClick={musik.onWeiterhoeren}>
+                          Weiterhören
+                        </Knopf>
+                      )}
+                    </>
+                  )}
+                  {musik?.laeuft && (
+                    <Knopf art="neben" onClick={musik.onAnhalten}>
+                      Anhalten
+                    </Knopf>
+                  )}
+                  <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
+                </>
               )}
-              {!bingo && (
-                // Eine Reihe spart Höhe. Läuft der Song, "Anhalten", steht er, "Weiterhören".
-                <div className="flex flex-wrap justify-center gap-2">
+              {!bingo && aufgeloest && (
+                // Läuft der Song, "Anhalten", steht er, "Weiterhören".
+                <>
                   {musik && (
                     <Knopf
                       art="neben"
@@ -243,10 +323,10 @@ export default function Tisch({
                   ) : (
                     <Knopf onClick={drehen}>Nächste Runde</Knopf>
                   )}
-                </div>
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </section>
       </div>
     </section>
