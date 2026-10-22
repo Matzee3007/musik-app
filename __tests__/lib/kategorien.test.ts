@@ -35,3 +35,13 @@ test("fünf Kategorien mit eigener Id, eigenem Namen und eigener Farbe", () => {
   expect(new Set(KATEGORIEN.map((k) => k.id)).size).toBe(5);
   expect(new Set(KATEGORIEN.map((k) => k.farbe)).size).toBe(5);
 });
+
+test("Kategorien haben die kräftigen Farben", () => {
+  expect(Object.fromEntries(KATEGORIEN.map((k) => [k.id, k.farbe]))).toEqual({
+    titel: "#3d8bff",
+    interpret: "#ff4f9a",
+    jahrzehnt: "#ff8a1f",
+    jahr: "#1fd18a",
+    jahrPlusMinus3: "#9b6bff",
+  });
+});
