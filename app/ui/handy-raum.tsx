@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import HandySpiel from "@/app/ui/handy-spiel";
 import { raumCodeLesen } from "@/lib/raum/code";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
 import {
@@ -26,7 +27,7 @@ type Zustand =
   | { art: "geschlossen" }
   | { art: "fehler"; text: string };
 
-// Der Raum am Handy: Name eingeben, beitreten, auf das Spiel warten (Plan C zeigt hier die Karte).
+// Der Raum am Handy: Name eingeben, beitreten, dann spielen (HandySpiel).
 export default function HandyRaum({
   code,
   kanalOeffnen = supabaseRaumKanal,
@@ -70,12 +71,14 @@ export default function HandyRaum({
         setZustand({ art: "name" });
         return;
       }
-      setZustand({ art: "drin", name: gemerkt.name });
+      // Erst danach "drin": HandySpiel meldet sich dann mit Stand an, und diese Anmeldung bleibt die letzte.
       k.anmelden({
         schluessel: tabSchluessel(),
         rolle: "spieler",
         name: gemerkt.name,
-      }).catch((e: Error) => setZustand({ art: "fehler", text: e.message }));
+      })
+        .then(() => setZustand({ art: "drin", name: gemerkt.name }))
+        .catch((e: Error) => setZustand({ art: "fehler", text: e.message }));
     }
     const anwesendeAb = kanal.beiAnwesenden(neueAnwesende);
     const nachrichtAb = kanal.beiNachricht((nachricht) => {
@@ -154,13 +157,13 @@ export default function HandyRaum({
           {meldung && <p>{meldung}</p>}
         </div>
       )}
-      {zustand.art === "drin" && (
-        <>
-          <p>
-            Du bist im Raum {raumCode} als {zustand.name}.
-          </p>
-          <p>Warte auf das Spiel …</p>
-        </>
+      {zustand.art === "drin" && kanal && (
+        <HandySpiel
+          code={raumCode}
+          name={zustand.name}
+          kanal={kanal}
+          anwesende={anwesende}
+        />
       )}
       {zustand.art === "geschlossen" && <p>Raum geschlossen</p>}
     </div>

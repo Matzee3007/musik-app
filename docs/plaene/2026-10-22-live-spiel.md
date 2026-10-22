@@ -332,7 +332,7 @@ Verhalten von `HandySpiel`:
   `key={`${stand.spiel}-${stand.runde?.nummer}`}`). Knopf „Notizen aus“ bzw. „Notizen an“, gemerkt mit
   `notizenSpeichern`. Ohne Notizfläche nimmt die Karte die ganze Breite ein (`max-w-sm` → `max-w-lg`).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 Mit `nachgebauterRaum()` und Anwesenden aus Tisch (mit Stand) und Anna; den Stand ändert der Test über
 `anwesendeSetzen`.
@@ -346,15 +346,15 @@ gerade nicht verbunden.“ (Prüf-Schwerpunkt 5), „Notizfläche leert sich bei
 In `handy-raum.test.tsx`: bestehende Tests bleiben grün, „Warte auf das Spiel …“ steht dort weiter (Tisch ohne
 Stand).
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/handy-spiel.test.tsx __tests__/ui/handy-raum.test.tsx`
 
-- [ ] **Schritt 3: `app/ui/handy-spiel.tsx` schreiben, `app/ui/handy-raum.tsx` anpassen**
+- [x] **Schritt 3: `app/ui/handy-spiel.tsx` schreiben, `app/ui/handy-raum.tsx` anpassen**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
