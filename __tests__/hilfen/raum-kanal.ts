@@ -1,8 +1,9 @@
-import type { KanalOeffnen, RaumNachricht } from "@/lib/raum/kanal";
+import type { KanalOeffnen, RaumKanal, RaumNachricht } from "@/lib/raum/kanal";
 import type { Anwesend } from "@/lib/raum/spieler";
 
 // Nachbau eines Raums für die Tests der Ansichten: Der Test bestimmt, wer anwesend ist, und
 // schickt Nachrichten; was die Ansicht anmeldet und sendet, steht in angemeldet und gesendet.
+// Mit stoerung scheitern anmelden und senden wie bei Supabase ohne Verbindung.
 export function nachgebauterRaum() {
   let anwesende: Anwesend[] = [];
   const anwesendeRueckrufe = new Set<(anwesende: Anwesend[]) => void>();
@@ -10,27 +11,8 @@ export function nachgebauterRaum() {
   const gesendet: RaumNachricht[] = [];
   const angemeldet: Anwesend[] = [];
 
-  const oeffnen: KanalOeffnen = () => ({
-    verbinden: async () => anwesende,
-    anmelden: async (ich) => {
-      angemeldet.push(ich);
-    },
-    beiAnwesenden(rueckruf) {
-      anwesendeRueckrufe.add(rueckruf);
-      return () => anwesendeRueckrufe.delete(rueckruf);
-    },
-    senden: async (nachricht) => {
-      gesendet.push(nachricht);
-    },
-    beiNachricht(rueckruf) {
-      nachrichtRueckrufe.add(rueckruf);
-      return () => nachrichtRueckrufe.delete(rueckruf);
-    },
-    trennen() {},
-  });
-
-  return {
-    oeffnen,
+  const raum = {
+    oeffnen: (() => kanal) as KanalOeffnen,
     anwesendeSetzen(neu: Anwesend[]) {
       anwesende = neu;
       for (const rueckruf of anwesendeRueckrufe) rueckruf(neu);
@@ -40,5 +22,29 @@ export function nachgebauterRaum() {
     },
     gesendet,
     angemeldet,
+    stoerung: null as string | null,
   };
+
+  const kanal: RaumKanal = {
+    verbinden: async () => anwesende,
+    anmelden: async (ich) => {
+      if (raum.stoerung) throw new Error(raum.stoerung);
+      angemeldet.push(ich);
+    },
+    beiAnwesenden(rueckruf) {
+      anwesendeRueckrufe.add(rueckruf);
+      return () => anwesendeRueckrufe.delete(rueckruf);
+    },
+    senden: async (nachricht) => {
+      if (raum.stoerung) throw new Error(raum.stoerung);
+      gesendet.push(nachricht);
+    },
+    beiNachricht(rueckruf) {
+      nachrichtRueckrufe.add(rueckruf);
+      return () => nachrichtRueckrufe.delete(rueckruf);
+    },
+    trennen() {},
+  };
+
+  return raum;
 }

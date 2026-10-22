@@ -30,24 +30,34 @@ function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
   );
 }
 
+// Supabase meldet nur ok, wenn track() oder send() angekommen sind, statt bei Fehlern zu werfen.
+function pruefen(antwort: string): void {
+  if (antwort !== "ok") throw new Error("Keine Verbindung zum Raum.");
+}
+
 // Der Client wird übergeben, damit Tests einen Nachbau einsetzen können.
 export function raumKanalUeber(
   client: Pick<SupabaseClient, "channel" | "removeChannel">,
 ): KanalOeffnen {
+  // Supabase liefert für denselben Raum denselben Kanal, auf dem schon abonniert ist. Deshalb je Raum
+  // ein RaumKanal, bis er getrennt wird, etwa wenn ein Handy die Raum-Seite verlässt und zurückkehrt.
+  const offen = new Map<string, RaumKanal>();
   return (code, schluessel) => {
+    const vorhanden = offen.get(code);
+    if (vorhanden) return vorhanden;
     const kanal = client.channel(`raum:${code}`, {
       config: { presence: { key: schluessel } },
     });
-    let ersterAbgleich: (anwesende: Anwesend[]) => void = () => {};
+    let ersterAbgleich: () => void = () => {};
     let abgelehnt: (fehler: Error) => void = () => {};
-    const abgeglichen = new Promise<Anwesend[]>((gut, schlecht) => {
+    const abgeglichen = new Promise<void>((gut, schlecht) => {
       ersterAbgleich = gut;
       abgelehnt = schlecht;
     });
     const anwesendeRueckrufe = new Set<(anwesende: Anwesend[]) => void>();
     kanal.on("presence", { event: "sync" }, () => {
       const anwesende = anwesendeLesen(kanal.presenceState<Anwesend>());
-      ersterAbgleich(anwesende);
+      ersterAbgleich();
       for (const rueckruf of anwesendeRueckrufe) rueckruf(anwesende);
     });
     const nachrichtRueckrufe = new Set<(nachricht: RaumNachricht) => void>();
@@ -58,41 +68,52 @@ export function raumKanalUeber(
     // React ruft Effekte im Strict Mode doppelt auf, Supabase erlaubt aber nur ein subscribe() je Kanal.
     let abonniert = false;
 
-    return {
+    const raumKanal: RaumKanal = {
       verbinden() {
-        if (abonniert) return abgeglichen;
-        abonniert = true;
-        kanal.subscribe((status) => {
-          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-            abgelehnt(new Error("Keine Verbindung zum Raum."));
-          }
-        });
-        return abgeglichen;
+        if (!abonniert) {
+          abonniert = true;
+          kanal.subscribe((status) => {
+            if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+              abgelehnt(new Error("Keine Verbindung zum Raum."));
+            }
+          });
+        }
+        // Wer später kommt, bekommt den aktuellen Stand, nicht den des ersten Abgleichs.
+        return abgeglichen.then(() =>
+          anwesendeLesen(kanal.presenceState<Anwesend>()),
+        );
       },
       async anmelden(ich) {
-        await kanal.track(ich);
+        pruefen(await kanal.track(ich));
       },
       beiAnwesenden(rueckruf) {
         anwesendeRueckrufe.add(rueckruf);
         return () => anwesendeRueckrufe.delete(rueckruf);
       },
       async senden(nachricht) {
-        await kanal.send({
-          type: "broadcast",
-          event: NACHRICHT,
-          payload: nachricht,
-        });
+        pruefen(
+          await kanal.send({
+            type: "broadcast",
+            event: NACHRICHT,
+            payload: nachricht,
+          }),
+        );
       },
       beiNachricht(rueckruf) {
         nachrichtRueckrufe.add(rueckruf);
         return () => nachrichtRueckrufe.delete(rueckruf);
       },
       trennen() {
+        offen.delete(code);
         void client.removeChannel(kanal);
       },
     };
+    offen.set(code, raumKanal);
+    return raumKanal;
   };
 }
 
+// Einmal angelegt, damit alle Ansichten dieselben offenen Räume sehen.
+let echterKanal: KanalOeffnen | undefined;
 export const supabaseRaumKanal: KanalOeffnen = (code, schluessel) =>
-  raumKanalUeber(supabaseClient())(code, schluessel);
+  (echterKanal ??= raumKanalUeber(supabaseClient()))(code, schluessel);

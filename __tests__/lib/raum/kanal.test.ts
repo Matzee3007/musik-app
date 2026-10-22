@@ -5,7 +5,8 @@ import { raumKanalUeber } from "@/lib/raum/kanal";
 type Rueckruf = (daten: { payload?: unknown }) => void;
 
 // Nachbau des Supabase-Clients: merkt sich, was der Kanal aufruft, und lässt den Test Ereignisse
-// auslösen. Wie das Original lehnt er Rückrufe nach subscribe() und ein zweites subscribe() ab.
+// auslösen. Wie das Original lehnt er Rückrufe nach subscribe() und ein zweites subscribe() ab und
+// liefert für denselben Namen denselben Kanal, bis er entfernt ist.
 function nachgebauterClient() {
   const rueckrufe: { art: string; event: string; rueckruf: Rueckruf }[] = [];
   let status: (s: string) => void = () => {};
@@ -16,6 +17,9 @@ function nachgebauterClient() {
     angemeldet: [] as unknown[],
     gesendet: [] as unknown[],
     entfernt: false,
+    geoeffnet: 0,
+    // Antwort von Supabase auf track() und send(): "ok", "timed out" oder "error".
+    antwort: "ok",
     status: (s: string) => status(s),
     ausloesen(art: string, event: string, payload?: unknown) {
       for (const r of rueckrufe) {
@@ -39,21 +43,24 @@ function nachgebauterClient() {
     presenceState: () => welt.zustand,
     async track(eintrag: unknown) {
       welt.angemeldet.push(eintrag);
-      return "ok";
+      return welt.antwort;
     },
     async send(nachricht: unknown) {
       welt.gesendet.push(nachricht);
-      return "ok";
+      return welt.antwort;
     },
   };
   const client = {
     channel(name: string, optionen: { config: unknown }) {
       welt.name = name;
       welt.config = optionen.config;
+      welt.geoeffnet++;
       return kanal;
     },
     async removeChannel() {
       welt.entfernt = true;
+      abonniert = false;
+      rueckrufe.length = 0;
       return "ok";
     },
   } as unknown as SupabaseClient;
@@ -146,4 +153,40 @@ test("verbinden zweimal abonniert nur einmal, wie es React im Strict Mode tut", 
   const zweites = kanal.verbinden();
   welt.ausloesen("presence", "sync");
   expect(await zweites).toEqual(await erstes);
+});
+
+test("ein Raum, der noch offen ist, wird beim zweiten Öffnen weiterverwendet", async () => {
+  const { client, welt } = nachgebauterClient();
+  const oeffnen = raumKanalUeber(client);
+  const erster = oeffnen("ABCD", "s1");
+  const verbunden = erster.verbinden();
+  welt.ausloesen("presence", "sync");
+  await verbunden;
+
+  welt.zustand = { t: [{ schluessel: "t", rolle: "tisch" }] };
+  const zweiter = oeffnen("ABCD", "s1");
+  expect(zweiter).toBe(erster);
+  expect(await zweiter.verbinden()).toEqual([
+    { schluessel: "t", rolle: "tisch" },
+  ]);
+});
+
+test("nach dem Trennen öffnet derselbe Raum einen neuen Kanal", () => {
+  const { client, welt } = nachgebauterClient();
+  const oeffnen = raumKanalUeber(client);
+  oeffnen("ABCD", "s1").trennen();
+  oeffnen("ABCD", "s1");
+  expect(welt.geoeffnet).toBe(2);
+});
+
+test("anmelden und senden scheitern, wenn Supabase nicht ok meldet", async () => {
+  const { client, welt } = nachgebauterClient();
+  const kanal = raumKanalUeber(client)("ABCD", "s1");
+  welt.antwort = "timed out";
+  await expect(
+    kanal.anmelden({ schluessel: "s1", rolle: "tisch" }),
+  ).rejects.toThrow("Keine Verbindung zum Raum.");
+  await expect(kanal.senden({ art: "geschlossen" })).rejects.toThrow(
+    "Keine Verbindung zum Raum.",
+  );
 });

@@ -85,7 +85,7 @@ test("ohne Tisch im Kanal: Kein Tisch mit dem Code", async () => {
 
 test("gespeicherter Raum tritt nach dem Neuladen ohne Namensabfrage bei", async () => {
   handyRaumSpeichern({ code: "ABCD", name: "Anna" });
-  const raum = nachgebauterRaum();
+  const raum = raumMitTisch();
   render(<HandyRaum code="ABCD" kanalOeffnen={raum.oeffnen} />);
   expect(
     await screen.findByText("Du bist im Raum ABCD als Anna."),
@@ -122,4 +122,35 @@ test("ohne Supabase", () => {
   expect(
     screen.getByText("Supabase ist hier nicht eingerichtet."),
   ).toBeDefined();
+});
+
+test("gespeicherter Raum ohne Tisch: Kein Tisch statt ewig warten", async () => {
+  handyRaumSpeichern({ code: "ABCD", name: "Anna" });
+  const raum = nachgebauterRaum();
+  render(<HandyRaum code="ABCD" kanalOeffnen={raum.oeffnen} />);
+  expect(
+    await screen.findByText("Kein Tisch mit dem Code ABCD. Code prüfen."),
+  ).toBeDefined();
+  expect(raum.angemeldet).toEqual([]);
+});
+
+test("kommt der Tisch dazu, geht es von Kein Tisch zur Namensabfrage", async () => {
+  const raum = nachgebauterRaum();
+  render(<HandyRaum code="ABCD" kanalOeffnen={raum.oeffnen} />);
+  await screen.findByText("Kein Tisch mit dem Code ABCD. Code prüfen.");
+  act(() => raum.anwesendeSetzen([tisch]));
+  expect(screen.getByLabelText("Dein Name")).toBeDefined();
+  expect(
+    screen.queryByText("Kein Tisch mit dem Code ABCD. Code prüfen."),
+  ).toBeNull();
+});
+
+test("Beitreten ohne Verbindung zeigt den Fehler und bleibt bei der Namensabfrage", async () => {
+  const raum = raumMitTisch();
+  render(<HandyRaum code="ABCD" kanalOeffnen={raum.oeffnen} />);
+  raum.stoerung = "Keine Verbindung zum Raum.";
+  await nameEingeben("Anna");
+  expect(await screen.findByText("Keine Verbindung zum Raum.")).toBeDefined();
+  expect(screen.getByLabelText("Dein Name")).toBeDefined();
+  expect(handyRaumLaden("ABCD")).toBeNull();
 });

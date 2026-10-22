@@ -26,7 +26,9 @@ Nur für Realtime, ohne Tabellen. Jeder Raum ist ein Kanal `raum:<Code>`, auf de
   Projekts und steckt auch in den Adressen des Dashboards.
 - **Publishable key** (`sb_publishable_…`): öffentlicher Schlüssel, darf im Browser stehen. Ihn nutzt die App.
 - **Secret key** (`sb_secret_…`): voller Zugriff, nur für Server. Brauchen wir nicht.
-- **anon key:** der alte öffentliche Schlüssel, den Supabase durch den publishable key ablöst. Nicht mehr verwenden.
+- **anon key:** der alte öffentliche Schlüssel. Supabase stellt ihn und den alten `service_role` key bis Ende 2026
+  ein (Stand 2026-10-22, [API-Keys-Doku](https://supabase.com/docs/guides/api/api-keys)), deshalb nehmen wir gleich
+  den publishable key.
 - **Kanal (Channel):** ein benannter Treffpunkt in Realtime. Öffentliche Kanäle kann jeder betreten, der den Namen
   kennt, private verlangen Regeln in der Datenbank.
 - **Presence:** Jedes Gerät meldet sich im Kanal an (`track`), alle sehen, wer gerade verbunden ist. Verliert ein

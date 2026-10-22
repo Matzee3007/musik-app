@@ -47,11 +47,37 @@ export default function HandyRaum({
   const [zustand, setZustand] = useState<Zustand>({ art: "verbinde" });
   const [anwesende, setAnwesende] = useState<Anwesend[]>([]);
   const [eingabe, setEingabe] = useState("");
-  const [vergeben, setVergeben] = useState(false);
+  // Unter dem Namensfeld: "Name schon vergeben" oder ein Fehler beim Beitreten.
+  const [meldung, setMeldung] = useState<string | null>(null);
 
   useEffect(() => {
     if (!kanal || !raumCode) return;
-    const anwesendeAb = kanal.beiAnwesenden(setAnwesende);
+    const k = kanal;
+    const c = raumCode;
+    // Erst mit Tisch geht es weiter, und zwar sobald er da ist, nicht nur beim ersten Abgleich.
+    let weiter = false;
+    function neueAnwesende(anwesende: Anwesend[]) {
+      setAnwesende(anwesende);
+      if (weiter) return;
+      if (!tischDa(anwesende)) {
+        setZustand({ art: "kein-tisch" });
+        return;
+      }
+      weiter = true;
+      // Nach dem Neuladen gleich wieder hinein, ohne Namensabfrage.
+      const gemerkt = handyRaumLaden(c);
+      if (!gemerkt) {
+        setZustand({ art: "name" });
+        return;
+      }
+      setZustand({ art: "drin", name: gemerkt.name });
+      k.anmelden({
+        schluessel: tabSchluessel(),
+        rolle: "spieler",
+        name: gemerkt.name,
+      }).catch((e: Error) => setZustand({ art: "fehler", text: e.message }));
+    }
+    const anwesendeAb = kanal.beiAnwesenden(neueAnwesende);
     const nachrichtAb = kanal.beiNachricht((nachricht) => {
       if (nachricht.art !== "geschlossen") return;
       handyRaumLoeschen();
@@ -60,22 +86,7 @@ export default function HandyRaum({
     });
     kanal
       .verbinden()
-      .then((anwesende) => {
-        setAnwesende(anwesende);
-        // Nach dem Neuladen gleich wieder hinein, auch wenn der Tisch gerade kurz fehlt.
-        const gemerkt = handyRaumLaden(raumCode);
-        if (gemerkt) {
-          setZustand({ art: "drin", name: gemerkt.name });
-          return kanal.anmelden({
-            schluessel: tabSchluessel(),
-            rolle: "spieler",
-            name: gemerkt.name,
-          });
-        }
-        setZustand(
-          tischDa(anwesende) ? { art: "name" } : { art: "kein-tisch" },
-        );
-      })
+      .then(neueAnwesende)
       .catch((e: Error) => setZustand({ art: "fehler", text: e.message }));
     return () => {
       anwesendeAb();
@@ -101,10 +112,15 @@ export default function HandyRaum({
     if (!kanal || !name) return;
     const ich = tabSchluessel();
     if (nameVergeben(anwesende, name, ich)) {
-      setVergeben(true);
+      setMeldung("Name schon vergeben");
       return;
     }
-    await kanal.anmelden({ schluessel: ich, rolle: "spieler", name });
+    try {
+      await kanal.anmelden({ schluessel: ich, rolle: "spieler", name });
+    } catch (e) {
+      setMeldung((e as Error).message);
+      return;
+    }
     handyRaumSpeichern({ code: raumCode!, name });
     setZustand({ art: "drin", name });
   }
@@ -125,7 +141,7 @@ export default function HandyRaum({
             value={eingabe}
             onChange={(e) => {
               setEingabe(e.target.value);
-              setVergeben(false);
+              setMeldung(null);
             }}
           />
           <button
@@ -135,7 +151,7 @@ export default function HandyRaum({
           >
             Beitreten
           </button>
-          {vergeben && <p>Name schon vergeben</p>}
+          {meldung && <p>{meldung}</p>}
         </div>
       )}
       {zustand.art === "drin" && (

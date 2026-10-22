@@ -30,8 +30,10 @@ export default function RaumKopf({
   useEffect(() => {
     // Wer einmal da war, bleibt in der Leiste, auch nach dem Neuladen des Tischs.
     function neueAnwesende(anwesende: Anwesend[]) {
-      const alt = tischRaumLaden()?.bekannt ?? [];
-      const bekannt = spielerleiste(alt, anwesende).map((s) => s.name);
+      // Nach "Raum schließen" ist nichts mehr gespeichert, ein später Abgleich legt den Raum nicht neu an.
+      const raum = tischRaumLaden();
+      if (!raum) return;
+      const bekannt = spielerleiste(raum.bekannt, anwesende).map((s) => s.name);
       tischRaumSpeichern({ code, bekannt });
       setStand({ bekannt, anwesende });
     }
@@ -47,7 +49,13 @@ export default function RaumKopf({
   }, [code, kanal]);
 
   async function schliessen() {
-    await kanal.senden({ art: "geschlossen" });
+    // Erst wenn alle Bescheid wissen, sonst warten Handys in einem Raum ohne Tisch.
+    try {
+      await kanal.senden({ art: "geschlossen" });
+    } catch (e) {
+      setFehler((e as Error).message);
+      return;
+    }
     kanal.trennen();
     tischRaumLoeschen();
     onGeschlossen();

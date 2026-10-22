@@ -64,3 +64,27 @@ test("Raum schließen sagt es allen und löscht den Raum", async () => {
   expect(raum.gesendet).toEqual([{ art: "geschlossen" }]);
   expect(tischRaumLaden()).toBeNull();
 });
+
+test("Raum schließen ohne Verbindung behält den Raum und zeigt den Fehler", async () => {
+  const onGeschlossen = vi.fn();
+  const raum = kopf(nachgebauterRaum(), onGeschlossen);
+  await waitFor(() => expect(raum.angemeldet).toHaveLength(1));
+  raum.stoerung = "Keine Verbindung zum Raum.";
+  fireEvent.click(screen.getByRole("button", { name: "Raum schließen" }));
+  expect(await screen.findByText("Keine Verbindung zum Raum.")).toBeDefined();
+  expect(onGeschlossen).not.toHaveBeenCalled();
+  expect(tischRaumLaden()?.code).toBe("ABCD");
+});
+
+test("ein Abgleich nach dem Schließen speichert den Raum nicht wieder", async () => {
+  const onGeschlossen = vi.fn();
+  const raum = kopf(nachgebauterRaum(), onGeschlossen);
+  fireEvent.click(screen.getByRole("button", { name: "Raum schließen" }));
+  await waitFor(() => expect(onGeschlossen).toHaveBeenCalled());
+  act(() =>
+    raum.anwesendeSetzen([
+      { schluessel: "s1", rolle: "spieler", name: "Anna" },
+    ]),
+  );
+  expect(tischRaumLaden()).toBeNull();
+});
