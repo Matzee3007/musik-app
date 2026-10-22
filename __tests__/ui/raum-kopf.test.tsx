@@ -1,4 +1,4 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import {
   act,
   cleanup,
@@ -12,10 +12,16 @@ import RaumKopf from "@/app/ui/raum-kopf";
 import { tischRaumLaden, tischRaumSpeichern } from "@/lib/raum/speicher";
 import type { TischStand } from "@/lib/raum/stand";
 
+// Die Rückfrage vor "Raum schließen" bestätigt der Nutzer, wenn ein Test nichts anderes sagt.
+beforeEach(() => {
+  vi.spyOn(window, "confirm").mockReturnValue(true);
+});
+
 afterEach(() => {
   cleanup();
   localStorage.clear();
   sessionStorage.clear();
+  vi.restoreAllMocks();
 });
 
 function kopf(
@@ -192,4 +198,18 @@ test("eine Fehlermeldung verschwindet, sobald das Senden wieder klappt", async (
   await waitFor(() =>
     expect(screen.queryByText("Keine Verbindung zum Raum.")).toBeNull(),
   );
+});
+
+test("Raum schließen fragt nach, Abbrechen lässt den Raum offen", async () => {
+  vi.mocked(window.confirm).mockReturnValue(false);
+  const onGeschlossen = vi.fn();
+  const raum = kopf(nachgebauterRaum(), onGeschlossen);
+  await waitFor(() => expect(raum.angemeldet).toHaveLength(1));
+  fireEvent.click(screen.getByRole("button", { name: "Raum schließen" }));
+  expect(window.confirm).toHaveBeenCalledWith(
+    "Willst du den Raum wirklich schließen?",
+  );
+  expect(raum.gesendet).not.toContainEqual({ art: "geschlossen" });
+  expect(onGeschlossen).not.toHaveBeenCalled();
+  expect(tischRaumLaden()?.code).toBe("ABCD");
 });

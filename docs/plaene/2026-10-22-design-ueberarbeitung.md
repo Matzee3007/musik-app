@@ -65,7 +65,7 @@ schmale Leiste mit Code und Spielern.
 - Anzeige: Läuft der Song (`musik.laeuft`), steht „Anhalten“ (`neben`) vor „Lösung anzeigen“ bzw. in der Auflösung
   allein. Steht er, erscheint wie bisher „Nochmal“/„Weiterhören“ bzw. „Weiterhören“.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 test("Anhalten pausiert den Song, Weiterhören setzt ihn fort", async () => {
@@ -85,10 +85,10 @@ test("nach der Auflösung lässt sich der weiterlaufende Song anhalten", async (
 });
 ```
 
-- [ ] **Schritt 2:** `npx vitest run __tests__/ui/spiel-musik.test.tsx`, erwartet FAIL (kein Knopf „Anhalten“).
-- [ ] **Schritt 3:** `anhalten()` und Knopf nach der Schnittstelle.
-- [ ] **Schritt 4:** `npm run check`, erwartet Exit 0.
-- [ ] **Schritt 5:** Committen: `Add pause button at the table`.
+- [x] **Schritt 2:** `npx vitest run __tests__/ui/spiel-musik.test.tsx`, erwartet FAIL (kein Knopf „Anhalten“).
+- [x] **Schritt 3:** `anhalten()` und Knopf nach der Schnittstelle.
+- [x] **Schritt 4:** `npm run check`, erwartet Exit 0.
+- [x] **Schritt 5:** Committen: `Add pause button at the table`.
 
 ### Aufgabe 2: Rückfrage vor „Raum schließen“
 
@@ -99,7 +99,7 @@ test("nach der Auflösung lässt sich der weiterlaufende Song anhalten", async (
 **Schnittstellen:**
 - `schliessen()` fragt zuerst `window.confirm("Willst du den Raum wirklich schließen?")`, bei Nein passiert nichts.
 
-- [ ] **Schritt 1: Fehlschlagender Test**
+- [x] **Schritt 1: Fehlschlagender Test**
 
 ```tsx
 test("Raum schließen fragt nach, Abbrechen lässt den Raum offen", async () => {
@@ -113,11 +113,11 @@ test("Raum schließen fragt nach, Abbrechen lässt den Raum offen", async () => 
 
 Die drei vorhandenen Tests zu „Raum schließen“ bekommen `vi.spyOn(window, "confirm").mockReturnValue(true)`.
 
-- [ ] **Schritt 2:** `npx vitest run __tests__/ui/raum-kopf.test.tsx`, erwartet FAIL (`confirm` nicht aufgerufen).
-- [ ] **Schritt 3:** Rückfrage in `schliessen()`. In den e2e-Tests vor dem Klick
+- [x] **Schritt 2:** `npx vitest run __tests__/ui/raum-kopf.test.tsx`, erwartet FAIL (`confirm` nicht aufgerufen).
+- [x] **Schritt 3:** Rückfrage in `schliessen()`. In den e2e-Tests vor dem Klick
   `seite.once("dialog", (d) => d.accept())`.
-- [ ] **Schritt 4:** `npm run check && npm run e2e`, erwartet beides grün.
-- [ ] **Schritt 5:** Committen: `Ask before closing the room`, PR.
+- [x] **Schritt 4:** `npm run check && npm run e2e`, erwartet beides grün.
+- [x] **Schritt 5:** Committen: `Ask before closing the room`, PR.
 
 ## Teil 2: Farben, Schrift, Rad (`feat/design-serioes`)
 
