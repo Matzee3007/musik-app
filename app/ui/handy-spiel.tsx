@@ -146,7 +146,7 @@ export default function HandySpiel({
                 !karte.karte[i].abgehakt && !feldFrei(karte, stand, i)
               }
               hervorgehoben={linie ?? undefined}
-              hoeher={!notizen}
+              felder={notizen ? "hoch" : "hoeher"}
             />
           </div>
           {notizen && (

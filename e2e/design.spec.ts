@@ -104,7 +104,7 @@ for (const [breite, hoch] of [
   [390, 844],
   [360, 780],
 ]) {
-  test(`Handy ${breite}×${hoch} mit Notizen passt ohne Scrollen`, async ({
+  test(`Handy ${breite}×${hoch} mit und ohne Notizen passt ohne Scrollen`, async ({
     browser,
   }) => {
     const tisch = await Tisch.eroeffnen(browser);
@@ -114,6 +114,12 @@ for (const [breite, hoch] of [
     await expect(anna.felder()).toHaveCount(25);
     await expect(
       anna.seite.getByRole("button", { name: "Notizen aus" }),
+    ).toBeVisible();
+    expect(await hoehe(anna.seite)).toBeLessThanOrEqual(hoch);
+    // Ohne Notizen werden die Felder höher (2 : 3) und müssen trotzdem passen.
+    await anna.seite.getByRole("button", { name: "Notizen aus" }).click();
+    await expect(
+      anna.seite.getByRole("button", { name: "Notizen an" }),
     ).toBeVisible();
     expect(await hoehe(anna.seite)).toBeLessThanOrEqual(hoch);
   });

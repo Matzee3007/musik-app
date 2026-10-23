@@ -59,3 +59,16 @@ test("ein abgehaktes Feld zeigt ein Kreuz, ein freies keins", () => {
   expect(felder()[2].querySelector("[data-kreuz]")).not.toBeNull();
   expect(felder()[3].querySelector("[data-kreuz]")).toBeNull();
 });
+
+test("ohne Angabe sind die Felder quadratisch, am Handy hochkant", () => {
+  const { rerender } = render(
+    <KarteAnsicht karte={karte} onFeldKlick={() => {}} />,
+  );
+  expect(felder()[0].className).toContain("aspect-square");
+  rerender(<KarteAnsicht karte={karte} onFeldKlick={() => {}} felder="hoch" />);
+  expect(felder()[0].className).toContain("aspect-[3/4]");
+  rerender(
+    <KarteAnsicht karte={karte} onFeldKlick={() => {}} felder="hoeher" />,
+  );
+  expect(felder()[0].className).toContain("aspect-[2/3]");
+});

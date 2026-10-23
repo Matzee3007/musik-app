@@ -6,7 +6,7 @@ export default function KarteAnsicht({
   onFeldKlick,
   ausgegraut,
   hervorgehoben,
-  hoeher,
+  felder,
 }: {
   karte: Karte;
   onFeldKlick: (index: number) => void;
@@ -14,9 +14,15 @@ export default function KarteAnsicht({
   ausgegraut?: (index: number) => boolean;
   // Am Handy: die Reihe mit Bingo.
   hervorgehoben?: number[];
-  // Am Handy ohne Notizen: Die Karte hat mehr Platz, die Felder werden noch höher.
-  hoeher?: boolean;
+  // Am Handy hochkant, ohne Notizen noch höher. Ohne Angabe (Laptop) quadratisch.
+  felder?: "hoch" | "hoeher";
 }) {
+  const form =
+    felder === "hoeher"
+      ? "aspect-[2/3]"
+      : felder === "hoch"
+        ? "aspect-[3/4]"
+        : "aspect-square";
   return (
     <section aria-label="Karte" className="grid grid-cols-5 gap-1.5">
       {karte.map((feld, index) => {
@@ -31,7 +37,7 @@ export default function KarteAnsicht({
             data-bingo={bingo || undefined}
             onClick={() => onFeldKlick(index)}
             style={{ backgroundColor: kategorie.farbe }}
-            className={`relative flex ${hoeher ? "aspect-[2/3]" : "aspect-[3/4]"} items-center justify-center rounded-md p-1 text-center text-[13px] leading-tight font-bold hyphens-auto text-grund outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50 data-bingo:ring-4 data-bingo:ring-akzent data-bingo:ring-offset-2 data-bingo:ring-offset-grund sm:text-sm`}
+            className={`relative flex ${form} items-center justify-center overflow-hidden rounded-md p-1 text-center text-[13px] leading-tight font-bold hyphens-auto text-grund outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50 data-bingo:ring-4 data-bingo:ring-akzent data-bingo:ring-offset-2 data-bingo:ring-offset-grund sm:text-sm`}
           >
             {/* Das Wort zuerst: Der Browser-Test misst das erste Kind. Es liegt über dem Stempel. */}
             <span className="relative z-10">{kategorie.name}</span>
@@ -50,28 +56,15 @@ export default function KarteAnsicht({
                     ["stroke-akzent", 9],
                   ] as const
                 ).map(([farbe, breite]) => (
-                  <g
+                  // non-scaling-stroke: Das SVG wird aufs Feld gestreckt, die Linien bleiben trotzdem gleich dick.
+                  <path
                     key={farbe}
+                    d="M12 12L88 88M88 12L12 88"
                     className={farbe}
                     strokeWidth={breite}
                     strokeLinecap="round"
-                  >
-                    {/* non-scaling-stroke: Das SVG wird aufs Feld gestreckt, die Linien bleiben trotzdem gleich dick. */}
-                    <line
-                      x1={12}
-                      y1={12}
-                      x2={88}
-                      y2={88}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                    <line
-                      x1={88}
-                      y1={12}
-                      x2={12}
-                      y2={88}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </g>
+                    vectorEffect="non-scaling-stroke"
+                  />
                 ))}
               </svg>
             )}
