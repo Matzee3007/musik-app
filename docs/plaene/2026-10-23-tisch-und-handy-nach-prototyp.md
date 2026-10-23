@@ -371,7 +371,7 @@ Danach PR, `gh pr checks <nr>`, `/code-review`, Funde mit dem Entwickler durchge
   `vector-effect: non-scaling-stroke`.
 - `HandySpiel` übergibt `hoeher={!notizen}`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 test("ein abgehaktes Feld zeigt ein Kreuz, ein freies keins", () => {
@@ -389,25 +389,30 @@ test("Handy mit Notizen passt ohne Scrollen", async ({ browser }) => {
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/karte-ansicht.test.tsx`
 Erwartet: FAIL, kein `[data-kreuz]`
 
-- [ ] **Schritt 3: `KarteAnsicht` und `HandySpiel` umbauen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 3: `KarteAnsicht` und `HandySpiel` umbauen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm test` und `npx playwright test e2e/design.spec.ts`
 Erwartet: PASS, auch „Felder am Handy zeigen ihr Wort ganz“
 
-- [ ] **Schritt 5: Screenshots** am Handy (390×844, 360×780) mit und ohne Notizen, mit Bingo-Reihe
-- [ ] **Schritt 6: Prüfen, committen, PR**
+- [x] **Schritt 5: Screenshots** am Handy (390×844, 360×780) mit und ohne Notizen, mit Bingo-Reihe
+- [x] **Schritt 6: Prüfen, committen, PR**
 
 ```bash
 npm run check
 git add app/ui/karte-ansicht.tsx app/ui/handy-spiel.tsx __tests__/ui/karte-ansicht.test.tsx e2e/design.spec.ts
 git commit -m "Make card fields taller and mark them with a cross"
 ```
+
+**Abweichung (PR zu Aufgabe 6):** Im Bingo-Zustand war die Seite bei 390×844 und 360×780 je 25 px zu hoch. Deshalb hat
+die Notizfläche auf Bildschirmen bis 800 px Höhe 2 statt 3 Zeilen, und die Raumseite hat am Handy `py-4` statt `py-8`.
+Der Browser-Test prüft beide Größen zu Spielbeginn, den Bingo-Zustand nur die Messung von Hand (zu langsam für die
+Suite).
 
 ## Teil 3: Ohne Songliste (`feat/ohne-songliste`)
 

@@ -2,7 +2,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import { KATEGORIEN } from "@/lib/kategorien";
-import { karteAusteilen } from "@/lib/karte";
+import { feldSetzen, karteAusteilen } from "@/lib/karte";
 
 const karte = karteAusteilen(
   KATEGORIEN.map((k) => k.id),
@@ -50,4 +50,25 @@ test("ohne Angaben ist kein Feld grau oder hervorgehoben", () => {
   expect(
     felder().some((f) => f.hasAttribute("aria-disabled") || f.dataset.bingo),
   ).toBe(false);
+});
+
+test("ein abgehaktes Feld zeigt ein Kreuz, ein freies keins", () => {
+  render(
+    <KarteAnsicht karte={feldSetzen(karte, 2, true)} onFeldKlick={() => {}} />,
+  );
+  expect(felder()[2].querySelector("[data-kreuz]")).not.toBeNull();
+  expect(felder()[3].querySelector("[data-kreuz]")).toBeNull();
+});
+
+test("ohne Angabe sind die Felder quadratisch, am Handy hochkant", () => {
+  const { rerender } = render(
+    <KarteAnsicht karte={karte} onFeldKlick={() => {}} />,
+  );
+  expect(felder()[0].className).toContain("aspect-square");
+  rerender(<KarteAnsicht karte={karte} onFeldKlick={() => {}} felder="hoch" />);
+  expect(felder()[0].className).toContain("aspect-[3/4]");
+  rerender(
+    <KarteAnsicht karte={karte} onFeldKlick={() => {}} felder="hoeher" />,
+  );
+  expect(felder()[0].className).toContain("aspect-[2/3]");
 });
