@@ -1,3 +1,6 @@
 # Doku gehört Obsidian, Prettier formatiert nur Code
 *.md
 package-lock.json
+
+# Projekt-Porträt: erzeugt vom Skill portraet-bauen
+portraet/
