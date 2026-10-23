@@ -441,7 +441,7 @@ Suite).
   hinter „Zeigen“), Konsequenzen (falsches Jahr fällt erst in der Runde auf, Korrektur gilt ab dann für die
   Playlist).
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 // __tests__/lib/vorbereiten.test.ts
@@ -465,25 +465,29 @@ test("nach dem Vorbereiten stehen keine Titel und Jahre, nur die Zahl der unsich
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/vorbereiten.test.ts __tests__/ui/vorbereiten-ansicht.test.tsx`
 Erwartet: FAIL, `unsichereJahre` fehlt
 
-- [ ] **Schritt 3: `unsichereJahre` schreiben, `VorbereitenAnsicht` umbauen, `Songliste` und ihren Test löschen**
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 3: `unsichereJahre` schreiben, `VorbereitenAnsicht` umbauen, `Songliste` und ihren Test löschen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npm test` und `npm run e2e`
 Erwartet: PASS (die Bots klicken nur „Spiel starten“)
 
-- [ ] **Schritt 5: ADR 0007 schreiben, `CLAUDE.md` und `docs/Projektvision.md` anpassen**
-- [ ] **Schritt 6: Prüfen, committen, PR**
+- [x] **Schritt 5: ADR 0007 schreiben, `CLAUDE.md` und `docs/Projektvision.md` anpassen**
+- [x] **Schritt 6: Prüfen, committen, PR**
 
 ```bash
 npm run check
 git add -A lib/vorbereiten.ts app/ui/vorbereiten-ansicht.tsx app/ui/songliste.tsx __tests__ docs/adr/0007-keine-songliste-vor-dem-spiel.md CLAUDE.md docs/Projektvision.md
 git commit -m "Drop the song list before the game"
 ```
+
+**Ergänzung (PR zu Aufgabe 7):** Die Fälle „Spiel starten“ und „Keine spielbaren Songs“ aus dem gelöschten
+`songliste.test.tsx` stehen jetzt in `vorbereiten-ansicht.test.tsx`. In `docs/Projektvision.md` ist auch der „Ablauf am
+Tisch“ angepasst, nicht nur „Korrigieren“.
 
 ## Nach Teil 3
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import Knopf from "@/app/ui/knopf";
-import Songliste from "@/app/ui/songliste";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import type { Song } from "@/lib/song";
 import { SpotifyFehler } from "@/lib/spotify/abruf";
@@ -15,7 +14,13 @@ import {
 import { playlistSongs, type PlaylistSong } from "@/lib/spotify/playlist-songs";
 import type { Playlist } from "@/lib/spotify/playlists";
 import { gueltigesToken } from "@/lib/spotify/sitzung";
-import { korrekturSpeichern, vorbereiten } from "@/lib/vorbereiten";
+import {
+  gespeicherteJahre,
+  korrekturSpeichern,
+  spielSongs as songsFuersSpiel,
+  unsichereJahre,
+  vorbereiten,
+} from "@/lib/vorbereiten";
 
 type Geladen = { songs: PlaylistSong[]; uebersprungen: number };
 
@@ -30,7 +35,8 @@ function standardVerbinden(): Promise<Abspieler> {
   });
 }
 
-// Vorbereiten einer Playlist (siehe Glossar), danach Songliste und Spiel.
+// Vorbereiten einer Playlist (siehe Glossar), danach das Spiel. Keine Songliste, sie verriete dem mitspielenden DJ
+// die Lösungen (ADR 0007).
 export default function VorbereitenAnsicht({
   playlist,
   accessToken,
@@ -117,7 +123,7 @@ export default function VorbereitenAnsicht({
   >(null);
   const verbunden = useRef(false);
 
-  // Verbinden, sobald die Songliste da ist, damit "Spiel starten" den Player schon im Klick aktivieren kann.
+  // Verbinden, sobald die Songs vorbereitet sind, damit "Spiel starten" den Player schon im Klick aktivieren kann.
   useEffect(() => {
     if (!geladen || verbunden.current) return;
     verbunden.current = true;
@@ -146,6 +152,10 @@ export default function VorbereitenAnsicht({
     );
   }
 
+  const unsicher = geladen
+    ? unsichereJahre(geladen.songs, gespeicherteJahre())
+    : 0;
+
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <button
@@ -164,15 +174,32 @@ export default function VorbereitenAnsicht({
                 ? `Musik nicht verfügbar: ${musik.fehler}`
                 : "Musik bereit"}
           </p>
-          <Songliste
-            songs={geladen.songs}
-            uebersprungen={geladen.uebersprungen}
-            onSpielStarten={(songs) => {
-              // Im Klick, sonst lässt der Browser keinen Ton zu.
-              abspieler?.aktivieren();
-              setSpielSongs(songs);
-            }}
-          />
+          <h2 className="font-schild text-2xl">
+            {geladen.songs.length}{" "}
+            {geladen.songs.length === 1 ? "Song" : "Songs"} bereit,{" "}
+            {geladen.uebersprungen} übersprungen
+          </h2>
+          {geladen.songs.length === 0 ? (
+            <p>Keine spielbaren Songs</p>
+          ) : (
+            <Knopf
+              onClick={() => {
+                // Im Klick, sonst lässt der Browser keinen Ton zu.
+                abspieler?.aktivieren();
+                setSpielSongs(
+                  songsFuersSpiel(geladen.songs, gespeicherteJahre()),
+                );
+              }}
+            >
+              Spiel starten
+            </Knopf>
+          )}
+          {unsicher > 0 && (
+            <p className="text-sm text-licht/70">
+              {unsicher} {unsicher === 1 ? "Song" : "Songs"} mit unsicherem
+              Jahr. Prüfe es bei der Auflösung.
+            </p>
+          )}
         </>
       ) : fehler ? (
         <>

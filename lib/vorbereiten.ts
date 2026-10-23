@@ -1,6 +1,6 @@
 // Vorbereiten einer Playlist (siehe Glossar): Erscheinungsjahre einmalig ermitteln und je Spotify-Track-ID im
 // Browser speichern. Verbindet die Songs von Spotify mit den Regeln aus lib/erscheinungsjahr.ts.
-import { jahrFuerSpiel, type Jahre } from "@/lib/erscheinungsjahr";
+import { jahrFuerSpiel, markierung, type Jahre } from "@/lib/erscheinungsjahr";
 import { MusicBrainzBeschaeftigt } from "@/lib/musicbrainz";
 import type { Song } from "@/lib/song";
 import type { Abruf } from "@/lib/spotify/abruf";
@@ -63,6 +63,15 @@ export function spielSongs(
     jahr: jahrFuerSpiel(jahreVon(s, gespeichert)),
     ...(s.cover ? { cover: s.cover } : {}),
   }));
+}
+
+// Wie viele Songs ein fragliches Jahr haben, der DJ prüft sie bei der Auflösung (ADR 0007).
+export function unsichereJahre(
+  songs: readonly PlaylistSong[],
+  gespeichert: Record<string, GespeicherteJahre>,
+): number {
+  return songs.filter((s) => markierung(jahreVon(s, gespeichert)) !== null)
+    .length;
 }
 
 // Fragt die eigene Route /api/erscheinungsjahr, MusicBrainz selbst nur der Server.
