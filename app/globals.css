@@ -21,16 +21,7 @@ body {
   color: var(--color-licht);
 }
 
-/* Musikspur am Tisch: springende Balken und Fortschritt des Ausschnitts. */
-@keyframes musikspur-springen {
-  from {
-    transform: scaleY(0.2);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
+/* Musikspur am Tisch: Fortschritt des Ausschnitts. Die Wellenlinie bewegt app/ui/musikspur.tsx. */
 @keyframes musikspur-fortschritt {
   from {
     width: 0;
@@ -40,26 +31,13 @@ body {
   }
 }
 
-.musikspur-balken {
-  transform-origin: bottom;
-  animation: musikspur-springen ease-in-out infinite alternate;
-}
-
 .musikspur-fortschritt {
   width: 0;
   animation: musikspur-fortschritt linear forwards;
 }
 
-.musikspur-steht .musikspur-balken,
 .musikspur-steht .musikspur-fortschritt {
   animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .musikspur-balken {
-    animation: none;
-    transform: scaleY(0.6);
-  }
 }
 
 /* Stempel beim Abhaken, wie vom Bingo-Marker: kurz größer, dann aufgedrückt. */

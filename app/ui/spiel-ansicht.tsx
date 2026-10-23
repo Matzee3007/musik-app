@@ -289,7 +289,7 @@ export default function SpielAnsicht({
 
   const spielfeld = (
     <div
-      className={`grid w-full max-w-5xl gap-8 ${raum ? "" : "md:grid-cols-2"}`}
+      className={`grid w-full gap-8 ${raum ? "" : "max-w-5xl md:grid-cols-2"}`}
     >
       <Tisch
         runde={spiel.runde}
@@ -334,7 +334,10 @@ export default function SpielAnsicht({
 
   if (!abspieler) return spielfeld;
   return (
-    <div className="flex w-full max-w-5xl flex-col items-center gap-4">
+    // Im Raum ohne Breitenbegrenzung: Rad und Abschnitt zur Runde brauchen die ganze Breite.
+    <div
+      className={`flex w-full flex-col items-center gap-4 ${raum ? "" : "max-w-5xl"}`}
+    >
       <label className="flex items-center gap-2 text-licht/70">
         Ausschnitt
         <select

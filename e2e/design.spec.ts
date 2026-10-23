@@ -40,6 +40,31 @@ test("Tisch passt im Spiel ohne Scrollen auf den Laptop", async ({
   expect(await hoehe(seite)).toBeLessThanOrEqual(800);
 });
 
+test("Abschnitt zur Runde bleibt in jedem Zustand gleich groß", async ({
+  browser,
+}) => {
+  const tisch = await Tisch.eroeffnen(browser);
+  const seite = tisch.seite;
+  await seite.setViewportSize({ width: 1280, height: 800 });
+  await Spieler.beitreten(browser, tisch.code, "Anna");
+  await tisch.demoStarten();
+  const runde = seite.getByRole("region", { name: "Runde" });
+  const groesse = async () => {
+    const box = (await runde.boundingBox())!;
+    return `${Math.round(box.width)}×${Math.round(box.height)}`;
+  };
+  const groessen = [await groesse()];
+  await seite.getByRole("button", { name: "Rad drehen" }).click();
+  groessen.push(await groesse());
+  const loesung = seite.getByRole("button", { name: "Lösung anzeigen" });
+  await loesung.waitFor({ timeout: 15_000 });
+  groessen.push(await groesse());
+  await loesung.click();
+  await seite.getByRole("button", { name: "Nächste Runde" }).waitFor();
+  groessen.push(await groesse());
+  expect(new Set(groessen).size).toBe(1);
+});
+
 test("Tisch scrollt am Handy nicht seitlich", async ({ browser }) => {
   const tisch = await Tisch.eroeffnen(browser);
   const seite = tisch.seite;

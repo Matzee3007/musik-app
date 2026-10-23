@@ -9,7 +9,12 @@ import {
 } from "@testing-library/react";
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import RaumKopf from "@/app/ui/raum-kopf";
-import { tischRaumLaden, tischRaumSpeichern } from "@/lib/raum/speicher";
+import {
+  raumSichtbar,
+  raumSichtbarSpeichern,
+  tischRaumLaden,
+  tischRaumSpeichern,
+} from "@/lib/raum/speicher";
 import type { TischStand } from "@/lib/raum/stand";
 
 // Die Rückfrage vor "Raum schließen" bestätigt der Nutzer, wenn ein Test nichts anderes sagt.
@@ -214,17 +219,48 @@ test("Raum schließen fragt nach, Abbrechen lässt den Raum offen", async () => 
   expect(tischRaumLaden()?.code).toBe("ABCD");
 });
 
-test("QR-Code lässt sich ausblenden, Code und Spieler bleiben", () => {
+test("ein Knopf blendet QR-Code und Spieler aus, der Code bleibt im Knopf", () => {
   const raum = kopf();
   act(() =>
     raum.anwesendeSetzen([
       { schluessel: "s1", rolle: "spieler", name: "Anna" },
     ]),
   );
-  fireEvent.click(screen.getByRole("button", { name: "QR-Code ausblenden" }));
+  expect(
+    screen
+      .getByRole("button", { name: "Raum ausblenden" })
+      .getAttribute("aria-controls"),
+  ).toBe("raum");
+  fireEvent.click(screen.getByRole("button", { name: "Raum ausblenden" }));
   expect(screen.queryByTitle("QR-Code für Raum ABCD")).toBeNull();
-  expect(screen.getByText("ABCD")).toBeDefined();
-  expect(screen.getByText("Anna")).toBeDefined();
-  fireEvent.click(screen.getByRole("button", { name: "QR-Code zeigen" }));
+  expect(screen.queryByText("Anna")).toBeNull();
+  // Die Schublade ist weg, der Knopf verweist auf nichts.
+  expect(
+    screen
+      .getByRole("button", { name: "Raum ABCD zeigen" })
+      .getAttribute("aria-controls"),
+  ).toBeNull();
+  expect(screen.queryByRole("button", { name: "Raum schließen" })).toBeNull();
+  expect(
+    screen.getByRole("button", { name: "Raum ABCD zeigen" }).textContent,
+  ).toContain("ABCD");
+  expect(raumSichtbar()).toBe(false);
+});
+
+test("ausgeblendet bleibt der Raum nach dem Neuladen ausgeblendet", () => {
+  raumSichtbarSpeichern(false);
+  kopf();
+  expect(screen.queryByTitle("QR-Code für Raum ABCD")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Raum ABCD zeigen" }));
   expect(screen.getByTitle("QR-Code für Raum ABCD")).toBeDefined();
+  expect(raumSichtbar()).toBe(true);
+});
+
+test("ausgeblendet steht ein Fehler unter dem Knopf", async () => {
+  const raum = kopf();
+  await waitFor(() => expect(raum.angemeldet).toHaveLength(1));
+  fireEvent.click(screen.getByRole("button", { name: "Raum ausblenden" }));
+  raum.stoerung = "Keine Verbindung zum Raum.";
+  raum.neuerStand({ spiel: "s1", runde: null, bingo: [] });
+  expect(await screen.findByText("Keine Verbindung zum Raum.")).toBeDefined();
 });
