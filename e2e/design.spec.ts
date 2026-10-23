@@ -99,3 +99,22 @@ test("Felder am Handy zeigen ihr Wort ganz", async ({ browser }) => {
   );
   expect(zuBreit).toBe(0);
 });
+
+for (const [breite, hoch] of [
+  [390, 844],
+  [360, 780],
+]) {
+  test(`Handy ${breite}×${hoch} mit Notizen passt ohne Scrollen`, async ({
+    browser,
+  }) => {
+    const tisch = await Tisch.eroeffnen(browser);
+    const anna = await Spieler.beitreten(browser, tisch.code, "Anna");
+    await anna.seite.setViewportSize({ width: breite, height: hoch });
+    await tisch.demoStarten();
+    await expect(anna.felder()).toHaveCount(25);
+    await expect(
+      anna.seite.getByRole("button", { name: "Notizen aus" }),
+    ).toBeVisible();
+    expect(await hoehe(anna.seite)).toBeLessThanOrEqual(hoch);
+  });
+}

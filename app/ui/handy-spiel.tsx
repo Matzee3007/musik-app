@@ -146,6 +146,7 @@ export default function HandySpiel({
                 !karte.karte[i].abgehakt && !feldFrei(karte, stand, i)
               }
               hervorgehoben={linie ?? undefined}
+              hoeher={!notizen}
             />
           </div>
           {notizen && (
@@ -155,7 +156,8 @@ export default function HandySpiel({
               <textarea
                 key={`${stand.spiel}-${stand.runde?.nummer}`}
                 rows={3}
-                className="rounded-lg bg-flaeche px-3 py-2 text-licht outline-akzent focus-visible:outline-2"
+                // Auf niedrigen Handys nur 2 Zeilen, damit Karte und Notizen auch mit „Bingo!“ ohne Scrollen passen.
+                className="rounded-lg bg-flaeche px-3 py-2 text-licht outline-akzent focus-visible:outline-2 [@media(max-height:800px)]:h-[calc(2lh+1rem)]"
               />
             </label>
           )}
