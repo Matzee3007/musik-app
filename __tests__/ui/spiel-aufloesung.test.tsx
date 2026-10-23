@@ -35,10 +35,13 @@ function tisch() {
 }
 
 // Ein Song, Zufall 0: Das Rad wählt Titel. Bis zur Auflösung.
-function aufloesen(onJahrKorrigiert?: (songId: string, jahr: number) => void) {
+function aufloesen(
+  onJahrKorrigiert?: (songId: string, jahr: number) => void,
+  song: Song = bohemian,
+) {
   render(
     <SpielAnsicht
-      songs={[bohemian]}
+      songs={[song]}
       zufall={() => 0}
       sofort
       onJahrKorrigiert={onJahrKorrigiert}
@@ -137,4 +140,16 @@ test("ein offenes, nicht gespeichertes Feld ist in der nächsten Runde wieder zu
   expect(
     tisch().getByRole("button", { name: "Jahr korrigieren" }),
   ).toBeDefined();
+});
+
+test("ein unsicheres Jahr ist in der Auflösung markiert, bis es korrigiert ist", () => {
+  aufloesen(vi.fn(), { ...bohemian, jahrUnsicher: true });
+  expect(tisch().getByText("Jahr unsicher")).toBeDefined();
+  jahrEintragen("1975");
+  expect(tisch().queryByText("Jahr unsicher")).toBeNull();
+});
+
+test("ein sicheres Jahr ist nicht markiert", () => {
+  aufloesen(vi.fn());
+  expect(tisch().queryByText("Jahr unsicher")).toBeNull();
 });

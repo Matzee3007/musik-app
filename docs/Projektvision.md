@@ -156,8 +156,8 @@ B [[2026-10-19-vorbereiten|Vorbereiten und Erscheinungsjahr]], C [[2026-10-19-ab
   entfallen, weil sie dem mitspielenden DJ die Lösungen verrät ([[0007-keine-songliste-vor-dem-spiel|ADR 0007]]).
 - **Ausschnitt:** ab Songanfang, 15, 30 (Standard), 45 oder 60 Sekunden oder ganz, jederzeit einstellbar, gilt ab dem
   nächsten Song. Am Ende pausiert die Musik, Knöpfe „Nochmal“ und „Weiterhören“.
-- **Musikspur:** animierte Equalizer-Balken in der Farbe der gedrehten Kategorie und ein Fortschrittsbalken. Keine
-  echte Wellenform, die Audio-Analyse von Spotify gibt es für neue Apps nicht mehr. Das Cover erst in der Auflösung.
+- **Musikspur:** animierte Wellenlinie in der Farbe der gedrehten Kategorie und ein Fortschrittsbalken (Phase 4,
+  vorher Equalizer-Balken). Keine echte Wellenform, die Audio-Analyse von Spotify gibt es für neue Apps nicht mehr. Das Cover erst in der Auflösung.
 - **Demo:** Die feste Songliste aus Phase 1 bleibt als Spiel ohne Anmeldung und ohne Musik.
 - **Fertig, wenn:** am Laptop ein komplettes Spiel mit eigener Playlist bis zum Bingo läuft, mit Musik, richtigen
   und einmal korrigierten Erscheinungsjahren, Musikspur und Cover. Die Auswahl des Erscheinungsjahrs ist eine reine

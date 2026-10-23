@@ -22,7 +22,11 @@ import {
   vorbereiten,
 } from "@/lib/vorbereiten";
 
-type Geladen = { songs: PlaylistSong[]; uebersprungen: number };
+type Geladen = {
+  songs: PlaylistSong[];
+  uebersprungen: number;
+  unsicher: number;
+};
 
 // Verbindet den Browser als Spotify-Gerät, das Token holt es bei Bedarf frisch.
 function standardVerbinden(): Promise<Abspieler> {
@@ -93,7 +97,10 @@ export default function VorbereitenAnsicht({
           onFortschritt: (fertig, gesamt) => setFortschritt({ fertig, gesamt }),
           abgebrochen: () => !sichtbar.current,
         });
-        setGeladen(ergebnis);
+        setGeladen({
+          ...ergebnis,
+          unsicher: unsichereJahre(ergebnis.songs, gespeicherteJahre()),
+        });
       })
       .catch((e) => {
         // 403: Die Playlist gehört dem DJ nicht, Spotify gibt ihre Songs seit Februar 2026 nicht heraus.
@@ -152,10 +159,6 @@ export default function VorbereitenAnsicht({
     );
   }
 
-  const unsicher = geladen
-    ? unsichereJahre(geladen.songs, gespeicherteJahre())
-    : 0;
-
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <button
@@ -194,10 +197,11 @@ export default function VorbereitenAnsicht({
               Spiel starten
             </Knopf>
           )}
-          {unsicher > 0 && (
+          {geladen.unsicher > 0 && (
             <p className="text-sm text-licht/70">
-              {unsicher} {unsicher === 1 ? "Song" : "Songs"} mit unsicherem
-              Jahr. Prüfe es bei der Auflösung.
+              {geladen.unsicher === 1
+                ? "1 Song mit unsicherem Jahr. Prüfe es bei der Auflösung."
+                : `${geladen.unsicher} Songs mit unsicherem Jahr. Prüfe sie bei der Auflösung.`}
             </p>
           )}
         </>

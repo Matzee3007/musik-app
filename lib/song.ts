@@ -6,4 +6,6 @@ export type Song = {
   jahr: number;
   // Bild des Albums für die Auflösung, Songs der Demo haben keins.
   cover?: string;
+  // MusicBrainz kennt das Jahr nicht oder es ist fraglich, der DJ prüft es in der Auflösung (ADR 0007).
+  jahrUnsicher?: true;
 };

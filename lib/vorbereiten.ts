@@ -62,6 +62,7 @@ export function spielSongs(
     interpret: s.interpret,
     jahr: jahrFuerSpiel(jahreVon(s, gespeichert)),
     ...(s.cover ? { cover: s.cover } : {}),
+    ...(markierung(jahreVon(s, gespeichert)) ? { jahrUnsicher: true } : {}),
   }));
 }
 

@@ -205,3 +205,14 @@ test("zählt Songs mit unsicherem Jahr, eine Korrektur macht es sicher", async (
   korrekturSpeichern("t2", 1999);
   expect(unsichereJahre(songs, gespeicherteJahre())).toBe(0);
 });
+
+test("spielSongs markiert unsichere Jahre, sichere nicht", async () => {
+  const songs = [song("t1"), song("t2", null)];
+  await vorbereiten(songs, {
+    jahrAbfragen: async () => 1975,
+    warten: ohnePause,
+  });
+  const [t1, t2] = spielSongs(songs, gespeicherteJahre());
+  expect(t1.jahrUnsicher).toBeUndefined();
+  expect(t2.jahrUnsicher).toBe(true);
+});

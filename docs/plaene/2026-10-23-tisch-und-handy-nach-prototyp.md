@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Tisch und Handy nach den Prototypen"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-23
 tags: [plan, oberflaeche, design, phase-4]
 ---
@@ -487,10 +487,20 @@ git commit -m "Drop the song list before the game"
 
 **Ergänzung (PR zu Aufgabe 7):** Die Fälle „Spiel starten“ und „Keine spielbaren Songs“ aus dem gelöschten
 `songliste.test.tsx` stehen jetzt in `vorbereiten-ansicht.test.tsx`. In `docs/Projektvision.md` ist auch der „Ablauf am
-Tisch“ angepasst, nicht nur „Korrigieren“.
+Tisch“ angepasst, nicht nur „Korrigieren“. Nach dem Review: Die Auflösung zeigt „Jahr unsicher“ bei fraglichem Jahr
+(`Song.jahrUnsicher`, aus `spielSongs`, eine Korrektur entfernt es), sonst wüsste der DJ nicht, welche Songs er prüfen
+soll. In der Mehrzahl heißt der Hinweis „Prüfe sie bei der Auflösung.“
 
 ## Nach Teil 3
 
-- `plan-pruefer` gegen diesen Plan laufen lassen, danach Plan auf `status: abgeschlossen`.
+- `plan-pruefer` gegen diesen Plan laufen lassen, danach Plan auf `status: abgeschlossen`. Erledigt mit PR #46, mit
+  dem Entwickler abgesprochene Abweichungen aus Teil 1:
+  - **Fuß bei Bingo:** „Jahr korrigieren“ bleibt auch bei Bingo stehen, der DJ will das Jahr des letzten Songs
+    vielleicht noch korrigieren.
+  - **Cover im schmalen Layout** (unter `@5xl`): `clamp(9rem, 30vw, 15rem)` statt `clamp(11rem, 36vh, 22rem)`, der
+    Nachtrag galt nur der breiten Fassung.
+  - **Bingo am Tisch ohne Browser-Test** (Schwerpunkte 1 und 2): bis zum Bingo zu spielen ist zu langsam für die
+    Suite. Von Hand gemessen bei 1280×800 mit offenem Raum: Abschnitt „Runde“ 576×592 wie zu Spielbeginn, Seite
+    800 px hoch, Rad 580 px breit.
 - Journal und Übergabe: Prüfung an echten Geräten (Kreuz auf iOS/Android, Welle auf dem Laptop, Schublade über dem
   Rad auf 13-Zoll-Laptops).

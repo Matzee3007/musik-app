@@ -242,6 +242,9 @@ export default function Tisch({
               {aufgeloest && stapelLeer && !bingo && (
                 <p className="font-semibold text-licht">Alle Songs gespielt</p>
               )}
+              {aufgeloest && runde!.song.jahrUnsicher && (
+                <p className="font-semibold text-signal">Jahr unsicher</p>
+              )}
               {aufgeloest &&
                 onJahrKorrigieren &&
                 (jahrFeld === null ? (
@@ -265,7 +268,7 @@ export default function Tisch({
                     <Knopf
                       art="neben"
                       onClick={() => {
-                        // Wie in der Songliste nur ganze Jahre bis heute, sonst bleibt das Feld offen.
+                        // Nur ganze Jahre bis heute, sonst bleibt das Feld offen.
                         const jahr = gueltigesJahr(
                           jahrFeld,
                           new Date().getFullYear(),
