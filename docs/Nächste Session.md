@@ -12,12 +12,14 @@ Stand vom 2026-10-23. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #44)
+- **Branch:** `main` (nach dem Merge von PR #47)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit Teil 1 des Plans (PR #43): fester Abschnitt zur Runde,
-  Wellenlinie, Raum als Schublade, kräftige Kategoriefarben
+- **Production:** `https://musik-bingo.vercel.app` mit dem ganzen
+  [[2026-10-23-tisch-und-handy-nach-prototyp|Plan Tisch und Handy nach den Prototypen]] (PR #43, #45, #46, Plan
+  abgeschlossen): hochkantige Felder mit Kreuz am Handy, keine Songliste vor dem Spiel, „Jahr unsicher“ in der
+  Auflösung ([[0007-keine-songliste-vor-dem-spiel|ADR 0007]])
 
 ## Vor dem Start
 
@@ -40,27 +42,30 @@ Stand vom 2026-10-23. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Womit es weitergeht
 
-**Phase 4 – Eigene Ideen**, weiter mit dem [[2026-10-23-tisch-und-handy-nach-prototyp|Plan Tisch und Handy nach
-den Prototypen]] (Teil 1 fertig, Prototyp-Links im Plan):
+**Phase 4 – Eigene Ideen** läuft weiter, der Plan zu Tisch und Handy ist fertig. Für den nächsten Schritt gibt es
+noch keinen Plan. Claude fragt deshalb zuerst, was als Nächstes ansteht. Vorschläge:
 
-1. **Teil 2, Aufgabe 6:** Handy-Karte mit Feldern im Hochformat (3 : 4, ohne Notizen 2 : 3) und Kreuz statt Kreis,
-   Branch `feat/handy-karte-hoch`.
-2. **Teil 3, Aufgabe 7:** Songliste vor dem Spiel entfernen, nur noch „<n> Songs mit unsicherem Jahr“, ADR 0007,
-   Prinzip 4 in der `CLAUDE.md` anpassen, Branch `feat/ohne-songliste`.
-3. Danach `plan-pruefer` gegen den Plan und den Plan auf `status: abgeschlossen`.
+1. **Prüfung an echten Geräten** (am besten an einem Spieleabend):
+   - Handy: Kreuz und hochkantige Felder auf iOS und Android, auch mit eingeblendeter Adressleiste. Passt die Karte
+     mit Notizen und „Bingo!“ ohne Scrollen?
+   - Laptop: Wellenlinie mit echter Musik (Tempo, Unruhe), Schublade über dem Rad auf einem 13-Zoll-Laptop.
+   - Mit einer echten Playlist: „<n> Songs mit unsicherem Jahr“ vor dem Spiel und „Jahr unsicher“ in der Auflösung.
+2. **Nächstes Stück Phase 4 mit `grill-with-docs` schärfen**, dann `plan-schreiben`. Offen laut Roadmap: Scoreboard
+   über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy, aus Phase 3 verschoben: Songs und
+   Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar, Kategorie und Lösung auch auf dem Handy,
+   Playwright in der CI, Tisch macht nach dem Neuladen im Spiel weiter.
+3. **Restpunkte**, wenn Zeit ist:
+   - Aus dem Review von PR #45: Karte im Querformat oder auf dem Tablet mit „Notizen aus“ höher als der Bildschirm;
+     Idee, die Kartengröße aus der Bildschirmhöhe zu berechnen statt aus festen Grenzen (800 px, `py-4`).
+   - `e2e/raum.spec.ts` beobachten: fiel einmal bei vollem `npm run e2e` aus, heute viermal grün. Beim nächsten
+     Ausfall sofort `test-results/` lesen.
+   - Aus älteren Übergaben: leere Startseite ohne Netz (`.catch` in `app/ui/start.tsx`), Funde aus PR #24 und PR #20,
+     `noUncheckedIndexedAccess`.
 
-Nebenbei, wenn Zeit ist:
-
-- **Wellenlinie mit echter Musik ansehen** (`npm run dev`, Playlist wählen): Tempo und Unruhe passen? Die Demo zeigt
-  sie nicht.
-- **`e2e/raum.spec.ts` beobachten:** fiel einmal bei vollem `npm run e2e` aus, danach grün (Journal, „Fehler und
-  Lösungen“). Beim nächsten Ausfall sofort `test-results/` lesen.
-- Restpunkte aus der vorigen Übergabe bleiben offen: Prüfung an echten Geräten, leere Startseite ohne Netz (`.catch`
-  in `app/ui/start.tsx`), Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`, Phase 4 mit `grill-with-docs`
-  schärfen.
+Vor dem Start eines neuen Plans `docs/Tools für später.md` auf vorgemerkte Werkzeuge für Phase 4 prüfen.
 
 ## Passende Skills
 
-- `tdd`: Aufgaben 6 und 7 mit Test zuerst
-- `fertig-pruefen`: vor jedem „fertig“ und jedem PR
-- `fehler-diagnose`: falls `e2e/raum.spec.ts` wieder ausfällt
+- `grill-with-docs`: das nächste Stück Phase 4 in Fragerunden klären
+- `plan-schreiben`: daraus einen Plan in prüfbaren Aufgaben machen
+- `fehler-diagnose`: falls `e2e/raum.spec.ts` wieder ausfällt oder an echten Geräten etwas nicht passt
