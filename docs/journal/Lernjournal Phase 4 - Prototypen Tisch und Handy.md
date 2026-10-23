@@ -3,7 +3,7 @@ titel: Lernjournal Phase 4 - Prototypen Tisch und Handy
 status: aktiv
 phase: 4
 erstellt: 2026-10-23
-tags: [lernjournal, phase-4, design, prototyp, artifact, tailwind, svg, vitest, playwright, code-review]
+tags: [lernjournal, phase-4, design, prototyp, artifact, tailwind, svg, vitest, playwright, code-review, plan-pruefer, adr]
 ---
 
 # Lernjournal Phase 4: Prototypen Tisch und Handy
@@ -29,9 +29,27 @@ Cover waren zu klein. Diesmal zuerst klickbare Prototypen als Claude Artifact, d
       `aria-controls`, Welle rechnet nach dem Absinken nicht weiter, kein negativer erster Zeitschritt), 5 begründet
       nicht geändert
 - [x] Prüfungen: 295 Vitest-Tests, `npx playwright test --repeat-each=3` 33 bestanden, CI grün, PR #43 gemergt
-- [ ] Teil 2: Handy-Karte mit höheren Feldern und Kreuz
-- [ ] Teil 3: ohne Songliste, ADR 0007
+- [x] Teil 2: Handy-Karte mit höheren Feldern und Kreuz (PR #45)
+- [x] Teil 3: ohne Songliste, ADR 0007 (PR #46)
 - [ ] Wellenlinie mit echter Musik ansehen (die Demo hat keine)
+- [x] Teil 2 testgetrieben: Felder 3 : 4, ohne Notizen 2 : 3, SVG-Kreuz mit `data-kreuz` statt Kreis, Schrift 13 px am
+      Handy. Neuer Browser-Test „Handy … mit und ohne Notizen passt ohne Scrollen“ für 390×844 und 360×780
+- [x] Screenshots im Bingo-Zustand zeigten 25 px Überhang. Abgesprochen: Notizfläche bis 800 px Höhe nur 2 Zeilen,
+      Raumseite am Handy `py-4` statt `py-8`. Danach von Hand gemessen 844/844 und 780/780 px
+- [x] `/code-review` PR #45: 8 Funde, 4 behoben (Prop `felder?: "hoch" | "hoeher"`, damit die Laptop-Karte im
+      Solo-Modus quadratisch bleibt; Test für „Notizen aus“; ein `<path>` statt vier `<line>`; `overflow-hidden`,
+      damit der Stempel nicht in Nachbarfelder ragt), 1 falsch („Erscheinungsjahr“ gibt es als Kategorie nicht),
+      3 begründet nicht geändert
+- [x] Teil 3: `unsichereJahre` in `lib/vorbereiten.ts`, `app/ui/songliste.tsx` und ihr Test gelöscht, ihre Fälle
+      „Spiel starten“ und „Keine spielbaren Songs“ in den Test der Vorbereiten-Ansicht übernommen. ADR 0007,
+      Prinzip 4 in der `CLAUDE.md`, Projektvision angepasst
+- [x] `/code-review` PR #46 und `plan-pruefer` parallel. Wichtigster Fund: Die Auflösung zeigte nicht, welcher Song ein
+      unsicheres Jahr hat. Jetzt „Jahr unsicher“ über `Song.jahrUnsicher`, eine Korrektur entfernt es. Dazu „Prüfe
+      sie“ in der Mehrzahl, einmal zählen statt bei jedem Neuzeichnen, drei veraltete Kommentare, Wellenlinie in der
+      Projektvision
+- [x] Abweichungen aus Teil 1 im Plan vermerkt („Jahr korrigieren“ bei Bingo, Cover im schmalen Layout, Bingo am Tisch
+      von Hand gemessen: Runde 576×592 wie zu Beginn, Seite 800 px, Rad 580 px)
+- [x] Plan auf `status: abgeschlossen`, 299 Vitest-Tests, 13 Browser-Tests, CI grün, PR #45 und #46 gemergt
 
 ## Befehle: Prototypen und Prüfung
 
@@ -50,6 +68,22 @@ gh pr merge 43 --merge --delete-branch
   nach.
 - `gh pr view 43 --json mergeable -q .mergeable`: meldet `MERGEABLE`, wenn sich der PR ohne Konflikte mergen lässt.
 - `gh pr merge 43 --merge --delete-branch`: PR in `main` zusammenführen und den Branch auf GitHub löschen.
+
+## Befehle: Handy-Karte und Songliste
+
+```bash
+git switch -c feat/handy-karte-hoch
+npx playwright test e2e/design.spec.ts -g "mit Notizen"
+npx vitest run __tests__/ui/karte-ansicht.test.tsx
+git rm app/ui/songliste.tsx __tests__/ui/songliste.test.tsx
+gh pr checks 45 --watch
+```
+
+- `git switch -c feat/handy-karte-hoch`: neuen Branch anlegen und auf ihn wechseln.
+- `npx playwright test e2e/design.spec.ts -g "mit Notizen"`: nur die Browser-Tests, deren Name „mit Notizen“ enthält.
+- `npx vitest run <datei>`: nur eine Testdatei einmal ausführen, schneller als `npm test`.
+- `git rm <dateien>`: Dateien löschen und das Löschen gleich für den Commit vormerken.
+- `gh pr checks 45 --watch`: wartet, bis die CI des PRs fertig ist.
 
 ## Neu gelernt
 
@@ -81,6 +115,40 @@ mit `preserveAspectRatio="none"` verzerrt wird.
 
 Mit `vi.stubGlobal("requestAnimationFrame", …)` speichert der Test die angeforderten Bilder in einer Map und spielt sie
 selbst ab. So lässt sich prüfen, ob die Schleife nach dem Absinken wirklich aufhört.
+
+### Ein Test, der sofort grün ist, kann trotzdem sinnvoll sein
+
+Der Test „Handy mit Notizen passt ohne Scrollen“ war schon vor dem Umbau grün, weil die quadratischen Felder kleiner
+waren. Er ist kein Rot-Grün-Test, sondern ein Schutz: Er soll zeigen, dass es nach dem Umbau so bleibt. Den echten
+Überhang zeigte erst der Screenshot im Bingo-Zustand, mit der großen Überschrift „Bingo!“.
+
+### Media-Query nach Höhe in Tailwind
+
+Tailwind hat Breakpoints nur für die Breite. Mit einer beliebigen Variante geht auch die Höhe:
+`[@media(max-height:800px)]:h-[calc(2lh+1rem)]`. `lh` ist die Zeilenhöhe als Einheit, so sind es genau zwei Zeilen
+plus Polster. `rows` am `textarea` lässt sich nicht je Bildschirm ändern, die Höhe per Klasse schon.
+
+### `vector-effect` wird nicht vererbt
+
+`vector-effect: non-scaling-stroke` muss an jeder Linie oder jedem Pfad stehen, an der Gruppe `<g>` wirkt es nicht.
+Ein `<path d="M12 12L88 88M88 12L12 88">` zeichnet beide Linien des Kreuzes auf einmal.
+
+### `as const` für Listen aus Paaren
+
+`[["stroke-akzent", 9], …] as const` lässt TypeScript jedes Paar als festes Tupel sehen. Dann hat `farbe` den Typ
+`string` und `breite` den Typ `number`, ohne Cast wie `as string`.
+
+### Review-Funde selbst prüfen
+
+Nicht jeder Fund stimmt: Einer nannte eine Kategorie „Erscheinungsjahr“, die es nicht gibt, ein anderer übersah, dass
+Tests `jahreVon` noch benutzen. Andere waren wichtiger als gedacht: Der Hinweis „Prüfe es bei der Auflösung“ half
+nichts, solange die Auflösung den unsicheren Song nicht kennzeichnet. Darum jeden Fund am Code nachsehen, bevor er
+umgesetzt oder verworfen wird.
+
+### Optionales Feld nur setzen, wenn es zutrifft
+
+`...(unsicher ? { jahrUnsicher: true } : {})` fügt das Feld nur bei Bedarf hinzu, wie schon beim `cover`. So bleiben
+bestehende `toEqual`-Vergleiche gültig, die Songs ohne das Feld erwarten.
 
 ## Fehler und Lösungen
 
@@ -115,6 +183,28 @@ selbst ab. So lässt sich prüfen, ob die Schleife nach dem Absinken wirklich au
 - **Lösung:** noch keine, im PR #43 vermerkt
 - **Prüfen:** beim nächsten Fehlschlag sofort `test-results/` lesen, dann mit `fehler-diagnose` eingrenzen
 
+### `fatal: pathspec 'app/ui/songliste.tsx' did not match any files`
+
+- **Wo:** `git add -A … app/ui/songliste.tsx …` vor dem Commit von Teil 3
+- **Ursache:** `git rm` hatte die Datei schon gelöscht und das Löschen vorgemerkt, `git add` fand sie nicht mehr
+- **Lösung:** die gelöschte Datei im `git add` weglassen
+- **Prüfen:** `git status --short` zeigt `D  app/ui/songliste.tsx`
+
+### Exit-Code nach einer Pipe fehlt (`check exit:` leer)
+
+- **Wo:** `npm run check | grep … ; echo ${PIPESTATUS[0]}`
+- **Ursache:** zsh schreibt die Variable klein (`pipestatus`), `PIPESTATUS` ist dort leer
+- **Lösung:** den Befehl ohne Pipe ausführen: `npm run check >/dev/null 2>&1; echo $?`
+- **Prüfen:** Ausgabe `exit 0`
+
+### Wegwerf-Test findet „Demo starten“ nicht
+
+- **Wo:** Messung der Laptop-Karte im Solo-Modus
+- **Ursache:** Mit Supabase in `.env.local` zeigt die Startseite zuerst nur „Raum eröffnen“, die Demo ohne Raum gibt es
+  nur ohne Supabase
+- **Lösung:** keine Messung, der Fund (hochkantige Felder auch im Solo-Modus) wurde mit dem Prop `felder` behoben
+- **Prüfen:** `__tests__/ui/karte-ansicht.test.tsx`, „ohne Angabe sind die Felder quadratisch“
+
 ## Aus dem Chat
 
 -
@@ -125,9 +215,12 @@ selbst ab. So lässt sich prüfen, ob die Schleife nach dem Absinken wirklich au
 - Ist der Fehlschlag in `e2e/raum.spec.ts` ein unzuverlässiger Test oder ein echter Fehler?
 - Soll eine Kategorie später selbst sagen, welche Angabe sie markiert (Review-Fund 9, Prinzip „Kategorien sind Daten“)?
 - Stört die offene Schublade auf einem 13-Zoll-Laptop über dem Rad?
+- Wie sehen Kreuz und hochkantige Felder auf echten Handys aus (iOS, Android), auch mit eingeblendeter Adressleiste?
+- Wie wirkt „Jahr unsicher“ mit einer echten Playlist, sind es viele Songs?
+- Sollte sich die Kartengröße aus der Bildschirmhöhe ergeben statt aus festen Grenzen (Review-Fund PR #45)?
 
 ## Nächste Schritte
 
-1. Teil 2 des Plans: Handy-Karte mit höheren Feldern und Kreuz (`feat/handy-karte-hoch`)
-2. Teil 3: Songliste entfernen, ADR 0007, Prinzip 4 in der `CLAUDE.md` anpassen (`feat/ohne-songliste`)
-3. Danach `plan-pruefer` und Prüfung an echten Geräten
+1. Prüfung an echten Geräten: Kreuz und Karte am Handy, Welle mit echter Musik, Schublade auf 13-Zoll-Laptops
+2. Mit einer echten Playlist „<n> Songs mit unsicherem Jahr“ und „Jahr unsicher“ in der Auflösung ansehen
+3. Nächster Schritt in Phase 4 laut Projektvision, vorher Restpunkte der Übergabe prüfen
