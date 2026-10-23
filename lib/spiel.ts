@@ -102,8 +102,9 @@ export function jahrKorrigieren(
   songId: string,
   jahr: number,
 ): Spiel {
+  // Korrigiert gilt das Jahr als geprüft.
   const korrigiert = (song: Song) =>
-    song.id === songId ? { ...song, jahr } : song;
+    song.id === songId ? { ...song, jahr, jahrUnsicher: undefined } : song;
   const { runde } = spiel;
   return {
     ...spiel,

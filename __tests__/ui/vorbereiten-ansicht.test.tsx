@@ -67,16 +67,41 @@ function nachgebauterAbspieler(): Abspieler {
   };
 }
 
-test("lädt, bereitet vor und zeigt die Songliste, danach startet das Spiel", async () => {
+test("lädt, bereitet vor und zeigt die Zahl der Songs, danach startet das Spiel", async () => {
   netz(() => antwort({ jahr: 1975 }));
   ansicht();
   expect(screen.getByRole("heading", { name: "Partyhits" })).toBeDefined();
   expect(
     await screen.findByText("1 Song bereit, 0 übersprungen"),
   ).toBeDefined();
-  expect(screen.getByText("1975")).toBeDefined();
+  // 1975 ist sicher, also kein Hinweis.
+  expect(screen.queryByText(/unsicherem Jahr/)).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Spiel starten" }));
   expect(screen.getByRole("button", { name: "Rad drehen" })).toBeDefined();
+});
+
+test("nach dem Vorbereiten stehen keine Titel und Jahre, nur die Zahl der unsicheren", async () => {
+  // MusicBrainz kennt den Song nicht, das Jahr ist unsicher.
+  netz(() => antwort({ jahr: null }));
+  ansicht();
+  await screen.findByText("1 Song bereit, 0 übersprungen");
+  expect(
+    screen.getByText("1 Song mit unsicherem Jahr. Prüfe es bei der Auflösung."),
+  ).toBeDefined();
+  expect(screen.queryByRole("table")).toBeNull();
+  expect(screen.queryByText(/Bohemian Rhapsody/)).toBeNull();
+  expect(screen.queryByText(/2011/)).toBeNull();
+});
+
+test("ohne spielbare Songs kein Spiel", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => antwort({ next: null, items: [] })),
+  );
+  ansicht();
+  expect(await screen.findByText("Keine spielbaren Songs")).toBeDefined();
+  expect(screen.getByText("0 Songs bereit, 0 übersprungen")).toBeDefined();
+  expect(screen.queryByRole("button", { name: "Spiel starten" })).toBeNull();
 });
 
 test("bereitet auch im StrictMode nur einmal vor", async () => {

@@ -38,7 +38,7 @@ export default function SpielAnsicht({
 }: {
   songs: readonly Song[];
   zufall?: Zufall;
-  // Ohne eigenen Knopf starten, wenn schon vorher geklickt wurde (z. B. in der Songliste).
+  // Ohne eigenen Knopf starten, wenn schon vorher geklickt wurde (z. B. „Spiel starten“ nach dem Vorbereiten).
   sofort?: boolean;
   // Mit Spotify läuft zu jeder Runde der Song, ohne (Demo) nicht.
   abspieler?: Abspieler;
@@ -171,7 +171,9 @@ export default function SpielAnsicht({
     const songId = spiel.runde.song.id;
     setSpiel(jahrKorrigieren(spiel, songId, jahr));
     setSpielSongs((alt) =>
-      alt.map((s) => (s.id === songId ? { ...s, jahr } : s)),
+      alt.map((s) =>
+        s.id === songId ? { ...s, jahr, jahrUnsicher: undefined } : s,
+      ),
     );
     onJahrKorrigiert?.(songId, jahr);
   }

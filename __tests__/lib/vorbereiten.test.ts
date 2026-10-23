@@ -9,6 +9,7 @@ import {
   jahrUeberServer,
   korrekturSpeichern,
   spielSongs,
+  unsichereJahre,
   vorbereiten,
 } from "@/lib/vorbereiten";
 
@@ -191,4 +192,27 @@ test("vorbereiten hört auf, sobald abgebrochen meldet, ohne Fehler", async () =
   });
   expect(jahrAbfragen.mock.calls).toEqual([["ISRCt1"]]);
   expect(Object.keys(gespeicherteJahre())).toEqual(["t1"]);
+});
+
+test("zählt Songs mit unsicherem Jahr, eine Korrektur macht es sicher", async () => {
+  // t1: MusicBrainz 1975 (sicher), t2: ohne ISRC (nicht gefunden).
+  const songs = [song("t1"), song("t2", null)];
+  await vorbereiten(songs, {
+    jahrAbfragen: async () => 1975,
+    warten: ohnePause,
+  });
+  expect(unsichereJahre(songs, gespeicherteJahre())).toBe(1);
+  korrekturSpeichern("t2", 1999);
+  expect(unsichereJahre(songs, gespeicherteJahre())).toBe(0);
+});
+
+test("spielSongs markiert unsichere Jahre, sichere nicht", async () => {
+  const songs = [song("t1"), song("t2", null)];
+  await vorbereiten(songs, {
+    jahrAbfragen: async () => 1975,
+    warten: ohnePause,
+  });
+  const [t1, t2] = spielSongs(songs, gespeicherteJahre());
+  expect(t1.jahrUnsicher).toBeUndefined();
+  expect(t2.jahrUnsicher).toBe(true);
 });

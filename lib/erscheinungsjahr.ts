@@ -10,7 +10,7 @@ export function jahrFuerSpiel(j: Jahre): number {
   return j.korrigiert ?? j.musicbrainz ?? j.spotify;
 }
 
-// Was der DJ in der Songliste prüfen sollte. Ein korrigierter Song gilt als geprüft.
+// Was der DJ in der Auflösung prüfen sollte. Ein korrigierter Song gilt als geprüft.
 export function markierung(
   j: Jahre,
 ): "nicht gefunden" | "später als Spotify" | null {

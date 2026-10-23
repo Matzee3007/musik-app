@@ -144,20 +144,20 @@ B [[2026-10-19-vorbereiten|Vorbereiten und Erscheinungsjahr]], C [[2026-10-19-ab
 - **Anmeldung:** OAuth mit PKCE nur im Browser, ohne Client-Secret ([[0003-spotify-anmeldung-nur-im-browser|ADR 0003]]).
   Der DJ bleibt angemeldet (Refresh-Token im Browser), ein Knopf „Abmelden“ löscht alles.
 - **Ablauf am Tisch:** Startseite mit „Mit Spotify anmelden“ oder „Demo starten“ → Liste der eigenen und
-  kollaborativen Playlists → Vorbereiten mit Fortschrittsbalken (entfällt, wenn schon vorbereitet) → Songliste prüfen
-  → „Spiel starten“. Gespielt wird wie in Phase 1, Tisch und Karte nebeneinander am Laptop.
+  kollaborativen Playlists → Vorbereiten mit Fortschrittsbalken (entfällt, wenn schon vorbereitet) → Zahl der Songs
+  und der unsicheren Jahre → „Spiel starten“. Gespielt wird wie in Phase 1, Tisch und Karte nebeneinander am Laptop.
 - **Speichern bis Phase 3:** im `localStorage` des Browsers, Schlüssel ist die Spotify-Track-ID. Ab Phase 3 Supabase.
 - **Vorbereiten:** Songs über `/playlists/{id}/items` laden, Podcast-Folgen, lokale und nicht abspielbare Songs still
   überspringen und zählen („98 Songs bereit, 2 übersprungen“). Erscheinungsjahr über den ISRC aus MusicBrainz
   (1 Anfrage pro Sekunde, über den Next.js-Server). Kein Treffer: Spotify-Jahr, markiert als „unsicher“, keine Suche
   nach Titel.
-- **Korrigieren:** in der Songliste vor dem Spiel und in der Auflösung („Jahr korrigieren“). Die Songliste zeigt
-  Spotify- und MusicBrainz-Jahr nebeneinander und markiert „nicht gefunden“ sowie „MusicBrainz-Jahr später als
-  Spotify-Jahr“.
+- **Korrigieren:** in der Auflösung („Jahr korrigieren“). Vor dem Spiel steht nur, wie viele Songs ein unsicheres
+  Jahr haben („nicht gefunden“ oder „MusicBrainz-Jahr später als Spotify-Jahr“). Die Songliste vor dem Spiel ist
+  entfallen, weil sie dem mitspielenden DJ die Lösungen verrät ([[0007-keine-songliste-vor-dem-spiel|ADR 0007]]).
 - **Ausschnitt:** ab Songanfang, 15, 30 (Standard), 45 oder 60 Sekunden oder ganz, jederzeit einstellbar, gilt ab dem
   nächsten Song. Am Ende pausiert die Musik, Knöpfe „Nochmal“ und „Weiterhören“.
-- **Musikspur:** animierte Equalizer-Balken in der Farbe der gedrehten Kategorie und ein Fortschrittsbalken. Keine
-  echte Wellenform, die Audio-Analyse von Spotify gibt es für neue Apps nicht mehr. Das Cover erst in der Auflösung.
+- **Musikspur:** animierte Wellenlinie in der Farbe der gedrehten Kategorie und ein Fortschrittsbalken (Phase 4,
+  vorher Equalizer-Balken). Keine echte Wellenform, die Audio-Analyse von Spotify gibt es für neue Apps nicht mehr. Das Cover erst in der Auflösung.
 - **Demo:** Die feste Songliste aus Phase 1 bleibt als Spiel ohne Anmeldung und ohne Musik.
 - **Fertig, wenn:** am Laptop ein komplettes Spiel mit eigener Playlist bis zum Bingo läuft, mit Musik, richtigen
   und einmal korrigierten Erscheinungsjahren, Musikspur und Cover. Die Auswahl des Erscheinungsjahrs ist eine reine

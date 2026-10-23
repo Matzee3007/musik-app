@@ -40,7 +40,8 @@ Begründung und Alternativen: `docs/adr/0001-stack.md`.
 3. **Kategorien sind Daten, nicht Code.** Eine neue Kategorie braucht Name, Farbe und Lösung (welche Angabe
    zum Song sie zeigt), keinen Umbau.
 4. **Das Erscheinungsjahr kommt nicht nur von Spotify.** Album-Daten von Remastern und Best-ofs sind oft falsch,
-   das Jahr kommt aus MusicBrainz und lässt sich vom DJ korrigieren. Es wird je Playlist einmal ermittelt und
+   das Jahr kommt aus MusicBrainz und lässt sich vom DJ in der Auflösung korrigieren
+   (`docs/adr/0007-keine-songliste-vor-dem-spiel.md`). Es wird je Playlist einmal ermittelt und
    gespeichert, nicht während des Spiels.
 5. **Kontext liegt in Dateien** (`CLAUDE.md`, `docs/`), nicht im Chatverlauf.
 
