@@ -1,24 +1,23 @@
 ---
 titel: Nächste Session
 status: aktiv
-erstellt: 2026-10-22
+erstellt: 2026-10-23
 tags: [session, übergabe]
 ---
 
 # Nächste Session
 
-Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
-[[Lernjournal Phase 4 - Design Spielshow]].
+Stand vom 2026-10-23. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
+[[Lernjournal Phase 4 - Prototypen Tisch und Handy]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #39)
+- **Branch:** `main` (nach dem Merge von PR #44)
 - **Offene PRs:** keine
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit dem neuen Design (PRs #35–#38), am Abend überarbeitet:
-  Anthrazit und Messing, großes Rad, „Anhalten“, Rückfrage beim Schließen, einklappbarer QR-Code (PRs #40–#42). Von
-  Claude aus nicht prüfbar (kein Netz in der Sandbox), an echten Geräten noch nicht getestet.
+- **Production:** `https://musik-bingo.vercel.app` mit Teil 1 des Plans (PR #43): fester Abschnitt zur Runde,
+  Wellenlinie, Raum als Schublade, kräftige Kategoriefarben
 
 ## Vor dem Start
 
@@ -41,37 +40,27 @@ Stand vom 2026-10-22. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 ## Womit es weitergeht
 
-**Phase 4 – Eigene Ideen** (Roadmap in [[projects/musik-app/docs/Projektvision|Projektvision]]). Vor dem eigentlichen
-Start kam das Design dazwischen ([[2026-10-22-design-spielshow|Plan Design Spielshow]] und
-[[2026-10-22-design-ueberarbeitung|Plan Design überarbeiten]], beide fertig bis auf die Prüfung an echten Geräten).
-Phase 4 selbst ist noch nicht geschärft.
+**Phase 4 – Eigene Ideen**, weiter mit dem [[2026-10-23-tisch-und-handy-nach-prototyp|Plan Tisch und Handy nach
+den Prototypen]] (Teil 1 fertig, Prototyp-Links im Plan):
 
-1. **Zuerst fragt Claude, ob vorher etwas anderes ansteht** (neue Ideen, Skills, Tools, Restpunkte). Vorschläge:
-   - **Design an echten Geräten prüfen** (Abschluss beider Design-Pläne): ein Spieleabend zur Probe auf Production
-     mit Laptop und Handys. Besonders: „Anhalten“ mit echter Musik, Höhe der Auflösung mit Cover (nur simuliert),
-     Silbentrennung „Jahr-zehnt“ auf iOS und Android, Playlist-Liste nach der Spotify-Anmeldung. Danach beide Pläne
-     auf `status: abgeschlossen`.
-   - **Playwright-Agents ausprobieren:** Planner auf die Startseite oder die Namensabfrage ansetzen (Seed
-     `e2e/seed.spec.ts`), Healer nach der nächsten Änderung an der Oberfläche.
-   - **Leere Startseite ohne Netz:** Kann das Spotify-Token offline nicht erneuert werden, bleibt die Startseite leer
-     (Fund 7, PR #27). Lösung wäre ein `.catch` beim Laden des Tokens in `app/ui/start.tsx`.
-   - **Funde aus dem Review von PR #24** (kollaborative Playlists, 401 bei „Nochmal versuchen“, leere Liste bei
-     `GET /v1/me`): Details in [[2026-10-20-deployment|Plan A]], Aufgabe 4.
-   - **Aufräumen:** Fehler in `lib/spotify/player.ts` in Meldungen übersetzen, Startzähler nur einmal führen (Funde
-     #8, #9 aus PR #20).
-   - **TypeScript-Option `noUncheckedIndexedAccess`:** eigener kleiner PR (Review PR #19).
-   - **Test am Laptop mit echtem Player ohne WLAN:** Was tut das Web Playback SDK bei Pause und „Weiterhören“?
-2. Danach `docs/Tools für später.md` prüfen: Für dieses Projekt ist dort nichts vorgemerkt.
-3. Phase 4 mit `grill-with-docs` schärfen: Welche Ideen zuerst? Kandidaten: Scoreboard über einen Spieleabend, Songs
-   und Jahre in Supabase (löst auch die Ladezeit beim Vorbereiten), Kategorie und Lösung auf dem Handy, Tisch ganz am
-   Handy, Stechen, Bingo-Erkennung abschaltbar, Playwright in der CI, Tisch macht nach dem Neuladen weiter.
-4. Den ersten Plan mit `plan-schreiben` schreiben.
+1. **Teil 2, Aufgabe 6:** Handy-Karte mit Feldern im Hochformat (3 : 4, ohne Notizen 2 : 3) und Kreuz statt Kreis,
+   Branch `feat/handy-karte-hoch`.
+2. **Teil 3, Aufgabe 7:** Songliste vor dem Spiel entfernen, nur noch „<n> Songs mit unsicherem Jahr“, ADR 0007,
+   Prinzip 4 in der `CLAUDE.md` anpassen, Branch `feat/ohne-songliste`.
+3. Danach `plan-pruefer` gegen den Plan und den Plan auf `status: abgeschlossen`.
 
-Offene Fragen aus dieser Session stehen im [[Lernjournal Phase 4 - Design Spielshow|Journal]]. Punkte fürs Ecosystem:
-siehe dessen Übergabe.
+Nebenbei, wenn Zeit ist:
+
+- **Wellenlinie mit echter Musik ansehen** (`npm run dev`, Playlist wählen): Tempo und Unruhe passen? Die Demo zeigt
+  sie nicht.
+- **`e2e/raum.spec.ts` beobachten:** fiel einmal bei vollem `npm run e2e` aus, danach grün (Journal, „Fehler und
+  Lösungen“). Beim nächsten Ausfall sofort `test-results/` lesen.
+- Restpunkte aus der vorigen Übergabe bleiben offen: Prüfung an echten Geräten, leere Startseite ohne Netz (`.catch`
+  in `app/ui/start.tsx`), Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`, Phase 4 mit `grill-with-docs`
+  schärfen.
 
 ## Passende Skills
 
-- `grill-with-docs`: Phase 4 in Fragerunden schärfen, bevor geplant wird
-- `frontend-design`: neue Oberflächen in Phase 4 im Stil der Spielshow (Tokens in `app/globals.css`)
-- `plan-schreiben`: aus der geklärten Idee den ersten Plan mit prüfbaren Aufgaben
+- `tdd`: Aufgaben 6 und 7 mit Test zuerst
+- `fertig-pruefen`: vor jedem „fertig“ und jedem PR
+- `fehler-diagnose`: falls `e2e/raum.spec.ts` wieder ausfällt
