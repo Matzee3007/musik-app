@@ -136,7 +136,7 @@ export default function RaumKopf({
     <>
       <button
         aria-expanded={sichtbar}
-        aria-controls="raum"
+        aria-controls={sichtbar ? "raum" : undefined}
         aria-label={sichtbar ? "Raum ausblenden" : `Raum ${code} zeigen`}
         title={sichtbar ? "Raum ausblenden" : "Raum zeigen"}
         onClick={umschalten}
@@ -160,6 +160,12 @@ export default function RaumKopf({
           </span>
         )}
       </button>
+      {/* Ausgeblendet steht ein Fehler unter dem Knopf, sonst bemerkte der DJ nicht, dass die Handys nichts mehr hören. */}
+      {!sichtbar && fehler && (
+        <p className="absolute top-12 left-0 z-20 max-w-64 text-left text-sm text-signal">
+          {fehler}
+        </p>
+      )}
       {sichtbar && (
         <section
           id="raum"

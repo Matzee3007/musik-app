@@ -20,8 +20,10 @@ export function tischRaumSpeichern(raum: TischRaum): void {
   localStorage.setItem(TISCH, JSON.stringify(raum));
 }
 
+// Ein neuer Raum beginnt sichtbar, sonst fehlt den Freunden beim nächsten Spieleabend der QR-Code.
 export function tischRaumLoeschen(): void {
   localStorage.removeItem(TISCH);
+  localStorage.removeItem(RAUM_SICHTBAR);
 }
 
 // Raum und Karte am Handy liegen in beiden Speichern: Der sessionStorage hält sie je Tab über Neuladen, damit

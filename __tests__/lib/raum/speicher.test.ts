@@ -123,3 +123,10 @@ test("Raum ist sichtbar, bis er ausgeblendet wird, und bleibt es über ein Neula
   raumSichtbarSpeichern(true);
   expect(localStorage.getItem("musik-app:raum-sichtbar")).toBeNull();
 });
+
+test("Schließen des Raums vergisst, dass er ausgeblendet war", () => {
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  raumSichtbarSpeichern(false);
+  tischRaumLoeschen();
+  expect(raumSichtbar()).toBe(true);
+});

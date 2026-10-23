@@ -226,9 +226,20 @@ test("ein Knopf blendet QR-Code und Spieler aus, der Code bleibt im Knopf", () =
       { schluessel: "s1", rolle: "spieler", name: "Anna" },
     ]),
   );
+  expect(
+    screen
+      .getByRole("button", { name: "Raum ausblenden" })
+      .getAttribute("aria-controls"),
+  ).toBe("raum");
   fireEvent.click(screen.getByRole("button", { name: "Raum ausblenden" }));
   expect(screen.queryByTitle("QR-Code für Raum ABCD")).toBeNull();
   expect(screen.queryByText("Anna")).toBeNull();
+  // Die Schublade ist weg, der Knopf verweist auf nichts.
+  expect(
+    screen
+      .getByRole("button", { name: "Raum ABCD zeigen" })
+      .getAttribute("aria-controls"),
+  ).toBeNull();
   expect(screen.queryByRole("button", { name: "Raum schließen" })).toBeNull();
   expect(
     screen.getByRole("button", { name: "Raum ABCD zeigen" }).textContent,
@@ -243,4 +254,13 @@ test("ausgeblendet bleibt der Raum nach dem Neuladen ausgeblendet", () => {
   fireEvent.click(screen.getByRole("button", { name: "Raum ABCD zeigen" }));
   expect(screen.getByTitle("QR-Code für Raum ABCD")).toBeDefined();
   expect(raumSichtbar()).toBe(true);
+});
+
+test("ausgeblendet steht ein Fehler unter dem Knopf", async () => {
+  const raum = kopf();
+  await waitFor(() => expect(raum.angemeldet).toHaveLength(1));
+  fireEvent.click(screen.getByRole("button", { name: "Raum ausblenden" }));
+  raum.stoerung = "Keine Verbindung zum Raum.";
+  raum.neuerStand({ spiel: "s1", runde: null, bingo: [] });
+  expect(await screen.findByText("Keine Verbindung zum Raum.")).toBeDefined();
 });

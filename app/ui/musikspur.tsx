@@ -42,19 +42,23 @@ export default function Musikspur({
     let bild = 0;
     let letzte = performance.now();
     function zeichnen(jetzt: number) {
-      // In etwa 250 ms beim Ziel.
+      // In etwa 250 ms beim Ziel. Das erste Bild kann einen Zeitstempel vor letzte haben, rückwärts geht es nie.
       staerke.current +=
-        (ziel - staerke.current) * Math.min(1, (jetzt - letzte) / 250);
+        (ziel - staerke.current) *
+        Math.min(1, Math.max(0, jetzt - letzte) / 250);
       letzte = jetzt;
+      // Steht der Song und ist die Welle abgesunken, bleibt sie stehen: Weiterrechnen kostete nur Akku.
+      const abgesunken = !laeuft && Math.abs(ziel - staerke.current) < 0.001;
+      if (abgesunken) staerke.current = ziel;
       linie.current?.setAttribute(
         "points",
         punkte(jetzt / 1000, staerke.current),
       );
-      bild = requestAnimationFrame(zeichnen);
+      if (!abgesunken) bild = requestAnimationFrame(zeichnen);
     }
     bild = requestAnimationFrame(zeichnen);
     return () => cancelAnimationFrame(bild);
-  }, [ziel]);
+  }, [ziel, laeuft]);
 
   return (
     <div
