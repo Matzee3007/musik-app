@@ -1,0 +1,945 @@
+<title>Projekt-Porträt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Steckbrief als Kopf (Monogramm und Titel links, Kennzahlen rechts), darunter die Phasen als Zeitstrahl,
+   dann das Herzstück „Zusammenspiel“: Filterleiste, Legende und ein Graph auf Zeichenbrett-Raster mit drei Spalten
+   (Claude-Werkzeuge | Claude Code und App | Technik), Detailkarte rechts im Graphen. Handy: Liste nach Typ.
+   Lücken klein am Ende. Vorlage für jedes Projekt: alle Texte kommen aus data.json, Farben je Typ sind Tokens. */
+:root {
+  --bg: #EEF1F4; --surface: #FFFFFF; --surface-2: #F5F7FA; --grid: #D7DDE5;
+  --ink: #121A24; --ink-2: #445162; --ink-3: #5F6B79; --line: #D5DCE4; --line-strong: #A3AEBB;
+  --accent: #1D4ED8; --accent-soft: #DDE6FC; --on-strong: #FFFFFF; --schatten: rgba(18, 26, 36, .16);
+  --ok: #1C7C46; --warn: #9A5B00; --warn-soft: #FBEFD9; --plan: #66717E;
+  --edge: #8A96A4;
+  --t-app: #121A24; --t-claude: #C4552B; --t-tool: #2563C9; --t-dienst: #0B7F74; --t-agent: #7442C8;
+  --t-skill: #B23B76; --t-hook: #8A5A12; --t-mcp: #0E7EA3; --t-mod: #4F7D1E; --t-ci: #56606E; --t-other: #66717E;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-text: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --fs-xs: 12px; --fs-s: 13.5px; --fs-m: 15px; --fs-l: 19px; --fs-xl: 27px; --fs-xxl: clamp(36px, 6.2vw, 64px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E131A; --surface: #161D26; --surface-2: #1B2430; --grid: #222C38;
+    --ink: #E5EAF0; --ink-2: #AAB5C2; --ink-3: #8D99A8; --line: #29333F; --line-strong: #4A576B;
+    --accent: #8DAEFF; --accent-soft: #1B2846; --on-strong: #0E131A; --schatten: rgba(0, 0, 0, .55);
+    --ok: #5BCB8B; --warn: #F2B25C; --warn-soft: #3A2A12; --plan: #8D99A8;
+    --edge: #5F6C7D;
+    --t-app: #E5EAF0; --t-claude: #F08A5D; --t-tool: #79A8F5; --t-dienst: #4FC7B8; --t-agent: #B595F2;
+    --t-skill: #EC86B9; --t-hook: #D9A55A; --t-mcp: #5CC3E6; --t-mod: #9BCB62; --t-ci: #A3ADBA; --t-other: #8D99A8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E131A; --surface: #161D26; --surface-2: #1B2430; --grid: #222C38;
+  --ink: #E5EAF0; --ink-2: #AAB5C2; --ink-3: #8D99A8; --line: #29333F; --line-strong: #4A576B;
+  --accent: #8DAEFF; --accent-soft: #1B2846; --on-strong: #0E131A; --schatten: rgba(0, 0, 0, .55);
+  --ok: #5BCB8B; --warn: #F2B25C; --warn-soft: #3A2A12; --plan: #8D99A8;
+  --edge: #5F6C7D;
+  --t-app: #E5EAF0; --t-claude: #F08A5D; --t-tool: #79A8F5; --t-dienst: #4FC7B8; --t-agent: #B595F2;
+  --t-skill: #EC86B9; --t-hook: #D9A55A; --t-mcp: #5CC3E6; --t-mod: #9BCB62; --t-ci: #A3ADBA; --t-other: #8D99A8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--fs-m)/1.5 var(--f-text); -webkit-text-size-adjust: 100%; }
+.wrap {
+  max-width: 1320px; margin: 0 auto; display: grid; gap: 44px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap > * { min-width: 0; }
+h1, h2, h3, h4 { margin: 0; }
+h2 { font: 700 var(--fs-xl)/1.1 var(--f-display); letter-spacing: -.01em; }
+code, .mono { font-family: var(--f-mono); }
+code { font-size: .92em; overflow-wrap: anywhere; }
+a { color: var(--accent); text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.quelle { font: 400 var(--fs-xs)/1.45 var(--f-mono); color: var(--ink-3); margin: 0; overflow-wrap: anywhere; }
+.kopfzeile { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 14px; }
+.fazit { margin: 0 0 16px; color: var(--ink-2); max-width: 80ch; }
+.fazit strong { color: var(--ink); }
+
+/* Steckbrief */
+.kopf { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px 48px; align-items: start; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.titelzeile { display: flex; gap: 18px; align-items: center; margin-bottom: 16px; }
+.monogramm {
+  flex: none; width: 76px; height: 76px; border-radius: 18px 4px 18px 4px; display: grid; place-items: center;
+  background: var(--accent); color: var(--on-strong); font: 700 32px/1 var(--f-display); letter-spacing: -.02em;
+}
+.eyebrow { font: 600 var(--fs-xs)/1.4 var(--f-mono); color: var(--ink-3); letter-spacing: .05em; text-transform: uppercase; margin: 0 0 6px; }
+h1 { font: 700 var(--fs-xxl)/1 var(--f-display); letter-spacing: -.025em; overflow-wrap: anywhere; }
+.lede { font-size: var(--fs-l); line-height: 1.45; margin: 0 0 10px; max-width: 62ch; }
+.zweck { color: var(--ink-2); max-width: 70ch; margin: 0 0 18px; }
+.stack { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0 0 14px; }
+.stack li { font: 500 var(--fs-xs)/1 var(--f-mono); padding: 7px 9px; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--surface); }
+.kopf-fuss { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+.seite { display: grid; gap: 14px; min-width: 0; }
+.jetzt { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 14px 16px; }
+.jetzt .eyebrow { margin-bottom: 4px; }
+.jetzt strong { font: 700 var(--fs-l)/1.25 var(--f-display); display: block; margin-bottom: 8px; }
+.zahlen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 0; }
+.zahlen > div { background: var(--surface); padding: 12px 14px; min-width: 0; display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+.zahlen dd { font: 600 30px/1 var(--f-mono); font-variant-numeric: tabular-nums; margin: 0 0 6px; }
+.zahlen dt { font-size: var(--fs-xs); color: var(--ink-2); }
+.zahlen .abgeleitet dd { color: var(--ink-2); }
+
+/* Status-Pillen (Phasen) */
+.pille { display: inline-flex; gap: 6px; align-items: center; font: 600 var(--fs-xs)/1 var(--f-mono); padding: 5px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.st-abgeschlossen { color: var(--ok); }
+.st-aktiv { color: var(--warn); background: var(--warn-soft); }
+.st-geplant { color: var(--plan); border-style: dashed; }
+
+/* Zeitstrahl */
+.zeitstrahl { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.station { position: relative; padding: 0 20px 0 0; min-width: 0; }
+.station::before { content: ""; position: absolute; top: 14px; left: 34px; right: 6px; height: 2px; background: var(--line-strong); }
+.station:last-child::before { display: none; }
+.station.abgeschlossen::before { background: var(--ok); }
+.marke { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 15px/1 var(--f-text); margin-bottom: 12px; position: relative; }
+.abgeschlossen .marke { background: var(--ok); color: var(--on-strong); }
+.aktiv .marke { background: var(--surface); border: 3px solid var(--warn); color: var(--warn); }
+.geplant .marke { background: var(--bg); border: 2px dashed var(--plan); color: var(--plan); }
+.station .nr { font: 600 var(--fs-xs)/1 var(--f-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; display: block; }
+.station .name { font: 700 var(--fs-l)/1.2 var(--f-display); display: block; margin: 5px 0 9px; overflow-wrap: anywhere; }
+.station .ziel { color: var(--ink-2); font-size: var(--fs-s); margin: 10px 0 0; }
+.station.aktiv .ziel { color: var(--ink); }
+.zeitstrahl.senkrecht { grid-template-columns: minmax(0, 1fr); }
+.senkrecht .station { padding: 0 0 24px 46px; }
+.senkrecht .station:last-child { padding-bottom: 0; }
+.senkrecht .marke { position: absolute; left: 0; top: 0; margin: 0; }
+.senkrecht .station::before { top: 34px; bottom: 4px; left: 14px; right: auto; width: 2px; height: auto; }
+.leer { color: var(--ink-3); font-style: italic; margin: 0; }
+
+/* Steuerung */
+.steuer { display: grid; gap: 10px; margin-bottom: 14px; }
+.steuer-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.steuer-label { font: 600 var(--fs-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); min-width: 52px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 6px 11px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--surface); font: 500 var(--fs-s)/1 var(--f-text); cursor: pointer;
+}
+.chip .zahl { font: 600 var(--fs-xs)/1 var(--f-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="false"] { background: transparent; border-style: dashed; color: var(--ink-3); }
+.chip[aria-pressed="false"] .punkt { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
+.chip.leise { border-color: transparent; background: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.punkt { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--c, var(--t-other)); }
+.segment { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; background: var(--line); gap: 1px; }
+.segment button { border: 0; background: var(--surface); min-height: 34px; padding: 6px 12px; font: 500 var(--fs-s)/1 var(--f-text); color: var(--ink-2); cursor: pointer; font-variant-numeric: tabular-nums; }
+.segment button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.knopf { min-height: 34px; padding: 6px 12px; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; cursor: pointer; font: 500 var(--fs-s)/1 var(--f-text); }
+
+/* Legende */
+.legende { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; font-size: var(--fs-s); color: var(--ink-2); padding: 10px 0 14px; border-top: 1px dashed var(--line); }
+.leg-gruppe { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.leg-titel { font: 600 var(--fs-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.leg-item { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.probe { display: inline-block; width: 26px; height: 16px; border-radius: 5px; border: 2px solid var(--ink-2); background: var(--surface); }
+.probe.gefuellt { background: color-mix(in srgb, var(--ink-2) 22%, var(--surface)); }
+.probe.h-eingerichtet { border-style: dashed; }
+.probe.h-beides { border-style: double; border-width: 5px; }
+.leg-item svg { color: var(--ink-2); flex: none; }
+
+/* Graph */
+.graph-figur { margin: 0; }
+.buehne { position: relative; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+#graph {
+  width: 100%; height: 560px; touch-action: none;
+  background-image: radial-gradient(var(--grid) 1.2px, transparent 1.4px); background-size: 22px 22px;
+}
+.gruppe-st { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.zoom { gap: 6px; }
+.zoom .knopf { min-width: 36px; }
+.tip {
+  position: absolute; z-index: 5; max-width: 300px; pointer-events: none; background: var(--ink); color: var(--bg);
+  padding: 8px 10px; border-radius: 8px; font-size: var(--fs-s); line-height: 1.4; box-shadow: 0 6px 20px var(--schatten);
+}
+.tip b { font-weight: 600; }
+.graph-figur figcaption { margin-top: 8px; font-size: var(--fs-s); color: var(--ink-3); }
+.detail { background: var(--surface); border-top: 1px solid var(--line); padding: 16px 18px 18px; }
+.detail-kopf { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.detail h3 { font: 700 var(--fs-l)/1.2 var(--f-display); overflow-wrap: anywhere; }
+.typmarke { display: inline-flex; align-items: center; gap: 6px; font: 600 var(--fs-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); margin-bottom: 6px; }
+.zu { flex: none; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; min-height: 32px; padding: 4px 10px; cursor: pointer; font: 500 var(--fs-xs)/1 var(--f-text); }
+@media (min-width: 900px) {
+  .detail { position: absolute; z-index: 4; top: 12px; right: 12px; bottom: 12px; width: 350px; overflow: auto; border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: 0 12px 32px var(--schatten); }
+}
+
+/* Inhalt eines Elements (Detailkarte und Liste) */
+.wofuer { margin: 0 0 12px; }
+.meta { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; margin: 0 0 14px; font-size: var(--fs-s); }
+.meta dt { color: var(--ink-3); font: 600 var(--fs-xs)/1.9 var(--f-mono); text-transform: uppercase; letter-spacing: .05em; }
+.meta dd { margin: 0; min-width: 0; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.marker { display: inline-flex; align-items: center; font: 500 var(--fs-xs)/1 var(--f-text); padding: 4px 8px; border-radius: 6px; border: 2px solid var(--ink-3); background: var(--surface); white-space: nowrap; }
+.marker.ebene-projekt { background: color-mix(in srgb, var(--ink-3) 20%, var(--surface)); }
+.marker.herkunft-eingerichtet { border-style: dashed; }
+.marker.herkunft-beides { border-style: double; border-width: 4px; padding: 2px 6px; }
+.phase-chip { font: 500 var(--fs-xs)/1 var(--f-mono); padding: 4px 7px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); }
+.kanten-titel { font: 600 var(--fs-xs)/1 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin: 12px 0 8px; }
+.kanten { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.kanten li { font-size: var(--fs-s); line-height: 1.4; min-width: 0; }
+.kante-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.art { font: 600 var(--fs-xs)/1 var(--f-mono); padding: 3px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--ink); white-space: nowrap; }
+.pfeil { color: var(--ink-3); }
+.ziel-link { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; font-weight: 500; overflow-wrap: anywhere; }
+.weg { color: var(--ink-3); }
+.kante-text { display: block; color: var(--ink-2); margin-top: 2px; }
+.kante-quelle { display: block; font: 400 11px/1.4 var(--f-mono); color: var(--ink-3); overflow-wrap: anywhere; }
+
+/* Liste */
+.liste { display: grid; gap: 22px; }
+.gruppe-kopf { display: flex; align-items: center; gap: 9px; font: 700 var(--fs-l)/1.2 var(--f-display); margin-bottom: 10px; }
+.gruppe-kopf .zahl { font: 600 var(--fs-s)/1 var(--f-mono); color: var(--ink-3); }
+.karten { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; align-items: start; }
+.el-karte { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.el-karte[open] { border-color: var(--line-strong); }
+.el-karte summary { list-style: none; cursor: pointer; padding: 11px 14px; display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; }
+.el-karte summary::-webkit-details-marker { display: none; }
+.el-karte summary::after { content: "+"; font: 600 18px/1 var(--f-mono); color: var(--ink-3); grid-column: 3; grid-row: 1; }
+.el-karte[open] summary::after { content: "–"; }
+.el-name { font-weight: 600; overflow-wrap: anywhere; }
+.el-zeile { grid-column: 2 / 4; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font: 400 var(--fs-xs)/1.3 var(--f-mono); color: var(--ink-3); }
+.el-body { padding: 0 14px 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* Lücken */
+.luecken { color: var(--ink-3); font-size: var(--fs-s); border-top: 1px solid var(--line); padding-top: 18px; }
+.luecken h2 { font: 600 var(--fs-m)/1.2 var(--f-text); color: var(--ink-2); }
+.luecken ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 5px; max-width: 100ch; }
+footer { font: 400 var(--fs-xs)/1.5 var(--f-mono); color: var(--ink-3); }
+.fehler { border: 2px solid var(--warn); background: var(--warn-soft); border-radius: 10px; padding: 18px 20px; }
+.fehler h2 { font-size: var(--fs-l); margin-bottom: 6px; }
+
+@media (max-width: 860px) {
+  .kopf { grid-template-columns: minmax(0, 1fr); }
+  .wrap { gap: 36px; }
+}
+@media (max-width: 520px) {
+  .monogramm { width: 56px; height: 56px; font-size: 24px; border-radius: 14px 3px 14px 3px; }
+  .titelzeile { gap: 12px; }
+  .zahlen dd { font-size: 25px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+</style>
+
+<div class="wrap" id="seite">
+  <p class="leer" id="laden">Lade data.json …</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.33.1/cytoscape.min.js"></script>
+<script>
+"use strict";
+
+// ---------- Feste Bedeutungen aus dem Schema (keine Projektdaten) ----------
+const TYPEN = {
+  app: { eins: "App", mehr: "App" },
+  claude: { eins: "Claude Code", mehr: "Claude Code" },
+  skill: { eins: "Skill", mehr: "Skills" },
+  agent: { eins: "Agent", mehr: "Agents" },
+  mcp: { eins: "MCP-Server", mehr: "MCP-Server" },
+  hook: { eins: "Hook", mehr: "Hooks" },
+  mod: { eins: "Mod", mehr: "Mods" },
+  ci: { eins: "CI-Workflow", mehr: "CI-Workflows" },
+  tool: { eins: "Tool", mehr: "Tools" },
+  dienst: { eins: "Dienst", mehr: "Dienste" }
+};
+const TYP_REIHE = Object.keys(TYPEN);
+const ANKER = new Set(["app", "claude"]);
+// Spalten des Graphen, jede Zeile kann mehrere Typ-Cluster nebeneinander halten. "*" = Typen, die das Schema nicht kennt.
+const PLAN = [
+  [["skill"], ["agent"], ["mcp"]],
+  [["hook", "mod"], ["claude"], ["app"], ["ci"]],
+  [["tool"], ["dienst"], ["*"]]
+];
+const ARTEN = {
+  nutzt:     { label: "nutzt",     erkl: "arbeitet mit",                linie: "solid",  dash: null,          breite: 1.6, spitze: "triangle" },
+  startet:   { label: "startet",   erkl: "ruft auf",                    linie: "solid",  dash: null,          breite: 1.6, spitze: "vee" },
+  liefert:   { label: "liefert",   erkl: "erzeugt Daten für das Ziel",  linie: "dotted", dash: [2, 3],        breite: 2,   spitze: "triangle" },
+  prueft:    { label: "prüft",     erkl: "prüft das Ergebnis",          linie: "dashed", dash: [6, 4],        breite: 1.6, spitze: "triangle" },
+  deployt:   { label: "deployt",   erkl: "bringt in Betrieb",           linie: "solid",  dash: null,          breite: 3,   spitze: "triangle" },
+  erweitert: { label: "erweitert", erkl: "wirkt auf die Claude-Session", linie: "dashed", dash: [10, 3, 2, 3], breite: 1.6, spitze: "circle" }
+};
+const EBENEN = { projekt: "Projekt", global: "Global" };
+const HERKUNFT = {
+  eingerichtet: "eingerichtet",
+  benutzt: "benutzt",
+  beides: "eingerichtet und benutzt"
+};
+const STATUS = {
+  abgeschlossen: { sym: "✓", label: "abgeschlossen" },
+  aktiv: { sym: "◐", label: "aktiv" },
+  geplant: { sym: "○", label: "geplant" }
+};
+const KENNZAHL_NAMEN = { commits: "Commits", prs: "Pull Requests", adrs: "ADRs", journale: "Lernjournale" };
+
+const MASS = { W: 172, G: 8, P: 12, KOPF: 34, ZEILE: 26, SPALTE: 120, NEBEN: 16, FS: 13, SPOT_FS: 17, LH: 1.25, MAX_ZEILEN: 3 };
+const FONT = '"IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif';
+const DISPLAY = '"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif';
+const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
+const weniger = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- Hilfen ----------
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const datum = (d) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ""); return m ? `${m[3]}.${m[2]}.${m[1]}` : String(d || ""); };
+const token = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const typInfo = (t) => TYPEN[t] || { eins: t, mehr: t };
+const typVar = (t) => (TYPEN[t] ? "--t-" + t : "--t-other");
+const artInfo = (a) => ARTEN[a] || { label: a, erkl: "", linie: "solid", dash: null, breite: 1.6, spitze: "triangle" };
+function mische(a, b, t) {
+  const p = (h) => { h = h.replace("#", ""); if (h.length === 3) h = h.split("").map((c) => c + c).join(""); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
+  const x = p(a), y = p(b);
+  return "#" + x.map((v, i) => Math.round(v * t + y[i] * (1 - t)).toString(16).padStart(2, "0")).join("");
+}
+
+// ---------- Zustand ----------
+let D, cy = null, modell = null, kaputt = [], verworfen = [];
+const EL = [], ELI = new Map(), KANTEN = [];
+let TYPEN_DA = [], PHASEN_NR = [];
+const Z = { typen: new Set(), ebene: "alle", phase: "alle", ansicht: "graph", auswahl: null };
+
+start();
+
+async function start() {
+  try {
+    const r = await fetch("data.json", { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    D = await r.json();
+  } catch (e) {
+    $("#seite").innerHTML = `<div class="fehler" role="alert"><h2>data.json lässt sich nicht laden</h2>
+      <p>Die Seite braucht <code>data.json</code> im selben Ordner. Lokal ansehen: im Ordner <code>python3 -m http.server</code>
+      starten und <code>http://localhost:8000</code> öffnen (direkt als Datei geöffnet blockiert der Browser das Laden).</p>
+      <p class="quelle">Fehler: ${esc(e.message)}</p></div>`;
+    return;
+  }
+  vorbereiten();
+  geruest();
+  renderKopf();
+  renderPhasen();
+  renderSteuer();
+  renderLegende();
+  renderLuecken();
+  const grafikDa = typeof cytoscape === "function";
+  Z.ansicht = !grafikDa || $("#zusammenspiel").clientWidth < 720 ? "liste" : "graph";
+  if (!grafikDa) $("#g-fazit-zusatz").textContent = " Die Graph-Bibliothek ließ sich nicht laden, die Liste zeigt dieselben Daten.";
+  // Schriften laden, bevor der Graph Beschriftungen misst (höchstens 2,5 s warten).
+  if (document.fonts) {
+    await Promise.race([
+      Promise.all([`500 ${MASS.FS}px ${FONT}`, `700 ${MASS.SPOT_FS}px ${DISPLAY}`, `600 12px ${MONO}`].map((f) => document.fonts.load(f))),
+      new Promise((r) => setTimeout(r, 2500))
+    ]).catch(() => {});
+  }
+  anwenden();
+  // Nur bei Breitenänderung neu anordnen: Eine aufklappende Detailkarte ändert die Höhe und soll den Zoom nicht zurücksetzen.
+  let breite = $("#zusammenspiel").clientWidth;
+  new ResizeObserver(() => {
+    const b = $("#zusammenspiel").clientWidth;
+    if (b === breite) return;
+    breite = b; richtung(); if (cy && Z.ansicht === "graph") layoutAnwenden();
+  }).observe($("#zusammenspiel"));
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (cy) { cy.style(stil()); farben(); } });
+}
+
+function vorbereiten() {
+  (D.elemente || []).forEach((e, i) => {
+    // 5: Phasennummern immer als Zahl, damit Filter und HTML nur Zahlen sehen.
+    const el = { ...e, i, phasen: (Array.isArray(e.phasen) ? e.phasen : []).map(Number).filter(Number.isFinite), aus: [], ein: [] };
+    if (!el.id || ELI.has(el.id)) { verworfen.push(el.id || `(ohne id: ${el.name || i})`); return; }
+    EL.push(el); ELI.set(el.id, el);
+  });
+  (D.verbindungen || []).forEach((k, i) => {
+    if (ELI.has(k.von) && ELI.has(k.nach)) {
+      const kk = { ...k, i }; KANTEN.push(kk);
+      ELI.get(k.von).aus.push(kk); ELI.get(k.nach).ein.push(kk);
+    } else kaputt.push(k);
+  });
+  const da = new Set(EL.map((e) => e.typ));
+  TYPEN_DA = [...TYP_REIHE.filter((t) => da.has(t)), ...[...da].filter((t) => !TYPEN[t]).sort()];
+  Z.typen = new Set(TYPEN_DA);
+  (D.phasen || []).forEach((p) => { p.nr = Number(p.nr); });
+  const nr = new Set((D.phasen || []).map((p) => p.nr));
+  EL.forEach((e) => e.phasen.forEach((n) => nr.add(n)));
+  PHASEN_NR = [...nr].filter(Number.isFinite).sort((a, b) => a - b);
+}
+
+const phaseName = (n) => ((D.phasen || []).find((p) => p.nr === n) || {}).name || "";
+
+function sichtbar(e) {
+  if (ANKER.has(e.typ)) return true;
+  if (!Z.typen.has(e.typ)) return false;
+  if (Z.ebene !== "alle" && e.ebene !== Z.ebene) return false;
+  if (Z.phase !== "alle" && e.phasen.length && !e.phasen.includes(Z.phase)) return false;
+  return true;
+}
+
+// ---------- Seitengerüst ----------
+function geruest() {
+  const p = D.projekt || {};
+  document.title = (p.titel || p.name || "Projekt") + " · Porträt";
+  $("#seite").innerHTML = `
+    <header id="steckbrief" class="kopf"></header>
+    <section id="phasen" aria-labelledby="h-phasen"></section>
+    <section id="zusammenspiel" aria-labelledby="h-graph">
+      <div class="kopfzeile"><h2 id="h-graph">Zusammenspiel</h2>
+        <p class="quelle">Quelle: elemente und verbindungen in data.json, jede mit eigener Quelle in der Detailkarte</p></div>
+      <p class="fazit" id="g-fazit"><span id="g-fazit-text"></span><span id="g-fazit-zusatz"></span></p>
+      <div class="steuer" id="steuer"></div>
+      <div class="legende" id="legende" aria-label="Legende"></div>
+      <figure class="graph-figur" id="g-figur">
+        <div class="buehne">
+          <div id="graph" role="img" aria-label="Graph: wie die Elemente des Projekts zusammenspielen. Die Ansicht Liste zeigt dieselben Daten als Text."></div>
+          <div class="tip" id="tip" hidden></div>
+          <aside class="detail" id="detail" hidden aria-live="polite"></aside>
+        </div>
+        <figcaption>Pfeile zeigen, wer auf wen wirkt. Antippen eines Knotens hebt seine Nachbarn hervor und zeigt die Verbindungen mit Text, ziehen verschiebt die Ansicht.</figcaption>
+      </figure>
+      <div class="liste" id="liste" hidden></div>
+    </section>
+    <section id="luecken" class="luecken" aria-labelledby="h-luecken"></section>
+    <footer id="fuss"></footer>`;
+}
+
+// ---------- Steckbrief ----------
+function renderKopf() {
+  const p = D.projekt || {};
+  const titel = p.titel || p.name || "Projekt";
+  const mono = titel.split(/[\s\-–_]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "P";
+  const zahlen = Object.entries(p.kennzahlen || {}).filter(([, v]) => v !== null && v !== undefined)
+    .map(([k, v]) => `<div><dt>${esc(KENNZAHL_NAMEN[k] || k)}</dt><dd>${esc(v)}</dd></div>`);
+  zahlen.push(`<div class="abgeleitet"><dt>Elemente im Graphen</dt><dd>${EL.length}</dd></div>`);
+  zahlen.push(`<div class="abgeleitet"><dt>Verbindungen</dt><dd>${KANTEN.length}</dd></div>`);
+  const ph = D.phasen || [];
+  const aktiv = ph.find((x) => x.status === "aktiv");
+  const fertig = ph.filter((x) => x.status === "abgeschlossen").length;
+  let jetzt;
+  if (!ph.length) jetzt = `<p class="eyebrow">Phasen</p><strong>Keine Phasen-Roadmap</strong>`;
+  else if (aktiv) jetzt = `<p class="eyebrow">Jetzt · ${fertig} von ${ph.length} Phasen abgeschlossen</p><strong>Phase ${esc(aktiv.nr)}: ${esc(aktiv.name)}</strong>${pille("aktiv")}`;
+  else if (fertig === ph.length) jetzt = `<p class="eyebrow">Stand</p><strong>Alle ${ph.length} Phasen abgeschlossen</strong>${pille("abgeschlossen")}`;
+  else jetzt = `<p class="eyebrow">Stand · ${fertig} von ${ph.length} Phasen abgeschlossen</p><strong>Keine Phase aktiv</strong>`;
+  const repo = typeof p.repo === "string" && /^https?:\/\//.test(p.repo)
+    ? `<a href="${esc(p.repo)}" target="_blank" rel="noopener">Repository öffnen ↗</a>` : "";
+  $("#steckbrief").innerHTML = `
+    <div>
+      <div class="titelzeile">
+        <div class="monogramm" aria-hidden="true">${esc(mono)}</div>
+        <div><p class="eyebrow">Projekt-Porträt · <span class="mono">${esc(p.name || "")}</span> · Stand ${esc(datum(D.erstellt))}</p>
+        <h1>${esc(titel)}</h1></div>
+      </div>
+      ${p.kurz ? `<p class="lede">${esc(p.kurz)}</p>` : ""}
+      ${p.zweck ? `<p class="zweck">${esc(p.zweck)}</p>` : ""}
+      ${(p.stack || []).length ? `<ul class="stack" aria-label="Stack">${p.stack.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>` : ""}
+      <div class="kopf-fuss">${repo}${p.quelle ? `<p class="quelle">Quelle: ${esc(p.quelle)}</p>` : ""}</div>
+    </div>
+    <div class="seite">
+      <div class="jetzt">${jetzt}</div>
+      <dl class="zahlen">${zahlen.join("")}</dl>
+    </div>`;
+}
+
+function pille(status, zusatz) {
+  const s = STATUS[status] || { sym: "•", label: status || "ohne Status" };
+  return `<span class="pille st-${esc(status)}"><span aria-hidden="true">${s.sym}</span>${esc(s.label)}${zusatz ? " · " + esc(zusatz) : ""}</span>`;
+}
+
+// ---------- Phasen ----------
+function renderPhasen() {
+  const ph = D.phasen || [];
+  const quellen = [...new Set(ph.map((x) => x.quelle).filter(Boolean))];
+  let inhalt;
+  if (!ph.length) inhalt = `<p class="leer">Das Projekt hat keine Phasen-Roadmap.</p>`;
+  else {
+    const fertig = ph.filter((x) => x.status === "abgeschlossen").length;
+    inhalt = `<p class="fazit"><strong>${fertig} von ${ph.length}</strong> Phasen abgeschlossen.</p>
+      <ol class="zeitstrahl" id="zeitstrahl" style="--n:${ph.length}">${ph.map((x) => {
+        const s = STATUS[x.status] || { sym: "•" };
+        return `<li class="station ${esc(x.status)}">
+          <span class="marke ${esc(x.status)}" aria-hidden="true">${s.sym}</span>
+          <span class="nr">Phase ${esc(x.nr)}</span>
+          <span class="name">${esc(x.name)}</span>
+          ${pille(x.status, x.status === "abgeschlossen" && x.abgeschlossen ? datum(x.abgeschlossen) : "")}
+          ${x.ziel ? `<p class="ziel">${esc(x.ziel)}</p>` : ""}
+        </li>`;
+      }).join("")}</ol>`;
+  }
+  $("#phasen").innerHTML = `<div class="kopfzeile"><h2 id="h-phasen">Phasen</h2>
+    ${quellen.length ? `<p class="quelle">Quelle: ${quellen.map(esc).join(", ")}</p>` : ""}</div>${inhalt}`;
+  richtung();
+}
+
+function richtung() {
+  const ol = $("#zeitstrahl");
+  if (!ol) return;
+  const n = (D.phasen || []).length;
+  ol.classList.toggle("senkrecht", n > 6 || ol.parentElement.clientWidth < 140 * n + 60 || ol.parentElement.clientWidth < 760);
+}
+
+// ---------- Steuerung ----------
+function renderSteuer() {
+  const zaehl = (t) => EL.filter((e) => e.typ === t).length;
+  const typChips = TYPEN_DA.filter((t) => !ANKER.has(t)).map((t) => `
+    <button type="button" class="chip" data-typ="${esc(t)}" aria-pressed="true" style="--c: var(${typVar(t)})">
+      <span class="punkt" aria-hidden="true"></span>${esc(typInfo(t).mehr)}<span class="zahl">${zaehl(t)}</span></button>`).join("");
+  const ebenen = ["alle", "projekt", "global"].map((e) =>
+    `<button type="button" data-ebene="${e}" aria-pressed="${e === Z.ebene}">${e === "alle" ? "Alle" : EBENEN[e]}</button>`).join("");
+  const phasen = PHASEN_NR.length ? `<span class="gruppe-st"><span class="steuer-label">Phase</span><div class="segment" role="group" aria-label="Phase">
+    <button type="button" data-phase="alle" aria-pressed="true">Alle</button>
+    ${PHASEN_NR.map((n) => `<button type="button" data-phase="${esc(n)}" aria-pressed="false" title="${esc(phaseName(n))}" aria-label="Phase ${esc(n)} ${esc(phaseName(n))}">${esc(n)}</button>`).join("")}</div></span>` : "";
+  $("#steuer").innerHTML = `
+    <div class="steuer-zeile"><span class="steuer-label">Typ</span><div class="chips" role="group" aria-label="Typ">${typChips}
+      <button type="button" class="chip leise" id="alle-typen" hidden>Alle Typen zeigen</button></div></div>
+    <div class="steuer-zeile"><span class="gruppe-st"><span class="steuer-label">Ebene</span><div class="segment" role="group" aria-label="Ebene">${ebenen}</div></span>${phasen}</div>
+    <div class="steuer-zeile"><span class="steuer-label">Ansicht</span><div class="segment" role="group" aria-label="Ansicht">
+      <button type="button" data-ansicht="graph" aria-pressed="true" ${typeof cytoscape === "function" ? "" : "disabled"}>Graph</button>
+      <button type="button" data-ansicht="liste" aria-pressed="false">Liste</button></div>
+      <span class="gruppe-st zoom" id="zoom" role="group" aria-label="Zoom">
+        <button type="button" class="knopf" id="z-plus" aria-label="Vergrößern">+</button>
+        <button type="button" class="knopf" id="z-minus" aria-label="Verkleinern">−</button>
+        <button type="button" class="knopf" id="z-fit">Einpassen</button></span></div>`;
+  $("#steuer").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    if (b.dataset.typ) { const t = b.dataset.typ; Z.typen.has(t) ? Z.typen.delete(t) : Z.typen.add(t); }
+    else if (b.id === "alle-typen") Z.typen = new Set(TYPEN_DA);
+    else if (b.dataset.ebene) Z.ebene = b.dataset.ebene;
+    else if (b.dataset.phase) Z.phase = b.dataset.phase === "alle" ? "alle" : Number(b.dataset.phase);
+    else if (b.dataset.ansicht) Z.ansicht = b.dataset.ansicht;
+    else return;
+    anwenden();
+  });
+  $("#z-plus").addEventListener("click", () => zoomen(1.25));
+  $("#z-minus").addEventListener("click", () => zoomen(0.8));
+  $("#z-fit").addEventListener("click", () => einpassen());
+  document.addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-ziel]");
+    if (b) { ev.preventDefault(); springe(b.dataset.ziel); }
+    if (ev.target.closest("#detail-zu")) waehle(null);
+  });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && Z.auswahl) waehle(null); });
+}
+
+function renderLegende() {
+  const linie = (a) => {
+    const i = artInfo(a);
+    const dash = i.dash ? `stroke-dasharray="${i.dash.join(" ")}"` : "";
+    const spitze = i.spitze === "circle" ? `<circle cx="38" cy="7" r="4.2" fill="currentColor"/>`
+      : i.spitze === "vee" ? `<path d="M32 1.5 L43 7 L32 12.5 L35.5 7 Z" fill="currentColor"/>`
+      : `<path d="M33 2 L43 7 L33 12 Z" fill="currentColor"/>`;
+    return `<span class="leg-item" title="${esc(i.erkl)}"><svg width="44" height="14" viewBox="0 0 44 14" aria-hidden="true">
+      <line x1="1" y1="7" x2="34" y2="7" stroke="currentColor" stroke-width="${i.breite}" ${dash}/>${spitze}</svg>${esc(i.label)}</span>`;
+  };
+  $("#legende").innerHTML = `
+    <div class="leg-gruppe"><span class="leg-titel">Ebene</span>
+      <span class="leg-item"><i class="probe gefuellt" aria-hidden="true"></i>Projekt (gefüllt)</span>
+      <span class="leg-item"><i class="probe" aria-hidden="true"></i>Global (hohl)</span></div>
+    <div class="leg-gruppe"><span class="leg-titel">Herkunft</span>
+      <span class="leg-item"><i class="probe h-eingerichtet" aria-hidden="true"></i>eingerichtet</span>
+      <span class="leg-item"><i class="probe" aria-hidden="true"></i>benutzt</span>
+      <span class="leg-item"><i class="probe h-beides" aria-hidden="true"></i>beides</span></div>
+    <div class="leg-gruppe"><span class="leg-titel">Pfeil</span>${Object.keys(ARTEN).map(linie).join("")}</div>`;
+}
+
+function renderLuecken() {
+  const l = [...(D.luecken || [])];
+  if (verworfen.length) l.push(`${verworfen.length} Element(e) mit doppelter oder fehlender id fehlen im Graphen: ${verworfen.join(", ")}.`);
+  if (kaputt.length) l.push(`${kaputt.length} Verbindung(en) verweisen auf unbekannte Elemente und fehlen im Graphen: ${kaputt.map((k) => `${k.von} → ${k.nach}`).join(", ")}.`);
+  $("#luecken").innerHTML = `<h2 id="h-luecken">Lücken der Analyse</h2>
+    <p class="quelle">Was die Analyse nicht belegen konnte, aus data.json</p>
+    ${l.length ? `<ul>${l.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p>Keine Lücken gemeldet.</p>`}`;
+  $("#fuss").textContent = `Projekt-Porträt · Schnappschuss vom ${datum(D.erstellt)} · Schema ${D.schema ?? "?"}`
+    + (D.schema !== undefined && D.schema !== 1 ? " (die Vorlage kennt Schema 1, Felder können fehlen)" : "");
+}
+
+// ---------- Filter anwenden ----------
+function anwenden() {
+  document.querySelectorAll("[data-typ]").forEach((b) => b.setAttribute("aria-pressed", Z.typen.has(b.dataset.typ)));
+  $("#alle-typen").hidden = TYPEN_DA.every((t) => Z.typen.has(t));
+  document.querySelectorAll("[data-ebene]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.ebene === Z.ebene));
+  document.querySelectorAll("[data-phase]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.phase) === String(Z.phase)));
+  document.querySelectorAll("[data-ansicht]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.ansicht === Z.ansicht));
+
+  const sicht = EL.filter(sichtbar);
+  const ids = new Set(sicht.map((e) => e.id));
+  const kanten = KANTEN.filter((k) => ids.has(k.von) && ids.has(k.nach)).length;
+  let txt = sicht.length === EL.length ? `${EL.length} Elemente und ${kanten} Verbindungen.`
+    : `Zeigt ${sicht.length} von ${EL.length} Elementen und ${kanten} von ${KANTEN.length} Verbindungen.`;
+  if (Z.phase !== "alle") {
+    const ohne = sicht.filter((e) => !e.phasen.length && !ANKER.has(e.typ)).length;
+    txt += ` Phase ${Z.phase}${phaseName(Z.phase) ? " „" + phaseName(Z.phase) + "“" : ""}: ${ohne} Elemente ohne Phasenangabe bleiben sichtbar, sie laufen in jeder Session.`;
+  }
+  if (Z.ansicht === "graph") txt += " Tippe auf einen Knoten für Details.";
+  $("#g-fazit-text").textContent = txt;
+
+  const graph = Z.ansicht === "graph";
+  $("#g-figur").hidden = !graph;
+  $("#legende").hidden = !graph;
+  $("#zoom").hidden = !graph;
+  $("#liste").hidden = graph;
+  if (graph) {
+    if (!cy) baueGraph();
+    layoutAnwenden();
+  } else renderListe(sicht);
+}
+
+// ---------- Graph ----------
+const messer = document.createElement("canvas").getContext("2d");
+function umbrechen(text, font, maxW) {
+  messer.font = font;
+  const w = (s) => messer.measureText(s).width;
+  const teile = [];
+  String(text).split(/\s+/).filter(Boolean).forEach((wort, wi) =>
+    wort.split(/(?<=[-/_.])(?=.)/).forEach((s, si) => teile.push({ t: s, vor: wi > 0 && si === 0 ? " " : "" })));
+  const zeilen = [];
+  let z = "";
+  for (const { t, vor } of teile) {
+    const test = z ? z + vor + t : t;
+    if (!z || w(test) <= maxW) z = test; else { zeilen.push(z); z = t; }
+  }
+  if (z) zeilen.push(z);
+  const hart = [];
+  zeilen.forEach((l) => {
+    let rest = l;
+    while (w(rest) > maxW && rest.length > 1) {
+      let n = rest.length - 1;
+      while (n > 1 && w(rest.slice(0, n)) > maxW) n--;
+      hart.push(rest.slice(0, n)); rest = rest.slice(n);
+    }
+    hart.push(rest);
+  });
+  if (hart.length > MASS.MAX_ZEILEN) {
+    const k = hart.slice(0, MASS.MAX_ZEILEN);
+    let last = k[k.length - 1];
+    while (last.length > 1 && w(last + "…") > maxW) last = last.slice(0, -1);
+    k[k.length - 1] = last.trimEnd() + "…";
+    return k;
+  }
+  return hart;
+}
+
+function knotenMasse() {
+  const spotW = 2 * MASS.W + MASS.G + 2 * MASS.P;
+  EL.forEach((e) => {
+    const spot = ANKER.has(e.typ);
+    const fs = spot ? MASS.SPOT_FS : MASS.FS;
+    const zeilen = umbrechen(e.name || e.id, `${spot ? 700 : 500} ${fs}px ${spot ? DISPLAY : FONT}`, (spot ? spotW : MASS.W) - 22);
+    e._label = zeilen.join("\n");
+    e._w = spot ? spotW : MASS.W;
+    e._h = Math.max(spot ? 52 : 38, Math.round(16 + zeilen.length * fs * MASS.LH));
+  });
+}
+
+function berechneLayout(liste, schmal) {
+  const { W, G, P, KOPF, ZEILE, SPALTE, NEBEN } = MASS;
+  const gruppen = new Map();
+  liste.forEach((e) => { if (!gruppen.has(e.typ)) gruppen.set(e.typ, []); gruppen.get(e.typ).push(e); });
+  gruppen.forEach((g) => g.sort((a, b) => (a.ebene === "global") - (b.ebene === "global") || a.i - b.i));
+  const fremd = [...gruppen.keys()].filter((t) => !TYPEN[t]).sort();
+  let plan = PLAN.map((sp) => sp.flatMap((z) => (z[0] === "*" ? fremd.map((t) => [t]) : [z])));
+  if (schmal) plan = [plan.flat()];
+  const pos = new Map(), boxen = [];
+  const spalten = plan.map((zeilen) => {
+    const zs = zeilen.map((z) => z.filter((t) => gruppen.has(t))).filter((z) => z.length).map((z) => {
+      const teile = z.map((t) => {
+        const els = gruppen.get(t);
+        if (ANKER.has(t)) {
+          return { t, spot: true, els, w: els[0]._w, h: els.reduce((a, e) => a + e._h, 0) + (els.length - 1) * G };
+        }
+        const cols = z.length > 1 ? 1 : els.length >= 3 ? 2 : 1;
+        const reihen = [];
+        for (let i = 0; i < els.length; i += cols) reihen.push(els.slice(i, i + cols));
+        const rh = reihen.map((r) => Math.max(...r.map((e) => e._h)));
+        return { t, els, reihen, rh, w: cols * W + (cols - 1) * G + 2 * P, h: KOPF + rh.reduce((a, b) => a + b, 0) + (reihen.length - 1) * G + P };
+      });
+      return { teile, w: teile.reduce((a, b) => a + b.w, 0) + (teile.length - 1) * NEBEN, h: Math.max(...teile.map((x) => x.h)) };
+    });
+    return { zs, w: Math.max(0, ...zs.map((z) => z.w)), h: zs.reduce((a, z) => a + z.h, 0) + Math.max(0, zs.length - 1) * ZEILE };
+  }).filter((s) => s.zs.length);
+  const hoehe = Math.max(0, ...spalten.map((s) => s.h));
+  let x = 0;
+  spalten.forEach((sp) => {
+    let y = (hoehe - sp.h) / 2;
+    sp.zs.forEach((z) => {
+      let xx = x + (sp.w - z.w) / 2;
+      z.teile.forEach((tl) => {
+        if (tl.spot) {
+          let yy = y + (z.h - tl.h) / 2;
+          tl.els.forEach((e) => { pos.set(e.id, { x: xx + tl.w / 2, y: yy + e._h / 2 }); yy += e._h + G; });
+        } else {
+          boxen.push({ typ: tl.t, x: xx, y, w: tl.w, h: tl.h, n: tl.els.length });
+          let yy = y + KOPF;
+          tl.reihen.forEach((r, ri) => {
+            r.forEach((e, ci) => pos.set(e.id, { x: xx + P + ci * (W + G) + W / 2, y: yy + tl.rh[ri] / 2 }));
+            yy += tl.rh[ri] + G;
+          });
+        }
+        xx += tl.w + NEBEN;
+      });
+      y += z.h + ZEILE;
+    });
+    x += sp.w + SPALTE;
+  });
+  return { pos, boxen, breite: Math.max(1, x - SPALTE), hoehe: Math.max(1, hoehe) };
+}
+
+function baueGraph() {
+  knotenMasse();
+  const els = [];
+  TYPEN_DA.filter((t) => !ANKER.has(t)).forEach((t) => {
+    els.push({ group: "nodes", data: { id: "box\u0000" + t, typ: t, w: 10, h: 10 }, classes: "box deko" });
+    els.push({ group: "nodes", data: { id: "punkt\u0000" + t, typ: t }, classes: "kopfpunkt deko" });
+    els.push({ group: "nodes", data: { id: "kopf\u0000" + t, typ: t, label: "" }, classes: "kopf deko" });
+  });
+  EL.forEach((e) => els.push({
+    group: "nodes",
+    data: { id: e.id, typ: e.typ, label: e._label, w: e._w, h: e._h },
+    classes: ["el", ANKER.has(e.typ) ? "spot" : "", "ebene-" + e.ebene, "herkunft-" + e.herkunft].join(" ")
+  }));
+  KANTEN.forEach((k) => els.push({
+    group: "edges",
+    data: { id: "kante\u0000" + k.i, source: k.von, target: k.nach, art: k.art, artLabel: artInfo(k.art).label },
+    classes: "art-" + k.art
+  }));
+  cy = cytoscape({
+    container: $("#graph"), elements: els, style: stil(), layout: { name: "preset" },
+    autoungrabify: true, boxSelectionEnabled: false, selectionType: "single",
+    userZoomingEnabled: matchMedia("(pointer: coarse)").matches, minZoom: 0.15, maxZoom: 3
+  });
+  cy.nodes(".deko").unselectify();
+  farben();
+  cy.on("tap", "node.el", (ev) => waehle(ev.target.id()));
+  cy.on("tap", (ev) => { if (ev.target === cy) { waehle(null); tipp(null); } });
+  cy.on("mouseover", "node.el", (ev) => {
+    const e = ELI.get(ev.target.id());
+    $("#graph").style.cursor = "pointer";
+    tipp(`<b>${esc(e.name)}</b> · ${esc(typInfo(e.typ).eins)}<br>${esc(e.wofuer || "")}`, ev.renderedPosition);
+  });
+  cy.on("mouseover tap", "edge", (ev) => tipp(kantenTipp(ev.target), ev.renderedPosition));
+  cy.on("mouseout", "node.el, edge", () => { $("#graph").style.cursor = ""; tipp(null); });
+  cy.on("pan zoom", () => tipp(null));
+}
+
+function kantenTipp(edge) {
+  const k = KANTEN.find((x) => "kante\u0000" + x.i === edge.id());
+  if (!k) return "";
+  return `<b>${esc(ELI.get(k.von).name)}</b> ${esc(artInfo(k.art).label)} <b>${esc(ELI.get(k.nach).name)}</b><br>${esc(k.text || "")}`;
+}
+
+function tipp(html, p) {
+  const t = $("#tip");
+  if (!html) { t.hidden = true; return; }
+  t.innerHTML = html; t.hidden = false;
+  const b = $("#graph").getBoundingClientRect();
+  const x = Math.min(Math.max(8, p.x + 14), b.width - t.offsetWidth - 8);
+  const y = p.y + 16 + t.offsetHeight > b.height ? p.y - t.offsetHeight - 12 : p.y + 16;
+  t.style.left = x + "px"; t.style.top = Math.max(8, y) + "px";
+}
+
+function stil() {
+  const T = token;
+  const ink = T("--ink"), ink2 = T("--ink-2"), edge = T("--edge"), acc = T("--accent"), surf = T("--surface");
+  const s = [
+    { selector: "node, edge", style: { "z-index-compare": "manual" } },
+    { selector: "node.el", style: {
+      shape: "round-rectangle", width: "data(w)", height: "data(h)", "background-color": "data(fill)",
+      "border-width": 2, "border-color": "data(farbe)", label: "data(label)", "text-wrap": "wrap", "text-max-width": 2000,
+      "font-family": FONT, "font-size": MASS.FS, "font-weight": 500, "line-height": MASS.LH, color: ink,
+      "text-valign": "center", "text-halign": "center", "z-index": 10,
+      "transition-property": "opacity", "transition-duration": weniger ? 0 : 0.15
+    } },
+    { selector: "node.herkunft-eingerichtet", style: { "border-style": "dashed" } },
+    { selector: "node.herkunft-beides", style: { "border-style": "double", "border-width": 5 } },
+    { selector: "node.spot", style: { color: T("--on-strong"), "font-family": DISPLAY, "font-size": MASS.SPOT_FS, "font-weight": 700, "z-index": 11 } },
+    { selector: "node.box", style: { shape: "round-rectangle", width: "data(w)", height: "data(h)", "background-color": T("--surface-2"), "border-width": 1, "border-color": T("--line"), label: "", "z-index": 0, events: "no" } },
+    { selector: "node.kopfpunkt", style: { shape: "ellipse", width: 10, height: 10, "background-color": "data(farbe)", "border-width": 0, label: "", "z-index": 1, events: "no" } },
+    { selector: "node.kopf", style: { width: 1, height: 1, "background-opacity": 0, "border-width": 0, label: "data(label)", "font-family": MONO, "font-size": 12, "font-weight": 600, color: ink2, "text-halign": "right", "text-valign": "center", "text-margin-x": 2, "z-index": 1, events: "no" } },
+    { selector: "edge", style: { "curve-style": "bezier", width: 1.6, "line-color": edge, "target-arrow-color": edge, "target-arrow-shape": "triangle", "arrow-scale": 1.1, opacity: 0.8, "z-index": 5 } }
+  ];
+  Object.entries(ARTEN).forEach(([a, i]) => {
+    const st = { width: i.breite, "target-arrow-shape": i.spitze, "line-style": i.linie === "dotted" ? "dotted" : i.linie };
+    if (i.dash && i.linie === "dashed") st["line-dash-pattern"] = i.dash;
+    s.push({ selector: "edge.art-" + a, style: st });
+  });
+  s.push(
+    { selector: "edge.hell", style: {
+      "line-color": acc, "target-arrow-color": acc, opacity: 1, width: 2.4,
+      "font-family": MONO, "font-size": 11.5, "font-weight": 600, color: ink, "text-background-color": surf,
+      "text-background-opacity": 1, "text-background-padding": 3, "text-background-shape": "round-rectangle",
+      "text-border-width": 1, "text-border-color": acc, "text-border-opacity": 1, "z-index": 20
+    } },
+    { selector: "edge.hell.aus-sicht", style: { "target-label": "data(artLabel)", "target-text-offset": 46 } },
+    { selector: "edge.hell.ein-sicht", style: { "source-label": "data(artLabel)", "source-text-offset": 46 } },
+    { selector: "edge.hell.art-deployt", style: { width: 3.6 } },
+    { selector: "node.el.blass", style: { opacity: 0.2 } },
+    { selector: "edge.blass", style: { opacity: 0.07 } },
+    { selector: "node.el.gewaehlt", style: { "underlay-color": acc, "underlay-padding": 7, "underlay-opacity": 0.4, "underlay-shape": "round-rectangle" } },
+    { selector: ".aus", style: { display: "none" } }
+  );
+  return s;
+}
+
+function farben() {
+  const surf = token("--surface");
+  const dunkel = surf.toLowerCase() !== "#ffffff";
+  cy.batch(() => {
+    cy.nodes().forEach((n) => {
+      const f = token(typVar(n.data("typ")));
+      n.data("farbe", f);
+      if (n.hasClass("el")) {
+        const e = ELI.get(n.id());
+        n.data("fill", ANKER.has(e.typ) ? f : e.ebene === "projekt" ? mische(f, surf, dunkel ? 0.24 : 0.16) : surf);
+      }
+    });
+  });
+}
+
+function layoutAnwenden() {
+  const g = $("#graph");
+  const cw = g.clientWidth;
+  if (!cw) return;
+  const schmal = cw < 720;
+  modell = berechneLayout(EL.filter(sichtbar), schmal);
+  const z = Math.min(1.1, (cw - 32) / modell.breite);
+  const h = schmal ? Math.min(modell.hoehe * z + 32, Math.max(420, innerHeight * 0.72))
+    : Math.max(380, Math.min(modell.hoehe * z + 40, 1100));
+  g.style.height = Math.round(h) + "px";
+  cy.resize();
+  const { P } = MASS;
+  cy.batch(() => {
+    cy.nodes(".el").forEach((n) => {
+      const p = modell.pos.get(n.id());
+      if (p) { n.removeClass("aus"); n.position(p); } else n.addClass("aus");
+    });
+    TYPEN_DA.filter((t) => !ANKER.has(t)).forEach((t) => {
+      const b = modell.boxen.find((x) => x.typ === t);
+      const box = cy.getElementById("box\u0000" + t), punkt = cy.getElementById("punkt\u0000" + t), kopf = cy.getElementById("kopf\u0000" + t);
+      if (!b) { box.add(punkt).add(kopf).addClass("aus"); return; }
+      box.add(punkt).add(kopf).removeClass("aus");
+      box.data({ w: b.w, h: b.h }); box.position({ x: b.x + b.w / 2, y: b.y + b.h / 2 });
+      punkt.position({ x: b.x + P + 5, y: b.y + 17 });
+      kopf.data("label", `${typInfo(t).mehr} · ${b.n}`); kopf.position({ x: b.x + P + 12, y: b.y + 17 });
+    });
+  });
+  if (Z.auswahl && !modell.pos.has(Z.auswahl)) waehle(null);
+  einpassen();
+  if (Z.auswahl) waehle(Z.auswahl, false);
+}
+
+function einpassen() {
+  if (!cy || !modell) return;
+  const pad = 16, W = cy.width(), H = cy.height();
+  const schmal = W < 720;
+  const zx = (W - 2 * pad) / modell.breite, zy = (H - 2 * pad) / modell.hoehe;
+  const z = Math.min(1.1, schmal ? zx : Math.min(zx, zy));
+  const px = (W - z * modell.breite) / 2;
+  const py = modell.hoehe * z <= H - 2 * pad ? (H - z * modell.hoehe) / 2 : pad;
+  cy.viewport({ zoom: z, pan: { x: px, y: py } });
+}
+
+function zoomen(f) {
+  if (!cy) return;
+  cy.zoom({ level: cy.zoom() * f, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
+}
+
+function waehle(id, zoom = true) {
+  Z.auswahl = id;
+  if (!cy) return;
+  cy.elements().removeClass("blass hell gewaehlt aus-sicht ein-sicht");
+  const d = $("#detail");
+  if (!id) { d.hidden = true; return; }
+  const n = cy.getElementById(id);
+  const e = ELI.get(id);
+  if (!n.length || !e) return;
+  const nb = n.closedNeighborhood();
+  cy.nodes(".el").not(nb).addClass("blass");
+  cy.edges().not(n.connectedEdges()).addClass("blass");
+  // Beschriftung am Ende des Nachbarn, damit sich die Etiketten nicht am gewählten Knoten stapeln.
+  n.outgoers("edge").addClass("hell aus-sicht");
+  n.incomers("edge").addClass("hell ein-sicht");
+  n.addClass("gewaehlt");
+  d.innerHTML = `<div class="detail-kopf"><div>
+      <span class="typmarke"><span class="punkt" style="--c: var(${typVar(e.typ)})" aria-hidden="true"></span>${esc(typInfo(e.typ).eins)}</span>
+      <h3>${esc(e.name)}</h3></div>
+      <button type="button" class="zu" id="detail-zu">Schließen ✕</button></div>${inhalt(e)}`;
+  d.hidden = false;
+  d.scrollTop = 0;
+  if (zoom) zeigeUmfeld(n, nb.nodes().filter((x) => x.visible()));
+}
+
+// Zeigt den Knoten mit seinen Nachbarn im freien Teil des Graphen. Nie kleiner als „Einpassen“:
+// Passt das Umfeld nicht hinein, steht der gewählte Knoten in der Mitte.
+function zeigeUmfeld(n, knoten) {
+  const W = cy.width(), H = cy.height();
+  const breit = getComputedStyle($("#detail")).position === "absolute";
+  const frei = breit ? W - 374 : W;
+  const bb = knoten.boundingBox();
+  const zFit = Math.min(1.1, (W - 32) / modell.breite, W < 720 ? Infinity : (H - 32) / modell.hoehe);
+  const zUmfeld = Math.min(1.15, (frei - 48) / bb.w, (H - 48) / bb.h);
+  const z = Math.max(zFit, zUmfeld);
+  const m = z > zUmfeld ? n.position() : { x: bb.x1 + bb.w / 2, y: bb.y1 + bb.h / 2 };
+  const pan = { x: frei / 2 - z * m.x, y: H / 2 - z * m.y };
+  if (weniger) cy.viewport({ zoom: z, pan });
+  else cy.animate({ zoom: z, pan }, { duration: 260, easing: "ease-in-out-cubic" });
+}
+
+// ---------- Inhalt eines Elements (Detailkarte und Liste) ----------
+function inhalt(e) {
+  const ph = e.phasen.length
+    ? e.phasen.map((n) => `<span class="phase-chip" title="${esc(phaseName(n))}">${esc(n)}${phaseName(n) ? " " + esc(phaseName(n)) : ""}</span>`).join("")
+    : `<span>keine Angabe: läuft in jeder Session oder unbekannt</span>`;
+  const sichtIds = new Set(EL.filter(sichtbar).map((x) => x.id));
+  const name = (id) => {
+    const x = ELI.get(id);
+    return sichtIds.has(id) ? `<button type="button" class="ziel-link" data-ziel="${esc(id)}">${esc(x.name)}</button>`
+      : `<span class="weg" title="durch Filter ausgeblendet">${esc(x.name)} (ausgeblendet)</span>`;
+  };
+  const kante = (k, aus) => `<li><span class="kante-kopf">${aus
+      ? `<span class="art">${esc(artInfo(k.art).label)}</span><span class="pfeil" aria-hidden="true">→</span>${name(k.nach)}`
+      : `${name(k.von)}<span class="pfeil" aria-hidden="true">→</span><span class="art">${esc(artInfo(k.art).label)}</span>`}</span>
+      ${k.text ? `<span class="kante-text">${esc(k.text)}</span>` : ""}
+      ${k.quelle ? `<span class="kante-quelle">Quelle: ${esc(k.quelle)}</span>` : ""}</li>`;
+  const verb = !e.aus.length && !e.ein.length ? `<p class="kanten-titel">Verbindungen</p><p class="leer">Keine Verbindungen in den Daten.</p>`
+    : (e.aus.length ? `<p class="kanten-titel">Wirkt auf (${e.aus.length})</p><ul class="kanten">${e.aus.map((k) => kante(k, true)).join("")}</ul>` : "")
+    + (e.ein.length ? `<p class="kanten-titel">Wird bewirkt von (${e.ein.length})</p><ul class="kanten">${e.ein.map((k) => kante(k, false)).join("")}</ul>` : "");
+  return `${e.wofuer ? `<p class="wofuer">${esc(e.wofuer)}</p>` : ""}
+    <dl class="meta">
+      <dt>Ebene</dt><dd><span class="marker ebene-${esc(e.ebene)}">${esc(EBENEN[e.ebene] || e.ebene || "?")}</span></dd>
+      <dt>Herkunft</dt><dd><span class="marker herkunft-${esc(e.herkunft)}">${esc(HERKUNFT[e.herkunft] || e.herkunft || "?")}</span></dd>
+      <dt>Phasen</dt><dd>${ph}</dd>
+      <dt>Quelle</dt><dd><code>${esc(e.quelle || "fehlt")}</code></dd>
+    </dl>${verb}`;
+}
+
+function renderListe(sicht) {
+  const gruppen = TYPEN_DA.map((t) => [t, sicht.filter((e) => e.typ === t).sort((a, b) => (a.ebene === "global") - (b.ebene === "global") || a.i - b.i)])
+    .filter(([, els]) => els.length);
+  $("#liste").innerHTML = gruppen.map(([t, els]) => `
+    <div class="gruppe" style="--c: var(${typVar(t)})">
+      <h3 class="gruppe-kopf"><span class="punkt" aria-hidden="true"></span>${esc(typInfo(t).mehr)} <span class="zahl">${els.length}</span></h3>
+      <div class="karten">${els.map((e) => `
+        <details class="el-karte" id="el-${esc(e.id)}">
+          <summary><span class="punkt" aria-hidden="true"></span><span class="el-name">${esc(e.name)}</span>
+            <span class="el-zeile"><span class="marker ebene-${esc(e.ebene)}">${esc(EBENEN[e.ebene] || e.ebene)}</span>
+            <span class="marker herkunft-${esc(e.herkunft)}">${esc(e.herkunft)}</span>
+            <span>${e.aus.length + e.ein.length} Verbindungen</span></span></summary>
+          <div class="el-body">${inhalt(e)}</div>
+        </details>`).join("")}</div>
+    </div>`).join("") || `<p class="leer">Kein Element passt zu den Filtern.</p>`;
+}
+
+function springe(id) {
+  if (Z.ansicht === "graph") { waehle(id); return; }
+  const d = document.getElementById("el-" + id);
+  if (!d) return;
+  d.open = true;
+  d.scrollIntoView({ block: "start", behavior: weniger ? "auto" : "smooth" });
+  d.querySelector("summary").focus({ preventScroll: true });
+}
+
+// Für Prüfskripte: Zugriff auf den Graphen von außen.
+window.portraet = { get cy() { return cy; }, waehle };
+</script>
