@@ -299,7 +299,7 @@ function mische(a, b, t) {
 }
 
 // ---------- Zustand ----------
-let D, cy = null, modell = null, kaputt = [];
+let D, cy = null, modell = null, kaputt = [], verworfen = [];
 const EL = [], ELI = new Map(), KANTEN = [];
 let TYPEN_DA = [], PHASEN_NR = [];
 const Z = { typen: new Set(), ebene: "alle", phase: "alle", ansicht: "graph", auswahl: null };
@@ -336,14 +336,21 @@ async function start() {
     ]).catch(() => {});
   }
   anwenden();
-  new ResizeObserver(() => { richtung(); if (cy && Z.ansicht === "graph") layoutAnwenden(); }).observe($("#zusammenspiel"));
+  // Nur bei Breitenänderung neu anordnen: Eine aufklappende Detailkarte ändert die Höhe und soll den Zoom nicht zurücksetzen.
+  let breite = $("#zusammenspiel").clientWidth;
+  new ResizeObserver(() => {
+    const b = $("#zusammenspiel").clientWidth;
+    if (b === breite) return;
+    breite = b; richtung(); if (cy && Z.ansicht === "graph") layoutAnwenden();
+  }).observe($("#zusammenspiel"));
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (cy) { cy.style(stil()); farben(); } });
 }
 
 function vorbereiten() {
   (D.elemente || []).forEach((e, i) => {
-    const el = { ...e, i, phasen: Array.isArray(e.phasen) ? e.phasen : [], aus: [], ein: [] };
-    if (!el.id || ELI.has(el.id)) return;
+    // 5: Phasennummern immer als Zahl, damit Filter und HTML nur Zahlen sehen.
+    const el = { ...e, i, phasen: (Array.isArray(e.phasen) ? e.phasen : []).map(Number).filter(Number.isFinite), aus: [], ein: [] };
+    if (!el.id || ELI.has(el.id)) { verworfen.push(el.id || `(ohne id: ${el.name || i})`); return; }
     EL.push(el); ELI.set(el.id, el);
   });
   (D.verbindungen || []).forEach((k, i) => {
@@ -355,9 +362,10 @@ function vorbereiten() {
   const da = new Set(EL.map((e) => e.typ));
   TYPEN_DA = [...TYP_REIHE.filter((t) => da.has(t)), ...[...da].filter((t) => !TYPEN[t]).sort()];
   Z.typen = new Set(TYPEN_DA);
+  (D.phasen || []).forEach((p) => { p.nr = Number(p.nr); });
   const nr = new Set((D.phasen || []).map((p) => p.nr));
   EL.forEach((e) => e.phasen.forEach((n) => nr.add(n)));
-  PHASEN_NR = [...nr].filter((n) => n !== undefined && n !== null).sort((a, b) => a - b);
+  PHASEN_NR = [...nr].filter(Number.isFinite).sort((a, b) => a - b);
 }
 
 const phaseName = (n) => ((D.phasen || []).find((p) => p.nr === n) || {}).name || "";
@@ -481,7 +489,7 @@ function renderSteuer() {
     `<button type="button" data-ebene="${e}" aria-pressed="${e === Z.ebene}">${e === "alle" ? "Alle" : EBENEN[e]}</button>`).join("");
   const phasen = PHASEN_NR.length ? `<span class="gruppe-st"><span class="steuer-label">Phase</span><div class="segment" role="group" aria-label="Phase">
     <button type="button" data-phase="alle" aria-pressed="true">Alle</button>
-    ${PHASEN_NR.map((n) => `<button type="button" data-phase="${n}" aria-pressed="false" title="${esc(phaseName(n))}" aria-label="Phase ${n} ${esc(phaseName(n))}">${n}</button>`).join("")}</div></span>` : "";
+    ${PHASEN_NR.map((n) => `<button type="button" data-phase="${esc(n)}" aria-pressed="false" title="${esc(phaseName(n))}" aria-label="Phase ${esc(n)} ${esc(phaseName(n))}">${esc(n)}</button>`).join("")}</div></span>` : "";
   $("#steuer").innerHTML = `
     <div class="steuer-zeile"><span class="steuer-label">Typ</span><div class="chips" role="group" aria-label="Typ">${typChips}
       <button type="button" class="chip leise" id="alle-typen" hidden>Alle Typen zeigen</button></div></div>
@@ -538,6 +546,7 @@ function renderLegende() {
 
 function renderLuecken() {
   const l = [...(D.luecken || [])];
+  if (verworfen.length) l.push(`${verworfen.length} Element(e) mit doppelter oder fehlender id fehlen im Graphen: ${verworfen.join(", ")}.`);
   if (kaputt.length) l.push(`${kaputt.length} Verbindung(en) verweisen auf unbekannte Elemente und fehlen im Graphen: ${kaputt.map((k) => `${k.von} → ${k.nach}`).join(", ")}.`);
   $("#luecken").innerHTML = `<h2 id="h-luecken">Lücken der Analyse</h2>
     <p class="quelle">Was die Analyse nicht belegen konnte, aus data.json</p>
