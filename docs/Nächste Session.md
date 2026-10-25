@@ -59,6 +59,8 @@ noch keinen Plan. Claude fragt deshalb zuerst, was als Nächstes ansteht. Vorsch
      Idee, die Kartengröße aus der Bildschirmhöhe zu berechnen statt aus festen Grenzen (800 px, `py-4`).
    - `e2e/raum.spec.ts` beobachten: fiel einmal bei vollem `npm run e2e` aus, heute viermal grün. Beim nächsten
      Ausfall sofort `test-results/` lesen.
+   - CI absichern wie in tages-dashboard (dort Fund aus dem `/code-review` von PR #4, 2026-10-25):
+     `.github/workflows/ci.yml` ohne `timeout-minutes`, ohne `concurrency` und ohne `permissions: contents: read`.
    - Aus älteren Übergaben: leere Startseite ohne Netz (`.catch` in `app/ui/start.tsx`), Funde aus PR #24 und PR #20,
      `noUncheckedIndexedAccess`.
 
