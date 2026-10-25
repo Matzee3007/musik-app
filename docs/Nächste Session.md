@@ -61,6 +61,9 @@ noch keinen Plan. Claude fragt deshalb zuerst, was als Nächstes ansteht. Vorsch
      Ausfall sofort `test-results/` lesen.
    - CI absichern wie in tages-dashboard (dort Fund aus dem `/code-review` von PR #4, 2026-10-25):
      `.github/workflows/ci.yml` ohne `timeout-minutes`, ohne `concurrency` und ohne `permissions: contents: read`.
+   - Aus der Werkzeug-Inventur im Ecosystem (2026-10-25): Dependabot einrichten (`.github/dependabot.yml`, PRs bei
+     neuen Paketversionen und Sicherheitslücken). Prüfen, ob das kostenlose Supabase-Projekt `musik-bingo` zwischen
+     Spieleabenden pausiert. Falls ja: vor dem Abend wecken oder für Realtime PartyKit vergleichen.
    - Aus älteren Übergaben: leere Startseite ohne Netz (`.catch` in `app/ui/start.tsx`), Funde aus PR #24 und PR #20,
      `noUncheckedIndexedAccess`.
 
