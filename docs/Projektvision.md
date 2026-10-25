@@ -73,9 +73,9 @@ Begründung und Alternativen: [[projects/musik-app/docs/adr/0001-stack|ADR 0001]
 | Sprache | TypeScript |
 | Framework | Next.js (React) |
 | Laufzeit und Pakete | Node.js 24 LTS, npm |
-| Daten und Echtzeit | Supabase (Postgres, Realtime), ab Phase 3 |
-| Hosting | Vercel, ab Phase 3 |
-| Qualität | ESLint, Prettier, Vitest, später Playwright |
+| Daten und Echtzeit | Supabase (Realtime, noch ohne Tabellen; Postgres für Songs und Jahre in Phase 4) |
+| Hosting | Vercel |
+| Qualität | ESLint, Prettier, Vitest, Playwright (nur lokal, CI in Phase 4) |
 | Musik | Spotify Web API und Web Playback SDK |
 | Erscheinungsjahr | MusicBrainz, Korrektur durch den DJ |
 

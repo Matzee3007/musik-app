@@ -24,9 +24,10 @@ Schritt eine funktionierende App entwickeln.
 
 - **Sprache:** TypeScript
 - **Framework:** Next.js (React), Laufzeit Node.js 24 LTS, Pakete mit npm
-- **Daten und Echtzeit:** Supabase (Postgres, Realtime-Kanäle für die Spielräume), ab Phase 3
-- **Hosting:** Vercel, ab Phase 3
-- **Qualität:** ESLint, Prettier, Vitest (später Playwright für Browser-Tests)
+- **Daten und Echtzeit:** Supabase (Realtime-Kanäle für die Spielräume, noch ohne Tabellen; Postgres für Songs und
+  Jahre in Phase 4)
+- **Hosting:** Vercel
+- **Qualität:** ESLint, Prettier, Vitest, Playwright für Browser-Tests (nur lokal, nicht in `npm run check` und CI)
 - **Musik:** Spotify Web API und Web Playback SDK (Premium des Entwicklers), MusicBrainz für das Erscheinungsjahr
 
 Begründung und Alternativen: `docs/adr/0001-stack.md`.
@@ -47,20 +48,23 @@ Begründung und Alternativen: `docs/adr/0001-stack.md`.
 
 ## Repo-Struktur
 
-Aktuell (Phase 3):
-
 ```
-app/              Next.js App Router: layout.tsx, page.tsx, globals.css, raum/[code]/ (Handy), ui/ (Ansichten)
+app/              Next.js App Router: layout.tsx, page.tsx, globals.css, raum/[code]/ (Handy), ui/ (Ansichten),
+                  callback/ (Rückkehr von der Spotify-Anmeldung), api/erscheinungsjahr/ (MusicBrainz über den Server)
 lib/              Spiellogik als reine Funktionen: Rad, Karte, Bingo, Songliste, Spielzüge (spiel.ts);
-                  raum/ für Räume (Code, Spieler, Speicher, Kanal über Supabase Realtime)
+                  raum/ für Räume (Code, Spieler, Speicher, Kanal über Supabase Realtime),
+                  spotify/ für Anmeldung (PKCE), Playlists und Abspielen
 __tests__/        Vitest-Tests, lib/ für die Spiellogik, hilfen/ für Testhilfen und Nachbauten
 e2e/              Playwright-Tests im Browser gegen das echte Supabase, hilfen/ mit den Bots Tisch und Spieler
 specs/            Testpläne der Playwright-Agents (.claude/agents/playwright-test-*.md)
 scripts/          Assistenten für Einrichtungen von Hand (supabase-einrichten.sh)
+portraet/         Projekt-Porträt als Artifact (index.html, data.json), erzeugt vom Skill portraet-bauen (Ecosystem)
 docs/             Obsidian-Vault: adr/, journal/, plaene/, tools/
 .github/          workflows/ci.yml: CI mit GitHub Actions
+.claude/          agents/ (Playwright-Agents), hooks/ (Prettier nach Edit und Write), settings.json
 AGENTS.md         Regeln von Next.js für Coding-Agents (schreibt `next dev` neu)
 CLAUDE.md
+REVIEW.md         Regeln, die beim Review eines PRs zusätzlich gelten
 package.json      Abhängigkeiten und npm-Skripte
 ```
 
@@ -87,8 +91,9 @@ greift nur bei Edit und Write.
 Änderungen an `app/globals.css` übernimmt ein laufender `npm run dev` nicht: Server neu starten, bevor Screenshots oder
 `npm run e2e` laufen.
 
-Vor jedem Commit: `npm run check` muss mit Exit-Code 0 durchlaufen. Vor jedem Merge: `gh pr checks <nr>` muss grün
-sein (privates Repo mit GitHub Free, daher kein Branch-Schutz).
+Vor jedem Commit, der etwas anderes als `*.md` ändert: `npm run check` muss mit Exit-Code 0 durchlaufen. Commits nur
+mit Markdown (Doku, `CLAUDE.md`, Skills, Agents) brauchen das nicht, `check` prüft kein Markdown (`.prettierignore`).
+Vor jedem Merge: `gh pr checks <nr>` muss grün sein (privates Repo mit GitHub Free, daher kein Branch-Schutz).
 
 Production: `https://musik-bingo.vercel.app`, jeder Merge in `main` erneuert sie, jeder PR bekommt eine Vorschau.
 Spotify-Anmeldung nur unter dieser Adresse und lokal, Vorschauen zeigen nur die Demo (`docs/tools/Vercel.md`).
