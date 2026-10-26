@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Knopf from "@/app/ui/knopf";
 import Tisch from "@/app/ui/tisch";
@@ -46,7 +46,12 @@ export default function SpielAnsicht({
   onJahrKorrigiert?: (songId: string, jahr: number) => void;
   // Im Raum spielen die Spieler am Handy: Der Tisch meldet seinen Stand, statt der Karte zählen ihre Bingos.
   // onStand(null): Die Spielansicht ist weg, die Handys warten auf das nächste Spiel.
-  raum?: { kanal: RaumKanal; onStand: (stand: TischStand | null) => void };
+  // Mit dj ist es ein Online-Raum (ADR 0008): Der DJ spielt mit eigener Karte am Tisch mit.
+  raum?: {
+    kanal: RaumKanal;
+    onStand: (stand: TischStand | null) => void;
+    dj?: string;
+  };
 }) {
   // Startet sonst erst nach dem Klick: Zufall beim ersten Rendern gäbe auf Server und
   // Browser verschiedene Karten (Hydration-Fehler). Mit sofort erscheint die Ansicht erst nach
@@ -240,6 +245,15 @@ export default function SpielAnsicht({
     });
   }, [kanal, spielId]);
 
+  // Online zählt auch das Bingo des DJs, seine Karte liegt hier am Tisch.
+  const dj = raum?.dj;
+  const online = dj !== undefined;
+  const djBingo = online && spiel !== null && hatBingo(spiel.karte);
+  const alleBingo = useMemo(
+    () => (djBingo && !bingo.includes(dj!) ? [...bingo, dj!] : bingo),
+    [djBingo, bingo, dj],
+  );
+
   const standMelden = useEffectEvent((stand: TischStand | null) =>
     raum?.onStand(stand),
   );
@@ -250,12 +264,12 @@ export default function SpielAnsicht({
   useEffect(() => {
     if (!gestartet) return;
     // Eine Jahreskorrektur ändert die Runde, aber nicht, was die Handys sehen: dann nichts melden.
-    const stand = tischStand(spielId, runde, bingo);
+    const stand = tischStand(spielId, runde, alleBingo, online);
     const text = JSON.stringify(stand);
     if (text === gemeldet.current) return;
     gemeldet.current = text;
     standMelden(stand);
-  }, [gestartet, spielId, runde, bingo]);
+  }, [gestartet, spielId, runde, alleBingo, online]);
 
   // Verschwindet die Spielansicht (z. B. Spotify-Anmeldung abgelaufen), gibt es für die Handys kein Spiel mehr.
   useEffect(
@@ -267,7 +281,7 @@ export default function SpielAnsicht({
   );
 
   // Bei Bingo ist das Spiel vorbei, die Musik hört auf.
-  const imRaumBingo = bingo.length > 0;
+  const imRaumBingo = alleBingo.length > 0;
   const beiBingoAnhalten = useEffectEvent(() => {
     if (musik) musikAnhalten();
   });
@@ -289,15 +303,17 @@ export default function SpielAnsicht({
     );
   }
 
+  // Lokal im Raum liegen die Karten auf den Handys, sonst liegt die Karte neben dem Tisch.
+  const mitKarte = !raum || online;
   const spielfeld = (
     <div
-      className={`grid w-full gap-8 ${raum ? "" : "max-w-5xl md:grid-cols-2"}`}
+      className={`grid w-full gap-8 ${mitKarte ? "max-w-5xl md:grid-cols-2" : ""}`}
     >
       <Tisch
         runde={spiel.runde}
         stapelLeer={spiel.stapel.length === 0}
         bingo={raum ? imRaumBingo : hatBingo(spiel.karte)}
-        gewinner={raum ? bingo : undefined}
+        gewinner={raum ? alleBingo : undefined}
         onRadDrehen={radDrehen}
         onLoesungAnzeigen={loesungZeigen}
         onVonVorn={() => setSpiel(stapelNeuMischen(spiel, spielSongs, zufall))}
@@ -316,8 +332,7 @@ export default function SpielAnsicht({
             : undefined
         }
       />
-      {/* Im Raum liegen die Karten auf den Handys. */}
-      {!raum && (
+      {mitKarte && (
         <KarteAnsicht
           karte={spiel.karte}
           onFeldKlick={(index) => {
@@ -338,7 +353,7 @@ export default function SpielAnsicht({
   return (
     // Im Raum ohne Breitenbegrenzung: Rad und Abschnitt zur Runde brauchen die ganze Breite.
     <div
-      className={`flex w-full flex-col items-center gap-4 ${raum ? "" : "max-w-5xl"}`}
+      className={`flex w-full flex-col items-center gap-4 ${mitKarte ? "max-w-5xl" : ""}`}
     >
       <label className="flex items-center gap-2 text-licht/70">
         Ausschnitt
