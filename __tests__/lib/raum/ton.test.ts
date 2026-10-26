@@ -198,7 +198,7 @@ test("beenden schließt alle Verbindungen und hört nicht mehr zu", async () => 
 function empfangen() {
   const raum = nachgebauterRaum();
   const fabrik = verbindungsFabrik();
-  const beiStrom = vi.fn<(strom: MediaStream) => void>();
+  const beiStrom = vi.fn<(strom: MediaStream | null) => void>();
   const beiFehler = vi.fn();
   const beenden = tonEmpfangen(
     raum.oeffnen("ABCD", "anna"),
@@ -390,4 +390,76 @@ test("beenden schließt die Verbindung und sagt kein hallo mehr", async () => {
   raum.verbundenMelden();
   await ruhe();
   expect(hallos()).toHaveLength(1);
+});
+
+// Funde aus dem Review von PR #66.
+test("nach einem Wiederbeitritt des DJs meldet er erneut bereit", async () => {
+  const { raum } = senden();
+  raum.verbundenMelden();
+  await ruhe();
+  expect(raum.gesendet).toEqual([
+    ton({ art: "bereit", von: "dj" }),
+    ton({ art: "bereit", von: "dj" }),
+  ]);
+});
+
+test("eine abgebrochene Verbindung fliegt raus und zählt nicht mehr", async () => {
+  const { alle, schicken, beiAnzahl } = senden();
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
+  alle[0].zustand("connected");
+  expect(beiAnzahl).toHaveBeenLastCalledWith(1);
+  alle[0].zustand("failed");
+  expect(alle[0].geschlossen).toBe(true);
+  expect(beiAnzahl).toHaveBeenLastCalledWith(0);
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    sdp: antwort,
+  });
+  expect(alle[0].entfernt).toBeNull();
+});
+
+test("beenden meldet ende, auch Wiederbeitritte sagen kein bereit mehr", async () => {
+  const { raum, beenden } = senden();
+  await ruhe();
+  beenden();
+  await ruhe();
+  expect(raum.gesendet.at(-1)).toEqual(ton({ art: "ende", von: "dj" }));
+  const vorher = raum.gesendet.length;
+  raum.verbundenMelden();
+  await ruhe();
+  expect(raum.gesendet).toHaveLength(vorher);
+});
+
+test("ende vom DJ: Verbindung zu, kein Strom mehr, kein neues hallo", async () => {
+  const { alle, schicken, versuch, beiStrom, hallos } = empfangen();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: versuch(),
+    sdp: angebot,
+  });
+  await schicken({ art: "ende", von: "dj" });
+  expect(alle[0].geschlossen).toBe(true);
+  expect(beiStrom).toHaveBeenLastCalledWith(null);
+  expect(hallos()).toHaveLength(1);
+});
+
+test("bricht die Verbindung ab, kein Strom mehr und ein neues hallo", async () => {
+  const { alle, schicken, versuch, beiStrom, hallos } = empfangen();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: versuch(),
+    sdp: angebot,
+  });
+  alle[0].zustand("failed");
+  await ruhe();
+  expect(alle[0].geschlossen).toBe(true);
+  expect(beiStrom).toHaveBeenLastCalledWith(null);
+  expect(hallos()).toHaveLength(2);
 });

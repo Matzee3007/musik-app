@@ -404,6 +404,8 @@ test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
   expect(
     raumNachrichtLesen({ art: "ton", signal: { art: "hallo", von: 3 } }),
   ).toBeNull();
+  const ende = { art: "ton", signal: { art: "ende", von: "t" } };
+  expect(raumNachrichtLesen(ende)).toEqual(ende);
   // Ohne Versuch passt die Nachricht zu keiner Verbindung.
   expect(
     raumNachrichtLesen({ art: "ton", signal: { art: "hallo", von: "s1" } }),

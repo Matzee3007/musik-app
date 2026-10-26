@@ -2,12 +2,13 @@ import type { RaumKanal } from "@/lib/raum/kanal";
 
 // Ton vom DJ im Online-Modus (ADR 0008): Der DJ schickt die Tonspur seines Tabs per WebRTC an jeden Spieler, eine
 // Verbindung je Spieler. Die Verbindungsdaten (Signaling) laufen als Raum-Nachricht "ton" über den Kanal des Raums.
-// von und an sind Tab-Kennungen (tabSchluessel). "bereit": Der DJ teilt jetzt Ton. "hallo": Ein Spieler möchte ihn.
+// von und an sind Tab-Kennungen (tabSchluessel). "bereit": Der DJ teilt jetzt Ton. "ende": Er hört damit auf.
+// "hallo": Ein Spieler möchte Ton.
 // versuch kennzeichnet ein "hallo" und alles, was zu seiner Verbindung gehört. Sagt ein Spieler zweimal kurz
 // hintereinander "hallo" (React Strict Mode, Wiederbeitritt), passte sonst seine Antwort auf das erste Angebot nicht
 // zur zweiten Verbindung des DJs, und der Ton kam nie an.
 export type TonSignal =
-  | { art: "bereit"; von: string }
+  | { art: "bereit" | "ende"; von: string }
   | { art: "hallo"; von: string; versuch: string }
   | Beschreibung<"angebot">
   | Beschreibung<"antwort">
@@ -36,7 +37,7 @@ function istBeschreibung(wert: unknown): wert is RTCSessionDescriptionInit {
 export function istTonSignal(wert: unknown): wert is TonSignal {
   const s = wert as Record<string, unknown> | null;
   if (typeof s?.von !== "string") return false;
-  if (s.art === "bereit") return true;
+  if (s.art === "bereit" || s.art === "ende") return true;
   if (typeof s.versuch !== "string") return false;
   switch (s.art) {
     case "hallo":
@@ -137,7 +138,18 @@ export function tonSenden(
             kandidat: e.candidate.toJSON(),
           }).catch(beiFehler);
         };
-        v.onconnectionstatechange = zaehlen;
+        v.onconnectionstatechange = () => {
+          // Ein gegangener Spieler: Verbindung zu, sonst hielte der DJ sie bis zum Ende des Teilens offen.
+          if (
+            v.connectionState === "failed" ||
+            v.connectionState === "closed"
+          ) {
+            v.close();
+            if (verbindungen.get(spieler)?.v === v)
+              verbindungen.delete(spieler);
+          }
+          zaehlen();
+        };
         await v.setLocalDescription(await v.createOffer());
         await signalSenden(kanal, {
           art: "angebot",
@@ -158,22 +170,29 @@ export function tonSenden(
     },
     beiFehler,
   );
-  signalSenden(kanal, { art: "bereit", von: ich }).catch(beiFehler);
+  // Auch nach einem Wiederbeitritt des DJs: "hallo" aus der Zeit ohne Verbindung sind verloren.
+  function bereit() {
+    signalSenden(kanal, { art: "bereit", von: ich }).catch(beiFehler);
+  }
+  const verbundenAb = kanal.beiVerbunden(bereit);
+  bereit();
 
   return () => {
     abmelden();
+    verbundenAb();
     for (const { v } of verbindungen.values()) v.close();
     verbindungen.clear();
+    signalSenden(kanal, { art: "ende", von: ich }).catch(beiFehler);
   };
 }
 
-// Ein Spieler bittet mit "hallo" um Ton, beim Start, nach jedem Wiederbeitritt und wenn ein DJ "bereit" meldet. Er
-// nimmt das erste Angebot zu seinem letzten "hallo" an und gibt die ankommende Tonspur an beiStrom. Liefert eine
-// Funktion, die den Empfang beendet.
+// Ein Spieler bittet mit "hallo" um Ton, beim Start, nach jedem Wiederbeitritt, wenn ein DJ "bereit" meldet und wenn
+// die Verbindung abbricht. Er nimmt das erste Angebot zu seinem letzten "hallo" an und gibt die ankommende Tonspur an
+// beiStrom, null, sobald sie nicht mehr kommt. Liefert eine Funktion, die den Empfang beendet.
 export function tonEmpfangen(
   kanal: RaumKanal,
   ich: string,
-  beiStrom: (strom: MediaStream) => void,
+  beiStrom: (strom: MediaStream | null) => void,
   neu: () => Verbindung = () => new RTCPeerConnection(ICE),
   beiFehler: (fehler: unknown) => void = console.error,
 ): () => void {
@@ -183,11 +202,16 @@ export function tonEmpfangen(
   // Kennung des letzten "hallo". Kein crypto.randomUUID: Das gibt es nur auf sicheren Seiten.
   let versuch = "";
 
-  // Der DJ legt auf "hallo" eine neue Verbindung an und schließt die alte, deshalb hier ebenso von vorn.
-  function vonVorn() {
+  function trennen() {
+    if (verbindung) beiStrom(null);
     verbindung?.close();
     verbindung = null;
     dj = null;
+  }
+
+  // Der DJ legt auf "hallo" eine neue Verbindung an und schließt die alte, deshalb hier ebenso von vorn.
+  function vonVorn() {
+    trennen();
     versuch = Math.random().toString(36).slice(2);
     signalSenden(kanal, { art: "hallo", von: ich, versuch }).catch(beiFehler);
   }
@@ -197,6 +221,10 @@ export function tonEmpfangen(
     async (signal) => {
       if (signal.art === "bereit") {
         vonVorn();
+        return;
+      }
+      if (signal.art === "ende") {
+        if (signal.von === dj) trennen();
         return;
       }
       if (signal.art !== "angebot" && signal.art !== "kandidat") return;
@@ -212,6 +240,10 @@ export function tonEmpfangen(
       const v = neu();
       verbindung = v;
       v.ontrack = (e) => beiStrom(e.streams[0]);
+      // Abgebrochen (Netz weg, DJ hat neu geladen): neu versuchen.
+      v.onconnectionstatechange = () => {
+        if (v.connectionState === "failed" && verbindung === v) vonVorn();
+      };
       v.onicecandidate = (e) => {
         if (!e.candidate) return;
         signalSenden(kanal, {
