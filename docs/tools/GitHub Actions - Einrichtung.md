@@ -27,9 +27,9 @@ Die CI benutzt nur die npm-Skripte aus `package.json`. So prüfen lokal und CI d
 Drei Einstellungen sichern den Workflow ab:
 
 - `concurrency` mit `cancel-in-progress`: Ein neuer Push in einen PR bricht dessen noch laufenden Lauf ab, das
-  spart Freiminuten. Die Gruppe ist `github.ref`, bei einem PR also `refs/pull/<nr>/merge`, je PR eine Gruppe.
-  Auf `main` bricht nichts ab (`cancel-in-progress` nur bei `pull_request`): Werden zwei PRs kurz nacheinander
-  gemergt, wird trotzdem jeder Merge-Commit geprüft.
+  spart Freiminuten. Bei einem PR ist die Gruppe `github.ref` (`refs/pull/<nr>/merge`), also eine je PR. Auf `main`
+  hat jeder Commit seine eigene Gruppe (`github.sha`), dort bricht nichts ab. Grund: In einer Gruppe läuft höchstens
+  ein Lauf und einer wartet. Ein neuer wartender Lauf verdrängt den alten, auch ohne `cancel-in-progress`.
 - `permissions: contents: read`: Das Token der CI (`GITHUB_TOKEN`) darf das Repo nur lesen. Ein manipuliertes
   npm-Paket, das während `npm ci` läuft, kann damit nichts ins Repo schreiben. Code ausführen und Daten nach außen
   schicken kann es trotzdem, deshalb später keine Geheimnisse (Secrets) in die CI, ohne das neu zu bedenken.
@@ -67,3 +67,10 @@ gh run view <id> --log-failed  # nur die Log-Zeilen der fehlgeschlagenen Schritt
 - Ursache: Die Datei war nicht nach Prettier formatiert, `prettier . --check` in `npm run format:check` schlägt fehl.
 - Lösung: lokal `npm run format`, dann committen. Bei Dateien, die Claude ändert, erledigt das künftig der
   Prettier-Hook ([[projects/musik-app/docs/tools/Claude Code - Einrichtung|Claude Code - Einrichtung]]).
+
+**Lauf auf `main` „cancelled“ nach wenigen Sekunden** (2026-10-26, Merge von PR #53):
+- Ursache: PR #52, #53 und #55 wurden kurz nacheinander gemergt, alle Läufe hatten dieselbe `concurrency`-Gruppe
+  `ci-refs/heads/main`. Der Lauf zu #53 wartete hinter dem zu #52, der zu #55 verdrängte ihn. Das passiert auch mit
+  `cancel-in-progress: false`: Eine Gruppe hat höchstens einen laufenden und einen wartenden Lauf.
+- Lösung: Auf `main` eine Gruppe je Commit (`github.sha`), Branch `ci/main-nie-abbrechen`. Der Inhalt von #53 war mit dem grünen Lauf zu
+  #55 trotzdem geprüft.
