@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
+import TonEmpfang from "@/app/ui/ton-empfang";
 import { bingoLinie } from "@/lib/bingo";
 import {
   abhaken,
@@ -151,22 +152,25 @@ export default function HandySpiel({
       {stand &&
         karte &&
         (online ? (
-          <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
-            <Tisch
-              zuschauer
-              runde={rundeAusStand(stand)}
-              stapelLeer={false}
-              bingo={stand.bingo.length > 0}
-              gewinner={stand.bingo}
-              onRadDrehen={() => {}}
-              onLoesungAnzeigen={() => {}}
-              onVonVorn={() => {}}
-              onNeuesSpiel={() => {}}
-            />
-            <div className="flex flex-col items-center gap-4">
-              {kartenteil(stand, karte)}
+          <>
+            <TonEmpfang kanal={kanal} />
+            <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
+              <Tisch
+                zuschauer
+                runde={rundeAusStand(stand)}
+                stapelLeer={false}
+                bingo={stand.bingo.length > 0}
+                gewinner={stand.bingo}
+                onRadDrehen={() => {}}
+                onLoesungAnzeigen={() => {}}
+                onVonVorn={() => {}}
+                onNeuesSpiel={() => {}}
+              />
+              <div className="flex flex-col items-center gap-4">
+                {kartenteil(stand, karte)}
+              </div>
             </div>
-          </div>
+          </>
         ) : (
           kartenteil(stand, karte)
         ))}

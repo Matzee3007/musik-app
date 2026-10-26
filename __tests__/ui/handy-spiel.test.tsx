@@ -277,3 +277,16 @@ test("online ohne Tisch: Der DJ ist gerade nicht verbunden.", () => {
   spielen(online, []);
   expect(screen.getByText("Der DJ ist gerade nicht verbunden.")).toBeDefined();
 });
+
+test("online: Ton vom DJ mit Lautstärke, lokal nicht", () => {
+  const { raum } = spielen(online);
+  expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
+  expect(screen.getByRole("slider", { name: "Lautstärke" })).toBeDefined();
+  expect(raum.gesendet).toContainEqual({
+    art: "ton",
+    signal: { art: "hallo", von: expect.any(String) },
+  });
+  cleanup();
+  spielen(runde3);
+  expect(screen.queryByText(/Ton vom DJ/)).toBeNull();
+});
