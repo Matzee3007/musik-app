@@ -365,7 +365,10 @@ test("beiVerbunden meldet jedes SUBSCRIBED, bis abgemeldet", () => {
 });
 
 test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
-  const hallo = { art: "ton", signal: { art: "hallo", von: "s1" } };
+  const hallo = {
+    art: "ton",
+    signal: { art: "hallo", von: "s1", versuch: "v1" },
+  };
   expect(raumNachrichtLesen(hallo)).toEqual(hallo);
   const angebot = {
     art: "ton",
@@ -373,6 +376,7 @@ test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
       art: "angebot",
       an: "s1",
       von: "t",
+      versuch: "v1",
       sdp: { type: "offer", sdp: "v=0" },
     },
   };
@@ -383,6 +387,7 @@ test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
       art: "kandidat",
       an: "t",
       von: "s1",
+      versuch: "v1",
       kandidat: { candidate: "c" },
     },
   };
@@ -398,5 +403,9 @@ test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
   ).toBeNull();
   expect(
     raumNachrichtLesen({ art: "ton", signal: { art: "hallo", von: 3 } }),
+  ).toBeNull();
+  // Ohne Versuch passt die Nachricht zu keiner Verbindung.
+  expect(
+    raumNachrichtLesen({ art: "ton", signal: { art: "hallo", von: "s1" } }),
   ).toBeNull();
 });

@@ -40,13 +40,13 @@ test("tonSenden meldet bereit", async () => {
   expect(raum.gesendet).toEqual([ton({ art: "bereit", von: "dj" })]);
 });
 
-test("auf hallo: Angebot an genau diesen Spieler mit der Tonspur", async () => {
+test("auf hallo: Angebot an genau diesen Spieler und Versuch mit der Tonspur", async () => {
   const { raum, alle, schicken } = senden();
-  await schicken({ art: "hallo", von: "anna" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
   expect(alle).toHaveLength(1);
   expect(alle[0].spuren).toEqual([spur]);
   expect(raum.gesendet.at(-1)).toEqual(
-    ton({ art: "angebot", an: "anna", von: "dj", sdp: angebot }),
+    ton({ art: "angebot", an: "anna", von: "dj", versuch: "a1", sdp: angebot }),
   );
   alle[0].kandidatFinden({ candidate: "k-dj" });
   await ruhe();
@@ -55,6 +55,7 @@ test("auf hallo: Angebot an genau diesen Spieler mit der Tonspur", async () => {
       art: "kandidat",
       an: "anna",
       von: "dj",
+      versuch: "a1",
       kandidat: { candidate: "k-dj" },
     }),
   );
@@ -62,32 +63,76 @@ test("auf hallo: Angebot an genau diesen Spieler mit der Tonspur", async () => {
 
 test("Antwort und Kandidaten gehen an die Verbindung des Spielers, fremde nicht", async () => {
   const { alle, schicken, beiFehler } = senden();
-  await schicken({ art: "hallo", von: "anna" });
-  await schicken({ art: "hallo", von: "ben" });
-  await schicken({ art: "antwort", an: "dj", von: "anna", sdp: antwort });
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
+  await schicken({ art: "hallo", von: "ben", versuch: "b1" });
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    sdp: antwort,
+  });
   await schicken({
     art: "kandidat",
     an: "dj",
     von: "anna",
+    versuch: "a1",
     kandidat: { candidate: "k-anna" },
   });
   // Für einen anderen DJ bestimmt: geht niemanden hier etwas an.
-  await schicken({ art: "antwort", an: "anderer", von: "ben", sdp: antwort });
+  await schicken({
+    art: "antwort",
+    an: "anderer",
+    von: "ben",
+    versuch: "b1",
+    sdp: antwort,
+  });
   expect(alle[0].entfernt).toEqual(antwort);
   expect(alle[0].kandidaten).toEqual([{ candidate: "k-anna" }]);
   expect(alle[1].entfernt).toBeNull();
   expect(beiFehler).not.toHaveBeenCalled();
 });
 
+// Fund aus dem Test am Gerät: Zwei hallo kurz hintereinander (Strict Mode), die Antwort auf das erste Angebot landete
+// in der zweiten Verbindung.
+test("eine Antwort zu einem alten Versuch geht nicht in die neue Verbindung", async () => {
+  const { alle, schicken } = senden();
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a2" });
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    sdp: antwort,
+  });
+  expect(alle[1].entfernt).toBeNull();
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a2",
+    sdp: antwort,
+  });
+  expect(alle[1].entfernt).toEqual(antwort);
+});
+
 test("ein Kandidat vor der fertigen Antwort wird erst danach eingetragen", async () => {
   const { alle, schicken, beiFehler } = senden();
-  await schicken({ art: "hallo", von: "anna" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
   alle[0].verzoegern();
-  await schicken({ art: "antwort", an: "dj", von: "anna", sdp: antwort });
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    sdp: antwort,
+  });
   await schicken({
     art: "kandidat",
     an: "dj",
     von: "anna",
+    versuch: "a1",
     kandidat: { candidate: "k-anna" },
   });
   expect(alle[0].kandidaten).toEqual([]);
@@ -99,10 +144,10 @@ test("ein Kandidat vor der fertigen Antwort wird erst danach eingetragen", async
 
 test("neues hallo desselben Spielers schließt die alte Verbindung und zählt ihn einmal", async () => {
   const { alle, schicken, beiAnzahl } = senden();
-  await schicken({ art: "hallo", von: "anna" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
   alle[0].zustand("connected");
   expect(beiAnzahl).toHaveBeenLastCalledWith(1);
-  await schicken({ art: "hallo", von: "anna" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a2" });
   expect(alle[0].geschlossen).toBe(true);
   alle[1].zustand("connected");
   expect(beiAnzahl).toHaveBeenLastCalledWith(1);
@@ -110,15 +155,16 @@ test("neues hallo desselben Spielers schließt die alte Verbindung und zählt ih
 
 test("beenden schließt alle Verbindungen und hört nicht mehr zu", async () => {
   const { alle, schicken, beenden } = senden();
-  await schicken({ art: "hallo", von: "anna" });
-  await schicken({ art: "hallo", von: "ben" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
+  await schicken({ art: "hallo", von: "ben", versuch: "b1" });
   beenden();
   expect(alle.map((v) => v.geschlossen)).toEqual([true, true]);
-  await schicken({ art: "hallo", von: "cem" });
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
   expect(alle).toHaveLength(2);
 });
 
 // Spielerin "anna" möchte Ton. schicken() spielt ein Signal eines anderen Geräts ein und wartet auf die Verarbeitung.
+// versuch() ist der Versuch ihres letzten hallo.
 function empfangen() {
   const raum = nachgebauterRaum();
   const fabrik = verbindungsFabrik();
@@ -135,50 +181,126 @@ function empfangen() {
     raum.nachrichtSchicken(ton(signal));
     await ruhe();
   }
-  return { raum, ...fabrik, beiStrom, beiFehler, beenden, schicken };
+  function hallos() {
+    return raum.gesendet.flatMap((n) =>
+      n.art === "ton" && n.signal.art === "hallo" ? [n.signal] : [],
+    );
+  }
+  const versuch = () => hallos().at(-1)!.versuch;
+  return {
+    raum,
+    ...fabrik,
+    beiStrom,
+    beiFehler,
+    beenden,
+    schicken,
+    hallos,
+    versuch,
+  };
 }
 
-const hallo = ton({ art: "hallo", von: "anna" });
-
-test("tonEmpfangen meldet hallo beim Start und nach einem Wiederbeitritt", async () => {
-  const { raum } = empfangen();
+test("tonEmpfangen meldet hallo beim Start und nach einem Wiederbeitritt, jedes mit neuem Versuch", async () => {
+  const { raum, hallos } = empfangen();
   await ruhe();
-  expect(raum.gesendet).toEqual([hallo]);
+  expect(hallos()).toEqual([
+    { art: "hallo", von: "anna", versuch: expect.any(String) },
+  ]);
   raum.verbundenMelden();
   await ruhe();
-  expect(raum.gesendet).toEqual([hallo, hallo]);
+  const [erstes, zweites] = hallos();
+  expect(zweites.von).toBe("anna");
+  expect(zweites.versuch).not.toBe(erstes.versuch);
 });
 
-test("nimmt das erste Angebot, antwortet ihm, übergeht ein zweites", async () => {
-  const { raum, alle, schicken, beiFehler } = empfangen();
-  await schicken({ art: "angebot", an: "anna", von: "dj", sdp: angebot });
+test("nimmt das Angebot zum letzten hallo, antwortet ihm, übergeht ein zweites", async () => {
+  const { raum, alle, schicken, versuch, beiFehler } = empfangen();
+  const v = versuch();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: v,
+    sdp: angebot,
+  });
   expect(alle[0].entfernt).toEqual(angebot);
   expect(raum.gesendet.at(-1)).toEqual(
-    ton({ art: "antwort", an: "dj", von: "anna", sdp: antwort }),
+    ton({ art: "antwort", an: "dj", von: "anna", versuch: v, sdp: antwort }),
   );
   const vorher = raum.gesendet.length;
-  await schicken({ art: "angebot", an: "anna", von: "dj2", sdp: angebot });
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj2",
+    versuch: v,
+    sdp: angebot,
+  });
   expect(raum.gesendet).toHaveLength(vorher);
   // Für jemand anderen bestimmt.
-  await schicken({ art: "angebot", an: "ben", von: "dj", sdp: angebot });
+  await schicken({
+    art: "angebot",
+    an: "ben",
+    von: "dj",
+    versuch: v,
+    sdp: angebot,
+  });
   expect(raum.gesendet).toHaveLength(vorher);
   expect(beiFehler).not.toHaveBeenCalled();
 });
 
-test("Kandidaten nur vom gewählten DJ", async () => {
-  const { raum, alle, schicken } = empfangen();
-  await schicken({ art: "angebot", an: "anna", von: "dj", sdp: angebot });
+// Fund aus dem Test am Gerät: Das Angebot zum ersten von zwei hallo darf nicht angenommen werden.
+test("ein Angebot zu einem alten hallo wird übergangen", async () => {
+  const { raum, alle, schicken, hallos } = empfangen();
+  raum.verbundenMelden();
+  await ruhe();
+  const [alt, neu] = hallos();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: alt.versuch,
+    sdp: angebot,
+  });
+  expect(alle).toHaveLength(0);
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: neu.versuch,
+    sdp: angebot,
+  });
+  expect(alle[0].entfernt).toEqual(angebot);
+});
+
+test("Kandidaten nur vom gewählten DJ und Versuch", async () => {
+  const { raum, alle, schicken, versuch } = empfangen();
+  const v = versuch();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: v,
+    sdp: angebot,
+  });
   await schicken({
     art: "kandidat",
     an: "anna",
     von: "dj",
+    versuch: v,
     kandidat: { candidate: "k-dj" },
   });
   await schicken({
     art: "kandidat",
     an: "anna",
     von: "dj2",
+    versuch: v,
     kandidat: { candidate: "k-dj2" },
+  });
+  await schicken({
+    art: "kandidat",
+    an: "anna",
+    von: "dj",
+    versuch: "alt",
+    kandidat: { candidate: "k-alt" },
   });
   expect(alle[0].kandidaten).toEqual([{ candidate: "k-dj" }]);
   alle[0].kandidatFinden({ candidate: "k-anna" });
@@ -188,35 +310,54 @@ test("Kandidaten nur vom gewählten DJ", async () => {
       art: "kandidat",
       an: "dj",
       von: "anna",
+      versuch: v,
       kandidat: { candidate: "k-anna" },
     }),
   );
 });
 
 test("bereit eines DJs beginnt neu: alte Verbindung zu, neues hallo", async () => {
-  const { raum, alle, schicken } = empfangen();
-  await schicken({ art: "angebot", an: "anna", von: "dj", sdp: angebot });
+  const { alle, schicken, versuch, hallos } = empfangen();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: versuch(),
+    sdp: angebot,
+  });
   await schicken({ art: "bereit", von: "dj" });
   expect(alle[0].geschlossen).toBe(true);
-  expect(raum.gesendet.at(-1)).toEqual(hallo);
-  await schicken({ art: "angebot", an: "anna", von: "dj", sdp: angebot });
+  expect(hallos()).toHaveLength(2);
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: versuch(),
+    sdp: angebot,
+  });
   expect(alle.at(-1)!.entfernt).toEqual(angebot);
 });
 
 test("eine ankommende Tonspur geht an beiStrom", async () => {
-  const { alle, schicken, beiStrom } = empfangen();
-  await schicken({ art: "angebot", an: "anna", von: "dj", sdp: angebot });
+  const { alle, schicken, beiStrom, versuch } = empfangen();
+  await schicken({
+    art: "angebot",
+    an: "anna",
+    von: "dj",
+    versuch: versuch(),
+    sdp: angebot,
+  });
   const ankommend = {} as MediaStream;
   alle[0].spurKommt(ankommend);
   expect(beiStrom).toHaveBeenCalledWith(ankommend);
 });
 
 test("beenden schließt die Verbindung und sagt kein hallo mehr", async () => {
-  const { raum, alle, beenden } = empfangen();
+  const { raum, alle, beenden, hallos } = empfangen();
   await ruhe();
   beenden();
   expect(alle.every((v) => v.geschlossen)).toBe(true);
   raum.verbundenMelden();
   await ruhe();
-  expect(raum.gesendet).toEqual([hallo]);
+  expect(hallos()).toHaveLength(1);
 });
