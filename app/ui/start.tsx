@@ -37,6 +37,8 @@ export default function Start({
   // undefined: noch nicht gelesen. Erst ein Effekt liest den Speicher, sonst gäbe es auf Server
   // und Browser verschiedenes HTML (Hydration-Fehler).
   const [token, setToken] = useState<Token | null | undefined>(undefined);
+  // Ohne Netz ließ sich das Token nicht erneuern, es bleibt aber gespeichert.
+  const [unerreichbar, setUnerreichbar] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [gewaehlt, setGewaehlt] = useState<Playlist | null>(null);
   // Wie das Token erst im Effekt gelesen: undefined heißt noch nicht gelesen.
@@ -50,10 +52,16 @@ export default function Start({
   const supabase = supabaseKonfiguriert();
 
   useEffect(() => {
-    (id ? gueltigesToken(id) : Promise.resolve(null)).then((t) => {
-      setToken(t);
-      setTischRaum(tischRaumLaden());
-    });
+    (id ? gueltigesToken(id) : Promise.resolve(null))
+      .catch((fehler) => {
+        console.error(fehler);
+        setUnerreichbar(true);
+        return null;
+      })
+      .then((t) => {
+        setToken(t);
+        setTischRaum(tischRaumLaden());
+      });
   }, [id]);
 
   // Ein Kanal je Raum, sonst bräche bei jedem Neuzeichnen die Verbindung ab.
@@ -73,7 +81,8 @@ export default function Start({
           abmelden();
           setToken(null);
         } else {
-          throw fehler;
+          console.error(fehler);
+          setUnerreichbar(true);
         }
       });
   }, [token]);
@@ -182,10 +191,18 @@ export default function Start({
       </Knopf>
     );
 
+    const unerreichbarHinweis = unerreichbar && (
+      <p className="max-w-sm text-sm text-licht/70">
+        Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu
+        laden.
+      </p>
+    );
+
     if (token) {
       return (
         <div className="flex w-full max-w-md flex-col items-center gap-4">
           <h2 className="font-schild text-2xl">Deine Playlists</h2>
+          {unerreichbarHinweis}
           <ul className="flex w-full flex-col gap-2">
             {playlists.map((p) => (
               <li key={p.id}>
@@ -219,6 +236,7 @@ export default function Start({
             NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
           </p>
         )}
+        {unerreichbarHinweis}
         {demoKnopf}
       </div>
     );
