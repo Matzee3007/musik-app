@@ -15,23 +15,34 @@ von selbst PRs öffnet, wenn ein Paket eine neue Version hat (**Versions-Updates
 ## Wie haben wir es eingerichtet?
 
 1. **2026-10-26, Phase 4:** `.github/dependabot.yml`, Restpunkt aus der Werkzeug-Inventur im Ecosystem:
-   - `npm`: einmal pro Woche. Kleine Updates (minor, patch) kommen gesammelt in einem PR (Gruppe `npm-klein`), große
-     (major) einzeln, weil sie oft Umbauten brauchen.
-   - `github-actions`: einmal pro Woche, z. B. `actions/checkout@v7` → `@v8`.
+   - `npm`: einmal pro Woche. Pakete, die nur zusammen gehen, kommen immer in einem PR, auch bei großen Updates:
+     Gruppe `next` (`next`, `eslint-config-next`) und Gruppe `react` (`react`, `react-dom` und ihre Typen). Sonst
+     kommen kleine Updates (minor, patch) gesammelt (Gruppe `npm-klein`), große (major) einzeln, weil sie oft Umbauten
+     brauchen. Ein Paket landet in der ersten Gruppe, die passt.
+   - Große Updates von `@types/node` ignoriert Dependabot: Die Typen sollen zu Node 24 passen, auf dem die App läuft.
+   - `github-actions`: einmal pro Woche, alle Actions in einem PR (Gruppe `actions`), z. B. `actions/checkout@v7` →
+     `@v8`.
 
 Die Versions-Updates regelt die Datei. Die Warnungen und Sicherheits-Updates sind eine Einstellung des Repos
-(GitHub → Settings → Code security), sie waren am 2026-10-26 aus.
+(GitHub → Settings → Code security), eingeschaltet am 2026-10-26 nach dem Merge der Datei.
 
 ## Typischer Ablauf
 
 1. Dependabot öffnet einen PR, z. B. „Bump the npm-klein group with 4 updates“.
 2. Die CI prüft ihn. Vercel baut eine Vorschau.
-3. Grün: mergen. Rot: das Paket hat etwas geändert, mit `fehler-diagnose` eingrenzen oder den PR schließen.
+3. Die CI prüft kein Playwright. Deshalb vor dem Merge den Branch lokal holen und `npm run e2e` laufen lassen.
+   Ist `@playwright/test` dabei, vorher `npx playwright install` (neue Browser), danach die Playwright-Agents neu
+   erzeugen (siehe [[Playwright]]).
+4. Grün: mergen. Rot: das Paket hat etwas geändert, mit `fehler-diagnose` eingrenzen.
+   - Rot nur bei `format:check` nach einem Prettier-Update: Prettier formatiert jetzt anders. Im Branch
+     `npm run format` ausführen, committen, pushen. Nicht den ganzen PR schließen, sonst gehen die anderen Updates
+     der Gruppe mit verloren.
 
 ## Befehle
 
 ```bash
 gh pr list --author 'app/dependabot'   # offene PRs von Dependabot
+gh pr checkout <nr>                    # Branch eines PRs lokal holen, z. B. für npm run e2e
 gh pr checks <nr>                      # CI-Ergebnis vor dem Merge
 gh api repos/Matzee3007/musik-app/automated-security-fixes   # sind Sicherheits-Updates an?
 ```
