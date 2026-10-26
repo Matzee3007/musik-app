@@ -7,18 +7,18 @@ tags: [session, übergabe]
 
 # Nächste Session
 
-Stand vom 2026-10-26. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
-[[Lernjournal Phase 4 - Restpunkte und Dependabot]].
+Stand vom 2026-10-26 (zweite Session). Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes
+Journal: [[Lernjournal Phase 4 - Restpunkte und Dependabot]] (Abschnitt „Zweite Session: Online-Modus“).
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #63)
-- **Offene PRs:** zwei von Dependabot, bewusst vertagt: #59 TypeScript 5.9 → 7.0 (CI rot), #60 ESLint 9 → 10
+- **Branch:** `main` (nach dem Merge von PR #67)
+- **Offene PRs:** zwei von Dependabot, weiter bewusst vertagt: #59 TypeScript 5.9 → 7.0 (CI rot), #60 ESLint 9 → 10
   (CI grün). Keine offenen PRs aus der Session.
 - **Nicht committet:** nichts. `.env.local` mit Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git
   ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit allen Restpunkten vom 2026-10-26 (PR #52 bis #62): CI
-  abgesichert, Dependabot an (auch Sicherheits-Updates), Startseite mit Hinweis ohne Netz, Next 16.4.3, React 19.3.1.
+- **Production:** `https://musik-bingo.vercel.app` mit dem **Online-Modus** samt Ton vom DJ (PR #64 bis #66,
+  [[0008-online-modus-mit-ton-vom-dj|ADR 0008]]).
 
 ## Vor dem Start
 
@@ -37,56 +37,50 @@ Stand vom 2026-10-26. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
    git pull
    ```
 
-   `git switch main` wechselt auf den Hauptzweig, `git pull` holt den Stand von GitHub (auch gemergte
-   Dependabot-PRs).
+   `git switch main` wechselt auf den Hauptzweig, `git pull` holt den Stand von GitHub.
 
-3. Neue PRs von Dependabot ansehen. Er öffnet jede Woche welche:
+3. Neue PRs von Dependabot ansehen (er öffnet jede Woche welche):
 
    ```bash
    gh pr list --author 'app/dependabot'
    ```
 
-   Ablauf vor dem Merge (lokal `npm run e2e`, Port 3000 vorher frei):
-   [[projects/musik-app/docs/tools/Dependabot - Einrichtung|Dependabot - Einrichtung]].
+   Ablauf vor dem Merge: [[projects/musik-app/docs/tools/Dependabot - Einrichtung|Dependabot - Einrichtung]].
 
 ## Womit es weitergeht
 
-**Phase 4 – Eigene Ideen** läuft weiter. Für den nächsten Schritt gibt es noch keinen Plan. Claude fragt deshalb
-zuerst, was als Nächstes ansteht. Vorschläge:
+**Phase 4 – Eigene Ideen** läuft weiter. Der Online-Modus ist spielbar (Teil 1 und 3 fertig). Claude fragt zuerst, was
+als Nächstes ansteht. Vorschläge:
 
-1. **Prüfung an echten Geräten** (am besten an einem Spieleabend):
-   - **Vorher Supabase prüfen:** Kostenlose Projekte pausieren nach 7 Tagen ohne Datenbank-Aktivität. Befehl und
-     „Resume project“: [[projects/musik-app/docs/tools/Supabase|Supabase]], Abschnitt „Pausiert das kostenlose
-     Projekt?“. Dabei notieren, ob es pausiert war: So klärt sich, ob Realtime als Aktivität zählt.
-   - Handy: Kreuz und hochkantige Felder auf iOS und Android, auch mit eingeblendeter Adressleiste. Passt die Karte
-     mit Notizen und „Bingo!“ ohne Scrollen?
-   - Laptop: Wellenlinie mit echter Musik (Tempo, Unruhe), Schublade über dem Rad auf einem 13-Zoll-Laptop.
-   - Mit einer echten Playlist: „<n> Songs mit unsicherem Jahr“ vor dem Spiel und „Jahr unsicher“ in der Auflösung.
-   - Startseite ohne Netz: WLAN aus, Seite neu laden, erscheint der Hinweis „Spotify ist gerade nicht erreichbar“?
-2. **Nächstes Stück Phase 4 mit `grill-with-docs` schärfen**, dann `plan-schreiben`. Offen laut Roadmap: Scoreboard
-   über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy, aus Phase 3 verschoben: Songs und
-   Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar, Kategorie und Lösung auch auf dem Handy,
-   Playwright in der CI, Tisch macht nach dem Neuladen im Spiel weiter.
-3. **Große Updates von Dependabot**, je eine eigene kleine Aufgabe:
-   - #59 TypeScript 7.0: CI rot, mit `fehler-diagnose` eingrenzen (`gh run view <id> --log-failed`).
-   - #60 ESLint 10: CI grün, trotzdem lesen, was sich geändert hat (Regeln, `eslint-config-next`), und `npm run e2e`.
-4. **Restpunkte**, wenn Zeit ist:
-   - Aus dem Review von PR #55: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) hat dieselbe Lücke ohne Netz wie
-     vorher die Startseite, der Spieler bekommt dann ein rohes „Failed to fetch“.
-   - Beobachten: In #62 kamen `react` und `react-dom` in die Gruppe `npm-klein` statt in `react`. Beim nächsten
-     großen React-Update prüfen, ob die Gruppe greift, sonst `.github/dependabot.yml` anpassen.
-   - Aus dem Review von PR #45: Karte im Querformat oder auf dem Tablet mit „Notizen aus“ höher als der Bildschirm;
-     Idee, die Kartengröße aus der Bildschirmhöhe zu berechnen statt aus festen Grenzen (800 px, `py-4`).
-   - `e2e/raum.spec.ts` beobachten: fiel einmal bei vollem `npm run e2e` aus, am 2026-10-26 fünfmal grün (alle Läufe mit 13 von 13). Beim nächsten
-     Ausfall sofort `test-results/` lesen.
-   - Aus älteren Übergaben: Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`.
-
-Punkte fürs Ecosystem und für tages-dashboard aus dieser Session stehen in deren Übergaben.
+1. **Online-Spieleabend mit Freunden** als echter Test:
+   - Vorher Supabase prüfen (pausiert nach 7 Tagen ohne Datenbank-Aktivität): Befehl in
+     [[projects/musik-app/docs/tools/Supabase|Supabase]], Abschnitt „Pausiert das kostenlose Projekt?“.
+   - DJ in Chrome oder Edge am Laptop: „Online spielen“, Playlist, „Ton teilen“, im Dialog „Dieser Tab“ mit
+     „Tab-Audio teilen“. Spieler treten mit dem Raum-Code auf `musik-bingo.vercel.app` bei.
+   - Beobachten: Bekommt jeder Ton (sonst braucht jemand hinter strengem NAT TURN, siehe [[WebRTC]])? Passen Tisch
+     und Karte bei den Spielern auf den Bildschirm (am Laptop ca. 1100 px hoch, der DJ muss für „Nächste Runde“
+     scrollen)?
+2. **Teil 2 des Online-Modus mit `plan-schreiben` planen:** Notizen in der Auflösung. Jeder schickt seine Notizfläche
+   mit, die Auflösung zeigt alle Antworten, der DJ sieht vorher, wer schon etwas notiert hat. Optional danach:
+   automatische Auflösung, sobald alle geantwortet haben.
+3. **Offene Review-Funde**, je klein:
+   - PR #65: Nr. 3 Name des DJs ist frei, solange er kurz weg ist; Nr. 5 „Jahr unsicher“ fehlt bei den Spielern
+     (`jahrUnsicher` im Stand mitschicken); Nr. 8 leere Handler beim Zuschauer-`Tisch`; Nr. 9 doppelter Zweig in
+     `anwesendeLesen`.
+   - PR #66: Nr. 9 Scheitert das Annehmen eines Angebots, bleibt der Spieler bis zum nächsten Versuch stumm. Nr. 4 und
+     8 (Reihenfolge der Kandidaten, Angebote nacheinander) nur bei Auffälligkeiten.
+   - Karte der Demo ohne Raum wirkt am Laptop vermutlich auseinandergezogen wie vorher die des DJs (im Online-Modus mit
+     `items-start` behoben).
+4. **Große Updates von Dependabot**, je eine eigene kleine Aufgabe: #59 TypeScript 7.0 (CI rot, mit `fehler-diagnose`
+   eingrenzen), #60 ESLint 10 (CI grün, trotzdem Änderungen lesen und `npm run e2e`).
+5. **Restpunkte aus der letzten Übergabe**, wenn Zeit ist: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) ohne Netz,
+   Gruppe `react` in `.github/dependabot.yml` beobachten, Karte im Querformat oder auf dem Tablet, `e2e/raum.spec.ts`
+   beobachten, Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`. Weitere Roadmap-Punkte in der Projektvision.
 
 Vor dem Start eines neuen Plans `docs/Tools für später.md` auf vorgemerkte Werkzeuge für Phase 4 prüfen.
 
 ## Passende Skills
 
-- `grill-with-docs`: das nächste Stück Phase 4 in Fragerunden klären
-- `plan-schreiben`: daraus einen Plan in prüfbaren Aufgaben machen
-- `fehler-diagnose`: für die rote CI von #59 (TypeScript 7) oder wenn an echten Geräten etwas nicht passt
+- `plan-schreiben`: Teil 2 des Online-Modus planen
+- `fehler-diagnose`: wenn am Online-Spieleabend etwas nicht klingt oder nicht verbindet, oder für #59
+- `tdd`: beim Abarbeiten der Review-Funde
