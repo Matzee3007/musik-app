@@ -139,6 +139,24 @@ test("ohne Netz: Anmelden und Demo mit Hinweis, das Token bleibt gespeichert", a
   expect(localStorage.getItem("musik-app:spotify-token")).not.toBeNull();
 });
 
+test("ohne Netz mit gültigem Token: Hinweis statt leerer Playlist-Liste", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(Date.now() + 3_600_000);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => {
+      throw new TypeError("Failed to fetch");
+    }),
+  );
+  render(<Start />);
+  expect(
+    await screen.findByText(
+      "Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu laden.",
+    ),
+  ).toBeDefined();
+  expect(localStorage.getItem("musik-app:spotify-token")).not.toBeNull();
+});
+
 test("lehnt Spotify das Token beim Laden ab, wird abgemeldet", async () => {
   vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
   angemeldet(Date.now() + 3_600_000);

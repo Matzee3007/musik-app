@@ -53,7 +53,8 @@ export default function Start({
 
   useEffect(() => {
     (id ? gueltigesToken(id) : Promise.resolve(null))
-      .catch(() => {
+      .catch((fehler) => {
+        console.error(fehler);
         setUnerreichbar(true);
         return null;
       })
@@ -80,7 +81,8 @@ export default function Start({
           abmelden();
           setToken(null);
         } else {
-          throw fehler;
+          console.error(fehler);
+          setUnerreichbar(true);
         }
       });
   }, [token]);
@@ -189,10 +191,18 @@ export default function Start({
       </Knopf>
     );
 
+    const unerreichbarHinweis = unerreichbar && (
+      <p className="max-w-sm text-sm text-licht/70">
+        Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu
+        laden.
+      </p>
+    );
+
     if (token) {
       return (
         <div className="flex w-full max-w-md flex-col items-center gap-4">
           <h2 className="font-schild text-2xl">Deine Playlists</h2>
+          {unerreichbarHinweis}
           <ul className="flex w-full flex-col gap-2">
             {playlists.map((p) => (
               <li key={p.id}>
@@ -226,12 +236,7 @@ export default function Start({
             NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
           </p>
         )}
-        {unerreichbar && (
-          <p className="max-w-sm text-sm text-licht/70">
-            Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite
-            neu laden.
-          </p>
-        )}
+        {unerreichbarHinweis}
         {demoKnopf}
       </div>
     );
