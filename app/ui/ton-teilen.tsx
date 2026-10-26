@@ -16,8 +16,11 @@ function tabTeilen(): Promise<MediaStream> {
   } as DisplayMediaStreamOptions);
 }
 
+// fragt: Chromes Dialog ist offen, ein zweiter Klick startete sonst ein zweites Teilen.
 type Zustand =
-  { art: "aus"; hinweis?: string } | { art: "teilt"; verbunden: number };
+  | { art: "fragt" }
+  | { art: "aus"; hinweis?: string }
+  | { art: "teilt"; verbunden: number };
 
 // Im Online-Raum (ADR 0008): Der DJ teilt den Ton seines Tabs mit allen Spielern.
 export default function TonTeilen({
@@ -37,6 +40,8 @@ export default function TonTeilen({
   useEffect(() => () => beenden.current?.(), []);
 
   async function starten() {
+    if (zustand.art !== "aus") return;
+    setZustand({ art: "fragt" });
     let strom: MediaStream;
     try {
       strom = await teilen();
@@ -89,10 +94,10 @@ export default function TonTeilen({
   }
   return (
     <div className="flex flex-col items-center gap-2">
-      <Knopf art="neben" onClick={starten}>
+      <Knopf art="neben" onClick={starten} disabled={zustand.art === "fragt"}>
         Ton teilen
       </Knopf>
-      {zustand.hinweis && (
+      {zustand.art === "aus" && zustand.hinweis && (
         <p role="alert" className="max-w-sm text-sm text-signal">
           {zustand.hinweis}
         </p>

@@ -125,6 +125,23 @@ test("scheitert das Teilen aus anderem Grund, ein Hinweis", async () => {
   expect(screen.getByRole("button", { name: "Ton teilen" })).toBeDefined();
 });
 
+// Fund aus dem Review von PR #66: Ein Doppelklick startete zweimal, das erste Teilen lief unbemerkt weiter.
+test("während der Dialog offen ist, startet ein zweiter Klick nichts", async () => {
+  const { strom } = nachgebauterStrom();
+  let fertig: (s: MediaStream) => void = () => {};
+  const teilen = vi.fn(() => new Promise<MediaStream>((gut) => (fertig = gut)));
+  const { senden } = zeigen(teilen);
+  await klick("Ton teilen");
+  const knopf = screen.getByRole<HTMLButtonElement>("button", {
+    name: "Ton teilen",
+  });
+  expect(knopf.disabled).toBe(true);
+  await klick("Ton teilen");
+  expect(teilen).toHaveBeenCalledTimes(1);
+  await act(async () => fertig(strom));
+  expect(senden).toHaveBeenCalledTimes(1);
+});
+
 test("beim Verschwinden endet das Teilen", async () => {
   const { strom } = nachgebauterStrom();
   const { stopp, unmount } = zeigen(async () => strom);
