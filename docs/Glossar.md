@@ -66,13 +66,22 @@ _Nicht verwenden_: Offline-Modus, Testmodus
 
 ## Rollen und Geräte
 
+**Lokaler Modus**:
+Alle sitzen im selben Raum, der Laptop ist der Tisch und spielt die Musik, die Spieler haben ihre Karte auf dem Handy.
+_Nicht verwenden_: Offline-Modus, Party-Modus
+
+**Online-Modus**:
+Jeder spielt an seinem eigenen Gerät an einem anderen Ort; es gibt keinen Tisch, jeder sieht Rad und Auflösung selbst,
+und der DJ streamt den Ton an alle ([[0008-online-modus-mit-ton-vom-dj|ADR 0008]]).
+_Nicht verwenden_: Remote-Modus, Discord-Modus
+
 **Tisch**:
 Das gemeinsame Gerät (meist der Laptop), das Rad, Musik und Auflösung zeigt; es hat keine Karte.
 _Nicht verwenden_: Host, Spielbrett
 
 **DJ**:
 Die Person, die den Raum eröffnet, sich bei Spotify anmeldet und den Tisch bedient; sie kann zusätzlich als Spieler
-beitreten.
+beitreten. Im Online-Modus spielt sie immer mit und streamt den Ton an alle.
 _Nicht verwenden_: Spielleiter, Admin
 
 **Spieler**:
