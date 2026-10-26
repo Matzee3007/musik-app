@@ -113,6 +113,18 @@ test("abgebrochener Dialog: wieder Ton teilen, kein Hinweis", async () => {
   expect(screen.queryByRole("alert")).toBeNull();
 });
 
+test("scheitert das Teilen aus anderem Grund, ein Hinweis", async () => {
+  const { senden } = zeigen(async () => {
+    throw new Error("kaputt");
+  });
+  await klick("Ton teilen");
+  expect(senden).not.toHaveBeenCalled();
+  expect(screen.getByRole("alert").textContent).toBe(
+    "Teilen hat nicht geklappt.",
+  );
+  expect(screen.getByRole("button", { name: "Ton teilen" })).toBeDefined();
+});
+
 test("beim Verschwinden endet das Teilen", async () => {
   const { strom } = nachgebauterStrom();
   const { stopp, unmount } = zeigen(async () => strom);

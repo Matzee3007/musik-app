@@ -142,6 +142,36 @@ test("ein Kandidat vor der fertigen Antwort wird erst danach eingetragen", async
   expect(beiFehler).not.toHaveBeenCalled();
 });
 
+test("ein Fehler geht an beiFehler, die nächsten Signale kommen trotzdem dran", async () => {
+  const { alle, schicken, beiFehler } = senden();
+  await schicken({ art: "hallo", von: "anna", versuch: "a1" });
+  // Ein Kandidat ohne Antwort davor: Der Nachbau lehnt ab wie das Original.
+  await schicken({
+    art: "kandidat",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    kandidat: { candidate: "zu-frueh" },
+  });
+  expect(beiFehler).toHaveBeenCalledTimes(1);
+  await schicken({
+    art: "antwort",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    sdp: antwort,
+  });
+  await schicken({
+    art: "kandidat",
+    an: "dj",
+    von: "anna",
+    versuch: "a1",
+    kandidat: { candidate: "k-anna" },
+  });
+  expect(alle[0].entfernt).toEqual(antwort);
+  expect(alle[0].kandidaten).toEqual([{ candidate: "k-anna" }]);
+});
+
 test("neues hallo desselben Spielers schließt die alte Verbindung und zählt ihn einmal", async () => {
   const { alle, schicken, beiAnzahl } = senden();
   await schicken({ art: "hallo", von: "anna", versuch: "a1" });
