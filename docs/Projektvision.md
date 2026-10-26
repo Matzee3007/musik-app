@@ -42,6 +42,10 @@ DJ bedient ihn. Spieler treten mit Raum-Code und Namen bei, ohne Konto, und habe
 auf dem eigenen Handy. Der DJ kann mit seinem Handy zusätzlich als Spieler mitmachen. Später soll der Tisch auch
 ganz auf einem Handy laufen können.
 
+**Online-Modus:** Neben diesem lokalen Modus soll man auch von verschiedenen Orten aus spielen können, jeder an
+seinem PC. Der DJ eröffnet den Raum, lädt die Playlist, spielt mit und streamt den Ton per WebRTC an alle. Jeder sieht
+Rad, Kategorie und Auflösung selbst neben seiner Karte ([[0008-online-modus-mit-ton-vom-dj|ADR 0008]]).
+
 **Eigene Ideen:** Scoreboard, wer an einem Spieleabend die meisten Spiele gewonnen hat. Weitere Kategorien (vorgemerkt:
 Gruppe oder Solo, Vor 2000?, Jahr ±4 und ±2, Herkunftsland des Interpreten, Titel und Interpret, Mitsingen); der DJ
 wählt dann je Spiel 5 Kategorien aus. Verworfen: Sprache (hört man), Genre und Album (Spotify-Daten unzuverlässig).
@@ -108,7 +112,8 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
   Erscheinungsjahr über MusicBrainz, Korrektur durch den DJ, animierte Musikspur am Tisch (abgeschlossen 2026-10-20, PRs #13 bis #15)
 - [x] **Phase 3 – Mehrspieler:** Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase
   Realtime, Deployment auf Vercel. Dazu Spieler-Bots für Browser-Tests (abgeschlossen 2026-10-22, PRs #21 bis #33)
-- [ ] **Phase 4 – Eigene Ideen:** Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy.
+- [ ] **Phase 4 – Eigene Ideen:** Online-Modus ([[0008-online-modus-mit-ton-vom-dj|ADR 0008]]), Scoreboard über
+  einen Spieleabend, weitere Kategorien, Tisch ganz am Handy.
   Aus Phase 3 verschoben: Songs und Erscheinungsjahre in Supabase, Stechen, Bingo-Erkennung abschaltbar,
   Kategorie und Lösung auch auf dem Handy, Playwright in der CI, Tisch macht nach dem Neuladen im Spiel weiter
 
