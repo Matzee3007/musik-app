@@ -64,6 +64,8 @@ seines Spotify-Tabs an andere Browser schicken kann:
 - Der DJ hört jeden Song etwa 1 Sekunde früher als die anderen. Für das Spiel ohne Zeitlimit ist das egal.
 - Jede Verbindung geht direkt vom DJ zu einem Spieler (Mesh). Für einen Freundeskreis reicht das, bei vielen Spielern
   wächst die Last beim DJ.
+- Die Verbindungsdaten laufen über den Kanal des Raums, jeder im Raum sieht die Netzadressen (ICE-Kandidaten) aller
+  Verbindungen, auch die nicht für ihn bestimmten. Unter Freunden in Ordnung.
 - Manche Netze (Firmen-WLAN, strenges NAT) lassen keine direkte Verbindung zu. Dann bräuchte es einen TURN-Server,
   der meist etwas kostet. Erst lösen, wenn es vorkommt.
 - Der Online-Modus braucht eine Spieleransicht für den PC (Rad, Kategorie, Auflösung und Karte zugleich) und Platz für
