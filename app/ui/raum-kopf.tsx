@@ -51,7 +51,7 @@ export default function RaumKopf({
       const bekannt = spielerleiste(raum.bekannt, anwesende, {}, null).map(
         (s) => s.name,
       );
-      tischRaumSpeichern({ code, bekannt });
+      tischRaumSpeichern({ ...raum, bekannt });
       setListe({ bekannt, anwesende });
     }
     const anwesendeAb = kanal.beiAnwesenden(neueAnwesende);

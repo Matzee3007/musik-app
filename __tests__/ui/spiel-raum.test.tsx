@@ -203,3 +203,20 @@ test("online: Bingo des DJs und eines Spielers stehen beide in der Liste", () =>
     screen.getByRole("heading", { name: "Bingo! Anna, Matthias" }),
   ).toBeDefined();
 });
+
+// Fund aus dem Review: Wie bei den Spielern (darfZuruecknehmen) bleibt ein Bingo bestehen.
+test("online: nach dem Bingo des DJs lässt sich nichts zurücknehmen", () => {
+  vi.spyOn(window, "confirm").mockReturnValue(true);
+  const { stand } = spielen(undefined, undefined, "Matthias", () => 0.999);
+  for (let runde = 0; runde < 5; runde++) {
+    drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    klick("Lösung anzeigen");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
+    );
+  }
+  const feld = screen.getAllByRole("button", { name: /^Feld / })[20];
+  fireEvent.click(feld);
+  expect(feld.getAttribute("aria-pressed")).toBe("true");
+  expect(stand().bingo).toEqual(["Matthias"]);
+});

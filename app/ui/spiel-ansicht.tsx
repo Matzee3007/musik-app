@@ -263,7 +263,8 @@ export default function SpielAnsicht({
   const gestartet = spiel !== null;
   useEffect(() => {
     if (!gestartet) return;
-    // Eine Jahreskorrektur ändert die Runde, aber nicht, was die Handys sehen: dann nichts melden.
+    // Lokal ändert eine Jahreskorrektur die Runde, aber nicht, was die Handys sehen: dann nichts melden. Online
+    // sehen die Spieler das korrigierte Jahr, der Stand geht neu raus.
     const stand = tischStand(spielId, runde, alleBingo, online);
     const text = JSON.stringify(stand);
     if (text === gemeldet.current) return;
@@ -340,7 +341,11 @@ export default function SpielAnsicht({
               const neu = feldAbhaken(spiel, index);
               setSpiel(neu);
               if (hatBingo(neu.karte)) musikAnhalten();
-            } else if (window.confirm("Abhaken zurücknehmen?")) {
+            } else if (
+              // Online bleibt ein Bingo wie bei den Spielern bestehen (darfZuruecknehmen).
+              !(online && imRaumBingo) &&
+              window.confirm("Abhaken zurücknehmen?")
+            ) {
               setSpiel(abhakenZuruecknehmen(spiel, index));
             }
           }}

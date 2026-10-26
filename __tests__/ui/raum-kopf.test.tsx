@@ -35,7 +35,7 @@ function kopf(
   stand: TischStand | null = null,
   dj?: string,
 ) {
-  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  tischRaumSpeichern({ code: "ABCD", bekannt: [], ...(dj && { dj }) });
   const zeigen = (stand: TischStand | null) => (
     <RaumKopf
       code="ABCD"
@@ -76,6 +76,22 @@ test("im Online-Raum meldet sich der Tisch mit dem Namen des DJs an", async () =
       name: "Matthias",
     }),
   );
+});
+
+// Fund aus dem Review: Das Speichern der Spielerleiste warf dj weg, nach dem Neuladen war der Raum lokal.
+test("neue Anwesende lassen den Online-Raum online", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, null, "Matthias");
+  await waitFor(() => expect(raum.angemeldet).toHaveLength(1));
+  act(() =>
+    raum.anwesendeSetzen([
+      { schluessel: "s1", rolle: "spieler", name: "Anna" },
+    ]),
+  );
+  expect(tischRaumLaden()).toEqual({
+    code: "ABCD",
+    bekannt: ["Anna"],
+    dj: "Matthias",
+  });
 });
 
 test("zeigt verbundene Spieler und graut gegangene aus", async () => {

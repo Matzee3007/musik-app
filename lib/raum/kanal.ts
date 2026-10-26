@@ -59,10 +59,11 @@ export type KanalOeffnen = (code: string, schluessel: string) => RaumKanal;
 function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
   return Object.values(zustand).map(([a]) => {
     if (a.rolle === "tisch") {
+      // Fremde Geräte können in Presence alles eintragen: nur Text gilt als Name.
       const { schluessel, rolle, name } = a;
-      return name === undefined
-        ? { schluessel, rolle }
-        : { schluessel, rolle, name };
+      return typeof name === "string"
+        ? { schluessel, rolle, name }
+        : { schluessel, rolle };
     }
     const { schluessel, rolle, name } = a;
     return { schluessel, rolle, name };
