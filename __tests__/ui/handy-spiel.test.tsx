@@ -235,3 +235,45 @@ test("Notizen aus wird gemerkt", () => {
   fireEvent.click(screen.getByRole("button", { name: "Notizen an" }));
   expect(screen.getByLabelText("Notizen")).toBeDefined();
 });
+
+const online: TischStand = { ...runde3, online: true };
+const onlineAufgeloest: TischStand = {
+  ...online,
+  runde: {
+    ...runde3.runde!,
+    aufgeloest: true,
+    song: { titel: "Bohemian Rhapsody", interpret: "Queen", jahr: 1975 },
+  },
+};
+
+test("online: Rad und Kategorie neben der Karte", () => {
+  spielen(online);
+  expect(screen.getByRole("img", { name: "Rad" })).toBeDefined();
+  expect(screen.getByRole("status").textContent).toBe("Titel");
+  expect(felder()).toHaveLength(25);
+});
+
+test("online: nach der Auflösung Lösung und Angaben", () => {
+  spielen(onlineAufgeloest);
+  expect(
+    screen.getByRole("heading", { level: 2, name: "Bohemian Rhapsody" }),
+  ).toBeDefined();
+  expect(screen.getByText("Queen")).toBeDefined();
+});
+
+test("online: Bingo eines anderen steht am Tisch", () => {
+  spielen({ ...onlineAufgeloest, bingo: ["Matthias"] });
+  expect(
+    screen.getByRole("heading", { name: "Bingo! Matthias" }),
+  ).toBeDefined();
+});
+
+test("lokal kein Rad am Handy", () => {
+  spielen(runde3);
+  expect(screen.queryByRole("img", { name: "Rad" })).toBeNull();
+});
+
+test("online ohne Tisch: Der DJ ist gerade nicht verbunden.", () => {
+  spielen(online, []);
+  expect(screen.getByText("Der DJ ist gerade nicht verbunden.")).toBeDefined();
+});

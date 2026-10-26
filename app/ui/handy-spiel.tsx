@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
+import Tisch from "@/app/ui/tisch";
 import { bingoLinie } from "@/lib/bingo";
 import {
   abhaken,
@@ -20,10 +21,15 @@ import {
   notizenSpeichern,
 } from "@/lib/raum/speicher";
 import { tischDa, type Anwesend } from "@/lib/raum/spieler";
-import type { SpielerStand, TischStand } from "@/lib/raum/stand";
+import {
+  rundeAusStand,
+  type SpielerStand,
+  type TischStand,
+} from "@/lib/raum/stand";
 import type { Zufall } from "@/lib/zufall";
 
-// Das Spiel am Handy: Karte zum Spiel des Tischs, abhaken nach der Auflösung, den eigenen Stand melden.
+// Das Spiel am Handy: Karte zum Spiel des Tischs, abhaken nach der Auflösung, den eigenen Stand melden. Im
+// Online-Modus (ADR 0008) steht daneben der Tisch des DJs ohne Knöpfe.
 export default function HandySpiel({
   code,
   name,
@@ -97,6 +103,7 @@ export default function HandySpiel({
   }, [kanal, name, meldeSpiel, meldeZahl, meldeBingo]);
 
   const linie = karte && bingoLinie(karte.karte);
+  const online = stand?.online === true;
 
   function feldKlick(index: number) {
     if (!stand || !karte) return;
@@ -121,13 +128,19 @@ export default function HandySpiel({
         </p>
       )}
       {!tischDa(anwesende) ? (
-        <p className="text-signal">Der Tisch ist gerade nicht verbunden.</p>
+        <p className="text-signal">
+          {online
+            ? "Der DJ ist gerade nicht verbunden."
+            : "Der Tisch ist gerade nicht verbunden."}
+        </p>
       ) : (
         !karte && <p>Warte auf das Spiel …</p>
       )}
       {linie ? (
         <h2 className="font-schild text-5xl text-akzent">Bingo!</h2>
       ) : (
+        // Online nennt der Tisch daneben die Gewinner.
+        !online &&
         stand &&
         stand.bingo.length > 0 && (
           <h2 className="font-schild text-2xl text-akzent">
@@ -135,43 +148,68 @@ export default function HandySpiel({
           </h2>
         )
       )}
-      {stand && karte && (
-        <>
-          {/* Ohne Notizfläche wird die Karte größer. */}
-          <div className={`w-full ${notizen ? "max-w-sm" : "max-w-lg"}`}>
-            <KarteAnsicht
-              karte={karte.karte}
-              onFeldKlick={feldKlick}
-              ausgegraut={(i) =>
-                !karte.karte[i].abgehakt && !feldFrei(karte, stand, i)
-              }
-              hervorgehoben={linie ?? undefined}
-              felder={notizen ? "hoch" : "hoeher"}
+      {stand &&
+        karte &&
+        (online ? (
+          <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
+            <Tisch
+              zuschauer
+              runde={rundeAusStand(stand)}
+              stapelLeer={false}
+              bingo={stand.bingo.length > 0}
+              gewinner={stand.bingo}
+              onRadDrehen={() => {}}
+              onLoesungAnzeigen={() => {}}
+              onVonVorn={() => {}}
+              onNeuesSpiel={() => {}}
             />
+            <div className="flex flex-col items-center gap-4">
+              {kartenteil(stand, karte)}
+            </div>
           </div>
-          {notizen && (
-            <label className="flex w-full max-w-sm flex-col gap-1 text-left text-licht/70">
-              Notizen
-              {/* Neuer key bei jeder Runde und jedem Spiel: Die Notizfläche beginnt leer. */}
-              <textarea
-                key={`${stand.spiel}-${stand.runde?.nummer}`}
-                rows={3}
-                // Auf niedrigen Handys nur 2 Zeilen, damit Karte und Notizen auch mit „Bingo!“ ohne Scrollen passen.
-                className="rounded-lg bg-flaeche px-3 py-2 text-licht outline-akzent focus-visible:outline-2 [@media(max-height:800px)]:h-[calc(2lh+1rem)]"
-              />
-            </label>
-          )}
-          <button
-            className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
-            onClick={() => {
-              notizenSpeichern(!notizen);
-              setNotizen(!notizen);
-            }}
-          >
-            {notizen ? "Notizen aus" : "Notizen an"}
-          </button>
-        </>
-      )}
+        ) : (
+          kartenteil(stand, karte)
+        ))}
     </div>
   );
+
+  function kartenteil(stand: TischStand, karte: HandyKarte) {
+    return (
+      <>
+        {/* Ohne Notizfläche wird die Karte größer. */}
+        <div className={`w-full ${notizen ? "max-w-sm" : "max-w-lg"}`}>
+          <KarteAnsicht
+            karte={karte.karte}
+            onFeldKlick={feldKlick}
+            ausgegraut={(i) =>
+              !karte.karte[i].abgehakt && !feldFrei(karte, stand, i)
+            }
+            hervorgehoben={linie ?? undefined}
+            felder={notizen ? "hoch" : "hoeher"}
+          />
+        </div>
+        {notizen && (
+          <label className="flex w-full max-w-sm flex-col gap-1 text-left text-licht/70">
+            Notizen
+            {/* Neuer key bei jeder Runde und jedem Spiel: Die Notizfläche beginnt leer. */}
+            <textarea
+              key={`${stand.spiel}-${stand.runde?.nummer}`}
+              rows={3}
+              // Auf niedrigen Handys nur 2 Zeilen, damit Karte und Notizen auch mit „Bingo!“ ohne Scrollen passen.
+              className="rounded-lg bg-flaeche px-3 py-2 text-licht outline-akzent focus-visible:outline-2 [@media(max-height:800px)]:h-[calc(2lh+1rem)]"
+            />
+          </label>
+        )}
+        <button
+          className="text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
+          onClick={() => {
+            notizenSpeichern(!notizen);
+            setNotizen(!notizen);
+          }}
+        >
+          {notizen ? "Notizen aus" : "Notizen an"}
+        </button>
+      </>
+    );
+  }
 }
