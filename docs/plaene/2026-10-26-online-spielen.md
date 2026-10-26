@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Online spielen (ohne Ton)"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-10-26
 tags: [plan, online-modus, raum, phase-4]
 ---
