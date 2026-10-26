@@ -83,7 +83,7 @@ selbst.
   - `rundeAusStand(stand: TischStand): Runde | null`: Kategorie aus `KATEGORIEN` per Id, Song aus `song` oder vor der
     Auflösung ein leerer Song `{ id: "", titel: "", interpret: "", jahr: 0 }`, `abgehaktesFeld: null`.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 test("online nach der Auflösung: Stand mit online und den Angaben zum Song", () => {
@@ -121,21 +121,21 @@ test("rundeAusStand baut die Runde, vor der Auflösung mit leerem Song", () => {
 
 `runde` ist eine Runde 1, Kategorie Titel, mit dem Song „Bohemian Rhapsody“, Queen, 1975 aus `SONGLISTE`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/stand.test.ts`
 Erwartet: FAIL, `rundeAusStand` ist nicht exportiert, `stand.online` ist `undefined`.
 
-- [ ] **Schritt 3: `tischStand`, `istTischStand` und `rundeAusStand` in `lib/raum/stand.ts`**
+- [x] **Schritt 3: `tischStand`, `istTischStand` und `rundeAusStand` in `lib/raum/stand.ts`**
 
 `online` nur setzen, wenn wahr (damit lokale Stände unverändert bleiben), `song` nur bei `online && aufgeloest`.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/lib/raum/stand.test.ts`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -153,7 +153,7 @@ git commit -m "Send song details in online table state after reveal"
 - Liefert: `Anwesend = { schluessel: string; rolle: "tisch"; name?: string } | { schluessel; rolle: "spieler"; name }`.
   `nameVergeben` zählt den Namen des Tischs wie den eines anderen Spielers.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```ts
 // spieler.test.ts
@@ -168,21 +168,21 @@ test("ein Tisch mit Namen behält ihn, presence_ref fällt weg", ...);
 // erwartet [{ schluessel: "t", rolle: "tisch", name: "Matthias" }]
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/lib/raum/spieler.test.ts __tests__/lib/raum/kanal.test.ts`
 Erwartet: FAIL, Typfehler bei `name` am Tisch und `false` statt `true`.
 
-- [ ] **Schritt 3: `Anwesend` und `nameVergeben` in `lib/raum/spieler.ts`, `anwesendeLesen` in `lib/raum/kanal.ts`**
+- [x] **Schritt 3: `Anwesend` und `nameVergeben` in `lib/raum/spieler.ts`, `anwesendeLesen` in `lib/raum/kanal.ts`**
 
 Ein Tisch ohne Namen bleibt `{ schluessel, rolle }` ohne Feld `name` (die vorhandenen Tests prüfen mit `toEqual`).
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/lib/raum`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -202,7 +202,7 @@ git commit -m "Treat the online DJ's name as taken"
   der Hinweis „Richtig? Hake ein Feld … ab.“ bleibt. Für alle gilt: Wechselt `runde.nummer` zwischen zwei Rendern, dreht
   das Rad (`dreht` wahr bis `onStillstand`), auch ohne Klick auf „Rad drehen“. Beim ersten Rendern dreht es nicht.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 test("Zuschauer sieht keine Knöpfe", () => {
@@ -229,22 +229,22 @@ test("Beitritt in einer aufgelösten Runde: Lösung sofort, das Rad dreht nicht"
 
 `neu(runde)` rendert denselben `Tisch` mit `rerender` und neuer Runde.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/tisch-zuschauer.test.tsx`
 Erwartet: FAIL, Knöpfe vorhanden und `status` sofort sichtbar.
 
-- [ ] **Schritt 3: `zuschauer` und Drehen bei neuer Rundennummer in `app/ui/tisch.tsx`**
+- [x] **Schritt 3: `zuschauer` und Drehen bei neuer Rundennummer in `app/ui/tisch.tsx`**
 
 Rundennummer wie in `HandySpiel` beim Rendern vergleichen (State mit der zuletzt gesehenen Nummer), nicht im Effekt.
 `drehen()` setzt `dreht` weiter selbst, damit sich am DJ-Tisch nichts ändert.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 Erwartet: PASS, auch die vorhandenen Tests von `SpielAnsicht`.
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -263,7 +263,7 @@ git commit -m "Add spectator mode to the table view"
 - Liefert: `raum?: { kanal; onStand; dj?: string }`. Mit `dj`: Karte (`KarteAnsicht` mit `spiel.karte`) neben dem Tisch
   im Layout ohne Raum, Stand mit `online: true`, und hat die Karte des DJs Bingo, steht `dj` in der Bingo-Liste.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 test("online: Karte des DJs am Tisch, Stand mit online und nach der Auflösung mit Song", () => {
@@ -287,22 +287,22 @@ test("online: Bingo des DJs und eines Spielers stehen beide in der Liste", () =>
 
 `spielen()` bekommt dafür `zufall` als vierten Parameter, Standard `() => 0`.
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/spiel-raum.test.tsx`
 Erwartet: FAIL, keine Felder am Tisch, `online` fehlt im Stand.
 
-- [ ] **Schritt 3: `raum.dj` in `app/ui/spiel-ansicht.tsx`**
+- [x] **Schritt 3: `raum.dj` in `app/ui/spiel-ansicht.tsx`**
 
 Bingo des DJs über `bingoNamen(alt, { [dj]: { spiel: spielId, abgehakt, bingo: true } }, spielId)` dazunehmen, sobald
 `hatBingo(spiel.karte)`. Layout und `onFeldKlick` wie im Zweig `!raum`.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -322,7 +322,7 @@ git commit -m "Let the DJ play along with a card in online rooms"
   `{ schluessel, rolle: "tisch", name: dj }` an, wenn `dj` gesetzt ist (neuer Parameter `dj?: string`).
   `Tisch.eroeffnen(browser, dj?: string)` im Bot: ohne `dj` „Lokal spielen“, mit `dj` „Online spielen“, Name, „Online-Raum eröffnen“.
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 // start.test.tsx: vorhandene Tests suchen künftig "Lokal spielen" statt "Raum eröffnen"
@@ -345,22 +345,22 @@ test("im Online-Raum meldet sich der Tisch mit dem Namen des DJs an", async () =
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/start.test.tsx __tests__/ui/raum-kopf.test.tsx`
 Erwartet: FAIL, keine Knöpfe „Lokal spielen“ und „Online spielen“.
 
-- [ ] **Schritt 3: `TischRaum.dj`, Knöpfe und Namensfeld in `start.tsx`, `dj` in `RaumKopf`, Bot anpassen**
+- [x] **Schritt 3: `TischRaum.dj`, Knöpfe und Namensfeld in `start.tsx`, `dj` in `RaumKopf`, Bot anpassen**
 
 Das Namensfeld wie in `HandyRaum` (`label` „Dein Name“, `nameLesen`). `dj` aus `tischRaum` an `RaumKopf` und an das
 `raum`-Objekt in `ablauf()` geben, `VorbereitenAnsicht` reicht es schon an `SpielAnsicht` weiter.
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -380,7 +380,7 @@ git commit -m "Add online rooms to the start page"
   `stand.bingo.length > 0`, `gewinner` = `stand.bingo`), rechts Karte und Notizen, im Layout `max-w-5xl md:grid-cols-2`.
   Ohne Tisch in Presence heißt der Hinweis online „Der DJ ist gerade nicht verbunden.“
 
-- [ ] **Schritt 1: Fehlschlagende Tests schreiben**
+- [x] **Schritt 1: Fehlschlagende Tests schreiben**
 
 ```tsx
 const online: TischStand = { ...runde3, online: true };
@@ -412,19 +412,19 @@ test("online ohne Tisch: Der DJ ist gerade nicht verbunden.", () => {
 });
 ```
 
-- [ ] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
+- [x] **Schritt 2: Tests laufen lassen, sie müssen fehlschlagen**
 
 `npx vitest run __tests__/ui/handy-spiel.test.tsx`
 Erwartet: FAIL, kein Rad am Handy.
 
-- [ ] **Schritt 3: Online-Zweig in `app/ui/handy-spiel.tsx`**
+- [x] **Schritt 3: Online-Zweig in `app/ui/handy-spiel.tsx`**
 
-- [ ] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 4: Tests laufen lassen, sie müssen bestehen**
 
 `npx vitest run __tests__/ui`
 Erwartet: PASS
 
-- [ ] **Schritt 5: Prüfen und committen**
+- [x] **Schritt 5: Prüfen und committen**
 
 ```bash
 npm run check
@@ -441,7 +441,7 @@ git commit -m "Show the table to players in online rooms"
 **Schnittstellen:**
 - Nutzt: `Tisch.eroeffnen(browser, "Matthias")` (Aufgabe 5) und den vorhandenen Spieler-Bot.
 
-- [ ] **Schritt 1: Browser-Test schreiben**
+- [x] **Schritt 1: Browser-Test schreiben**
 
 ```ts
 test("Online-Raum: DJ und Spieler sehen dieselbe Runde und haken beide ab", async ({ browser }) => {
@@ -454,17 +454,17 @@ test("Online-Raum: DJ und Spieler sehen dieselbe Runde und haken beide ab", asyn
 });
 ```
 
-- [ ] **Schritt 2: Browser-Tests laufen lassen, sie müssen bestehen**
+- [x] **Schritt 2: Browser-Tests laufen lassen, sie müssen bestehen**
 
 `npm run e2e` (Port 3000 vorher frei, nach Änderungen am Raum zusätzlich `npx playwright test --repeat-each=3`)
 Erwartet: alle Tests grün, auch die vorhandenen mit „Lokal spielen“.
 
-- [ ] **Schritt 3: Screenshots prüfen**
+- [x] **Schritt 3: Screenshots prüfen**
 
 Mit dem Playwright-MCP DJ und Spieler im Online-Raum bei 1280×800: Rad, Abschnitt zur Runde und Karte sind
 ohne seitliches Scrollen sichtbar. Fällt die Karte unter den Tisch, ist das in Ordnung, seitliches Scrollen nicht.
 
-- [ ] **Schritt 4: Prüfen und committen**
+- [x] **Schritt 4: Prüfen und committen**
 
 ```bash
 npm run check
