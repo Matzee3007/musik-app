@@ -307,7 +307,7 @@ export default function SpielAnsicht({
   const mitKarte = !raum || online;
   const spielfeld = (
     <div
-      className={`grid w-full gap-8 ${mitKarte ? "max-w-5xl md:grid-cols-2" : ""}`}
+      className={`grid w-full gap-8 ${mitKarte ? "max-w-5xl md:grid-cols-2" : ""} ${online ? "items-start" : ""}`}
     >
       <Tisch
         runde={spiel.runde}
