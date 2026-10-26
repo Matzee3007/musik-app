@@ -37,6 +37,8 @@ export default function Start({
   // undefined: noch nicht gelesen. Erst ein Effekt liest den Speicher, sonst gäbe es auf Server
   // und Browser verschiedenes HTML (Hydration-Fehler).
   const [token, setToken] = useState<Token | null | undefined>(undefined);
+  // Ohne Netz ließ sich das Token nicht erneuern, es bleibt aber gespeichert.
+  const [unerreichbar, setUnerreichbar] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [gewaehlt, setGewaehlt] = useState<Playlist | null>(null);
   // Wie das Token erst im Effekt gelesen: undefined heißt noch nicht gelesen.
@@ -50,10 +52,15 @@ export default function Start({
   const supabase = supabaseKonfiguriert();
 
   useEffect(() => {
-    (id ? gueltigesToken(id) : Promise.resolve(null)).then((t) => {
-      setToken(t);
-      setTischRaum(tischRaumLaden());
-    });
+    (id ? gueltigesToken(id) : Promise.resolve(null))
+      .catch(() => {
+        setUnerreichbar(true);
+        return null;
+      })
+      .then((t) => {
+        setToken(t);
+        setTischRaum(tischRaumLaden());
+      });
   }, [id]);
 
   // Ein Kanal je Raum, sonst bräche bei jedem Neuzeichnen die Verbindung ab.
@@ -217,6 +224,12 @@ export default function Start({
           <p className="max-w-sm text-sm text-licht/70">
             Spotify ist hier nicht eingerichtet, nur die Demo. Lokal:
             NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
+          </p>
+        )}
+        {unerreichbar && (
+          <p className="max-w-sm text-sm text-licht/70">
+            Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite
+            neu laden.
           </p>
         )}
         {demoKnopf}
