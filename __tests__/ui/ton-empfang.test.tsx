@@ -8,14 +8,12 @@ import {
 } from "@testing-library/react";
 import { nachgebauterRaum } from "../hilfen/raum-kanal";
 import TonEmpfang from "@/app/ui/ton-empfang";
-import { lautstaerke } from "@/lib/raum/speicher";
+import { lautstaerke, lautstaerkeSpeichern } from "@/lib/raum/speicher";
 import type { tonEmpfangen } from "@/lib/raum/ton";
 
 // jsdom spielt nichts ab: play() ist nachgebaut, srcObject eine einfache Eigenschaft.
-const play = vi.fn<() => Promise<void>>();
 beforeEach(() => {
-  play.mockReset().mockResolvedValue(undefined);
-  vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(play);
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
   Object.defineProperty(HTMLMediaElement.prototype, "srcObject", {
     configurable: true,
     writable: true,
@@ -30,10 +28,40 @@ afterEach(() => {
   sessionStorage.clear();
 });
 
-// Zeigt den Empfang. Der Empfang ist nachgebaut: strom() lässt den Ton vom DJ ankommen.
-function zeigen() {
+// Nachbau eines AudioContext: Ohne Klick auf der Seite bleibt er "suspended", wenn blockiert gesetzt ist.
+function nachgebauterKontext(blockiert = false) {
+  const verstaerker = { gain: { value: 1 }, connect: vi.fn() };
+  const quellen: { strom: MediaStream; ziel: unknown; getrennt: boolean }[] =
+    [];
+  const k = {
+    state: "suspended" as AudioContextState,
+    blockiert,
+    onstatechange: null as (() => void) | null,
+    destination: {},
+    createGain: () => verstaerker,
+    createMediaStreamSource(strom: MediaStream) {
+      const quelle = { strom, ziel: null as unknown, getrennt: false };
+      quellen.push(quelle);
+      return {
+        connect: (ziel: unknown) => (quelle.ziel = ziel),
+        disconnect: () => (quelle.getrennt = true),
+      };
+    },
+    async resume() {
+      if (k.blockiert) return;
+      k.state = "running";
+      k.onstatechange?.();
+    },
+    close: vi.fn(async () => {}),
+  };
+  return { k, verstaerker, quellen };
+}
+
+// Zeigt den Empfang. Der Empfang ist nachgebaut: strom() lässt den Ton vom DJ ankommen, ohne Strom endet er.
+function zeigen(blockiert = false) {
   const ende = vi.fn();
-  let beiStrom: (strom: MediaStream) => void = () => {};
+  const kontext = nachgebauterKontext(blockiert);
+  let beiStrom: (strom: MediaStream | null) => void = () => {};
   const empfangen = vi.fn<typeof tonEmpfangen>((_k, _i, rueckruf) => {
     beiStrom = rueckruf;
     return ende;
@@ -42,13 +70,15 @@ function zeigen() {
     <TonEmpfang
       kanal={nachgebauterRaum().oeffnen("ABCD", "a")}
       empfangen={empfangen}
+      kontextNeu={() => kontext.k as unknown as AudioContext}
     />,
   );
   const audio = container.querySelector("audio")!;
-  async function strom() {
-    await act(async () => beiStrom({} as MediaStream));
+  const ankommend = {} as MediaStream;
+  async function strom(s: MediaStream | null = ankommend) {
+    await act(async () => beiStrom(s));
   }
-  return { audio, ende, strom, unmount };
+  return { audio, ende, strom, unmount, ankommend, ...kontext };
 }
 
 test("vor dem Teilen: noch nicht geteilt", () => {
@@ -56,39 +86,57 @@ test("vor dem Teilen: noch nicht geteilt", () => {
   expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
 });
 
-test("mit Strom: Ton vom DJ läuft", async () => {
-  const { audio, strom } = zeigen();
+test("mit Strom: Ton läuft über die Lautstärke, das audio-Element stumm", async () => {
+  lautstaerkeSpeichern(0.6);
+  const { audio, strom, ankommend, quellen, verstaerker, k } = zeigen();
   await strom();
-  expect(audio.srcObject).not.toBeNull();
-  expect(play).toHaveBeenCalled();
+  expect(audio.srcObject).toBe(ankommend);
+  expect(audio.muted).toBe(true);
+  expect(quellen[0].strom).toBe(ankommend);
+  expect(quellen[0].ziel).toBe(verstaerker);
+  expect(verstaerker.connect).toHaveBeenCalledWith(k.destination);
+  expect(verstaerker.gain.value).toBe(0.6);
   expect(screen.getByText("Ton vom DJ läuft")).toBeDefined();
 });
 
 test("blockiert der Browser, startet Ton einschalten das Abspielen", async () => {
-  play.mockRejectedValueOnce(new DOMException("", "NotAllowedError"));
-  const { strom } = zeigen();
+  const { strom, k } = zeigen(true);
   await strom();
+  expect(screen.getByText("Ton vom DJ ist da")).toBeDefined();
+  k.blockiert = false;
   await act(async () => {
     fireEvent.click(screen.getByRole("button", { name: "Ton einschalten" }));
   });
-  expect(play).toHaveBeenCalledTimes(2);
   expect(screen.getByText("Ton vom DJ läuft")).toBeDefined();
   expect(screen.queryByRole("button", { name: "Ton einschalten" })).toBeNull();
 });
 
-test("der Regler setzt die Lautstärke und merkt sie sich", () => {
-  const { audio } = zeigen();
+// Fund aus dem Review von PR #66: audio.volume wirkt auf dem iPhone nicht, deshalb die Lautstärke über Web Audio.
+test("der Regler setzt die Lautstärke über Web Audio und merkt sie sich", async () => {
+  const { strom, verstaerker } = zeigen();
+  await strom();
   const regler = screen.getByRole<HTMLInputElement>("slider", {
     name: "Lautstärke",
   });
   expect(regler.value).toBe("1");
   fireEvent.change(regler, { target: { value: "0.3" } });
-  expect(audio.volume).toBe(0.3);
+  expect(verstaerker.gain.value).toBe(0.3);
   expect(lautstaerke()).toBe(0.3);
 });
 
-test("beim Verschwinden endet der Empfang", () => {
-  const { ende, unmount } = zeigen();
+test("endet der Strom, steht wieder noch nicht geteilt da", async () => {
+  const { audio, strom, quellen } = zeigen();
+  await strom();
+  await strom(null);
+  expect(audio.srcObject).toBeNull();
+  expect(quellen[0].getrennt).toBe(true);
+  expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
+});
+
+test("beim Verschwinden endet der Empfang", async () => {
+  const { ende, strom, unmount, k } = zeigen();
+  await strom();
   unmount();
   expect(ende).toHaveBeenCalled();
+  expect(k.close).toHaveBeenCalled();
 });
