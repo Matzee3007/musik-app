@@ -59,8 +59,10 @@ export type KanalOeffnen = (code: string, schluessel: string) => RaumKanal;
 function anwesendeLesen(zustand: Record<string, Anwesend[]>): Anwesend[] {
   return Object.values(zustand).map(([a]) => {
     if (a.rolle === "tisch") {
-      const { schluessel, rolle } = a;
-      return { schluessel, rolle };
+      const { schluessel, rolle, name } = a;
+      return name === undefined
+        ? { schluessel, rolle }
+        : { schluessel, rolle, name };
     }
     const { schluessel, rolle, name } = a;
     return { schluessel, rolle, name };

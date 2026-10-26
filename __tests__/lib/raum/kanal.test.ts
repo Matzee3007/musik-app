@@ -97,6 +97,22 @@ test("verbinden liefert die Anwesenden nach dem ersten Abgleich", async () => {
   ]);
 });
 
+test("ein Tisch mit Namen behält ihn, presence_ref fällt weg", async () => {
+  const { client, welt } = nachgebauterClient();
+  const verbunden = raumKanalUeber(client)("ABCD", "s1").verbinden();
+  welt.status("SUBSCRIBED");
+  welt.zustand = {
+    t: [
+      { schluessel: "t", rolle: "tisch", name: "Matthias", presence_ref: "r1" },
+    ],
+  };
+  welt.ausloesen("presence", "sync");
+
+  expect(await verbunden).toEqual([
+    { schluessel: "t", rolle: "tisch", name: "Matthias" },
+  ]);
+});
+
 test("verbinden scheitert, wenn Supabase den Kanal ablehnt", async () => {
   const { client, welt } = nachgebauterClient();
   const verbunden = raumKanalUeber(client)("ABCD", "s1").verbinden();

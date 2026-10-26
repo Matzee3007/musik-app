@@ -1,8 +1,9 @@
 import type { SpielerStaende } from "@/lib/raum/stand";
 
 // Ein Gerät im Raum laut Presence. schluessel ist die Kennung des Tabs, zugleich der Presence-Schlüssel.
+// Im Online-Modus trägt der Tisch den Namen des DJs, der mitspielt (ADR 0008).
 export type Anwesend =
-  | { schluessel: string; rolle: "tisch" }
+  | { schluessel: string; rolle: "tisch"; name?: string }
   | { schluessel: string; rolle: "spieler"; name: string };
 
 const NAME_MAX = 20;
@@ -13,8 +14,8 @@ export function nameLesen(eingabe: string): string | null {
   return name.length >= 1 && name.length <= NAME_MAX ? name : null;
 }
 
-// Vergeben, wenn ein anderer Spieler den Namen trägt, ohne Unterschied von Groß- und Kleinschreibung.
-// Der eigene Eintrag (ich) zählt nicht: Nach dem Neuladen steht er noch kurz in Presence.
+// Vergeben, wenn ein anderer Spieler oder der DJ im Online-Raum den Namen trägt, ohne Unterschied von Groß- und
+// Kleinschreibung. Der eigene Eintrag (ich) zählt nicht: Nach dem Neuladen steht er noch kurz in Presence.
 export function nameVergeben(
   anwesende: readonly Anwesend[],
   name: string,
@@ -22,10 +23,7 @@ export function nameVergeben(
 ): boolean {
   const gesucht = name.toLowerCase();
   return anwesende.some(
-    (a) =>
-      a.rolle === "spieler" &&
-      a.schluessel !== ich &&
-      a.name.toLowerCase() === gesucht,
+    (a) => a.schluessel !== ich && a.name?.toLowerCase() === gesucht,
   );
 }
 
