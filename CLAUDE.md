@@ -60,7 +60,7 @@ specs/            Testpläne der Playwright-Agents (.claude/agents/playwright-te
 scripts/          Assistenten für Einrichtungen von Hand (supabase-einrichten.sh)
 portraet/         Projekt-Porträt als Artifact (index.html, data.json), erzeugt vom Skill portraet-bauen (Ecosystem)
 docs/             Obsidian-Vault: adr/, journal/, plaene/, tools/
-.github/          workflows/ci.yml: CI mit GitHub Actions
+.github/          workflows/ci.yml: CI mit GitHub Actions, dependabot.yml: PRs für neue Paketversionen
 .claude/          agents/ (Playwright-Agents), hooks/ (Prettier nach Edit und Write), settings.json
 AGENTS.md         Regeln von Next.js für Coding-Agents (schreibt `next dev` neu)
 CLAUDE.md
