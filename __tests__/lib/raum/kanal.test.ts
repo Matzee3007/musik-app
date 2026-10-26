@@ -363,3 +363,40 @@ test("beiVerbunden meldet jedes SUBSCRIBED, bis abgemeldet", () => {
   welt.status("SUBSCRIBED");
   expect(verbunden).toBe(2);
 });
+
+test("raumNachrichtLesen nimmt Ton-Nachrichten, keine kaputten", () => {
+  const hallo = { art: "ton", signal: { art: "hallo", von: "s1" } };
+  expect(raumNachrichtLesen(hallo)).toEqual(hallo);
+  const angebot = {
+    art: "ton",
+    signal: {
+      art: "angebot",
+      an: "s1",
+      von: "t",
+      sdp: { type: "offer", sdp: "v=0" },
+    },
+  };
+  expect(raumNachrichtLesen(angebot)).toEqual(angebot);
+  const kandidat = {
+    art: "ton",
+    signal: {
+      art: "kandidat",
+      an: "t",
+      von: "s1",
+      kandidat: { candidate: "c" },
+    },
+  };
+  expect(raumNachrichtLesen(kandidat)).toEqual(kandidat);
+  expect(
+    raumNachrichtLesen({
+      art: "ton",
+      signal: { art: "angebot", an: "s1", von: "t" },
+    }),
+  ).toBeNull();
+  expect(
+    raumNachrichtLesen({ art: "ton", signal: { art: "winken", von: "t" } }),
+  ).toBeNull();
+  expect(
+    raumNachrichtLesen({ art: "ton", signal: { art: "hallo", von: 3 } }),
+  ).toBeNull();
+});
