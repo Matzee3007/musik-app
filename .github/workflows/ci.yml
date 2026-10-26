@@ -7,19 +7,20 @@ on:
   push:
     branches: [main]
 
-# Ein neuer Push bricht den noch laufenden Lauf desselben Branches ab, spart Freiminuten
+# Ein neuer Push in einen PR bricht dessen noch laufenden Lauf ab, spart Freiminuten.
+# Auf main nie abbrechen, sonst bliebe ein Merge-Commit ungeprüft.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# Die CI liest nur, ein manipuliertes npm-Paket bekommt so keinen Schreibzugriff aufs Repo
+# Das Token der CI darf das Repo nur lesen, auch ein manipuliertes npm-Paket kann damit nichts ins Repo schreiben
 permissions:
   contents: read
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    # Ein normaler Lauf dauert unter zwei Minuten, ein hängender bricht nach 10 ab statt nach 6 Stunden
+    # Ein hängender Lauf bricht nach 10 Minuten ab statt nach 6 Stunden (Laufzeit: Tool-Notiz)
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7

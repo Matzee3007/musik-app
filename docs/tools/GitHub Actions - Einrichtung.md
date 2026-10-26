@@ -26,10 +26,13 @@ Die CI benutzt nur die npm-Skripte aus `package.json`. So prüfen lokal und CI d
 
 Drei Einstellungen sichern den Workflow ab:
 
-- `concurrency` mit `cancel-in-progress`: Ein neuer Push auf denselben Branch bricht den noch laufenden Lauf ab.
-  Das spart Freiminuten.
-- `permissions: contents: read`: Der Workflow darf das Repo nur lesen. Ein manipuliertes npm-Paket, das während
-  `npm ci` läuft, bekommt so keinen Schreibzugriff.
+- `concurrency` mit `cancel-in-progress`: Ein neuer Push in einen PR bricht dessen noch laufenden Lauf ab, das
+  spart Freiminuten. Die Gruppe ist `github.ref`, bei einem PR also `refs/pull/<nr>/merge`, je PR eine Gruppe.
+  Auf `main` bricht nichts ab (`cancel-in-progress` nur bei `pull_request`): Werden zwei PRs kurz nacheinander
+  gemergt, wird trotzdem jeder Merge-Commit geprüft.
+- `permissions: contents: read`: Das Token der CI (`GITHUB_TOKEN`) darf das Repo nur lesen. Ein manipuliertes
+  npm-Paket, das während `npm ci` läuft, kann damit nichts ins Repo schreiben. Code ausführen und Daten nach außen
+  schicken kann es trotzdem, deshalb später keine Geheimnisse (Secrets) in die CI, ohne das neu zu bedenken.
 - `timeout-minutes: 10`: Ein hängender Lauf bricht nach 10 Minuten ab, nicht erst nach der Grenze von GitHub
   (6 Stunden).
 
