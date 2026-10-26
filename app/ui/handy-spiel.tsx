@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import KarteAnsicht from "@/app/ui/karte-ansicht";
 import Tisch from "@/app/ui/tisch";
+import TonEmpfang from "@/app/ui/ton-empfang";
 import { bingoLinie } from "@/lib/bingo";
 import {
   abhaken,
@@ -104,6 +105,9 @@ export default function HandySpiel({
 
   const linie = karte && bingoLinie(karte.karte);
   const online = stand?.online === true;
+  // Einmal online, bleibt der Ton, auch zwischen zwei Spielen (Stand null), sonst bräche er jedes Mal ab.
+  const [tonAn, setTonAn] = useState(false);
+  if (online && !tonAn) setTonAn(true);
 
   function feldKlick(index: number) {
     if (!stand || !karte) return;
@@ -136,6 +140,7 @@ export default function HandySpiel({
       ) : (
         !karte && <p>Warte auf das Spiel …</p>
       )}
+      {tonAn && <TonEmpfang kanal={kanal} />}
       {linie ? (
         <h2 className="font-schild text-5xl text-akzent">Bingo!</h2>
       ) : (

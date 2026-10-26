@@ -6,6 +6,7 @@ import {
   type SpielerStand,
   type TischStand,
 } from "@/lib/raum/stand";
+import { istTonSignal, type TonSignal } from "@/lib/raum/ton";
 import { supabaseClient } from "@/lib/supabase";
 
 // Der Spielstand läuft über Broadcast (ADR 0006). Wer neu dazukommt oder wieder verbunden ist, schickt
@@ -14,7 +15,8 @@ export type RaumNachricht =
   | { art: "geschlossen" }
   | { art: "anfrage" }
   | { art: "tisch"; stand: TischStand | null }
-  | { art: "spieler"; name: string; stand: SpielerStand };
+  | { art: "spieler"; name: string; stand: SpielerStand }
+  | { art: "ton"; signal: TonSignal };
 
 // Nachrichten kommen von anderen Geräten, etwa einer älteren Fassung der App: Form prüfen.
 export function raumNachrichtLesen(wert: unknown): RaumNachricht | null {
@@ -31,6 +33,8 @@ export function raumNachrichtLesen(wert: unknown): RaumNachricht | null {
       return typeof n.name === "string" && istSpielerStand(n.stand)
         ? { art: "spieler", name: n.name, stand: n.stand }
         : null;
+    case "ton":
+      return istTonSignal(n.signal) ? { art: "ton", signal: n.signal } : null;
     default:
       return null;
   }

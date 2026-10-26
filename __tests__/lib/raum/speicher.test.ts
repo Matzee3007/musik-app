@@ -6,6 +6,8 @@ import {
   handyRaumLaden,
   handyRaumLoeschen,
   handyRaumSpeichern,
+  lautstaerke,
+  lautstaerkeSpeichern,
   notizenAn,
   notizenSpeichern,
   raumSichtbar,
@@ -129,4 +131,16 @@ test("Schließen des Raums vergisst, dass er ausgeblendet war", () => {
   raumSichtbarSpeichern(false);
   tischRaumLoeschen();
   expect(raumSichtbar()).toBe(true);
+});
+
+test("lautstaerke ist 1, bis ein Wert gespeichert ist, kaputte Werte zählen nicht", () => {
+  expect(lautstaerke()).toBe(1);
+  lautstaerkeSpeichern(0.4);
+  expect(lautstaerke()).toBe(0.4);
+  lautstaerkeSpeichern(0);
+  expect(lautstaerke()).toBe(0);
+  for (const kaputt of ["laut", "7", "-1", ""]) {
+    localStorage.setItem("musik-app:lautstaerke", kaputt);
+    expect(lautstaerke()).toBe(1);
+  }
 });

@@ -30,6 +30,7 @@ alle benutzten Befehle, Fehler.
 | [[projects/musik-app/docs/tools/Supabase\|Supabase]] | 2026-10-22 | Realtime-Kanäle für die Räume: wer ist da, Nachrichten an alle |
 | [[Playwright]] | 2026-10-22 | Tests im echten Browser: Tisch und Handys über das echte Supabase |
 | [[projects/musik-app/docs/tools/Dependabot - Einrichtung\|Dependabot]] | 2026-10-26 | öffnet PRs für neue Paketversionen und Sicherheitslücken |
+| [[WebRTC]] | 2026-10-26 | schickt im Online-Modus den Ton vom DJ direkt an jeden Spieler |
 
 ## Geplant
 

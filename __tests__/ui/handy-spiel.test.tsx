@@ -277,3 +277,27 @@ test("online ohne Tisch: Der DJ ist gerade nicht verbunden.", () => {
   spielen(online, []);
   expect(screen.getByText("Der DJ ist gerade nicht verbunden.")).toBeDefined();
 });
+
+test("online: Ton vom DJ mit Lautstärke, lokal nicht", () => {
+  const { raum } = spielen(online);
+  expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
+  expect(screen.getByRole("slider", { name: "Lautstärke" })).toBeDefined();
+  expect(raum.gesendet).toContainEqual({
+    art: "ton",
+    signal: {
+      art: "hallo",
+      von: expect.any(String),
+      versuch: expect.any(String),
+    },
+  });
+  cleanup();
+  spielen(runde3);
+  expect(screen.queryByText(/Ton vom DJ/)).toBeNull();
+});
+
+// Fund aus dem Review von PR #66: Zwischen zwei Spielen (Stand null) brach der Ton ab.
+test("online bleibt der Ton vom DJ, auch wenn gerade kein Spiel läuft", () => {
+  const { raum } = spielen(online);
+  act(() => raum.nachrichtSchicken({ art: "tisch", stand: null }));
+  expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
+});

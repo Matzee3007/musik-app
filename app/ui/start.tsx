@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Knopf from "@/app/ui/knopf";
 import RaumKopf from "@/app/ui/raum-kopf";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
+import TonTeilen from "@/app/ui/ton-teilen";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
 import { neuerRaumCode, raumCodeLesen } from "@/lib/raum/code";
 import { nameLesen } from "@/lib/raum/spieler";
@@ -194,6 +195,8 @@ export default function Start({
           setStand(null);
         }}
       />
+      {/* Online hört jeder den Song im eigenen Browser (ADR 0008). */}
+      {tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />}
       <div className="flex w-full justify-center">{ablauf()}</div>
     </div>
   );

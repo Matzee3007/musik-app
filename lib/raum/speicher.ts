@@ -8,6 +8,7 @@ const GERAET = "musik-app:geraet";
 const KARTE = "musik-app:handy-karte";
 const NOTIZEN = "musik-app:notizen";
 const RAUM_SICHTBAR = "musik-app:raum-sichtbar";
+const LAUTSTAERKE = "musik-app:lautstaerke";
 
 // dj ist der Name des DJs im Online-Raum (ADR 0008), lokal fehlt er.
 export type TischRaum = { code: string; bekannt: string[]; dj?: string };
@@ -80,6 +81,18 @@ export function notizenAn(): boolean {
 export function notizenSpeichern(an: boolean): void {
   if (an) localStorage.removeItem(NOTIZEN);
   else localStorage.setItem(NOTIZEN, "aus");
+}
+
+// Lautstärke des Tons vom DJ auf diesem Gerät, 0 bis 1 (Online-Modus). Gilt für alle Räume, anfangs und bei einem
+// kaputten Eintrag 1.
+export function lautstaerke(): number {
+  const text = localStorage.getItem(LAUTSTAERKE)?.trim();
+  const wert = text ? Number(text) : NaN;
+  return wert >= 0 && wert <= 1 ? wert : 1;
+}
+
+export function lautstaerkeSpeichern(wert: number): void {
+  localStorage.setItem(LAUTSTAERKE, String(wert));
 }
 
 // Am Tisch: Code, QR-Code und Spieler sind sichtbar, bis der DJ sie ausblendet, auch über ein Neuladen hinweg.

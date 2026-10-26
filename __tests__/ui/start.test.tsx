@@ -333,3 +333,18 @@ test("gespeicherter Online-Raum ist nach dem Neuladen wieder online", async () =
   fireEvent.click(screen.getByRole("button", { name: "Spiel starten" }));
   expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
 });
+
+test("im Online-Raum gibt es Ton teilen, im lokalen nicht", async () => {
+  mitSupabase();
+  tischRaumSpeichern({ code: "ABCD", bekannt: [], dj: "Matthias" });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  expect(
+    await screen.findByRole("button", { name: "Ton teilen" }),
+  ).toBeDefined();
+  cleanup();
+  localStorage.clear();
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  await screen.findByText("ABCD");
+  expect(screen.queryByRole("button", { name: "Ton teilen" })).toBeNull();
+});
