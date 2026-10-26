@@ -20,12 +20,15 @@ export default function RaumKopf({
   kanal,
   stand,
   onGeschlossen,
+  dj,
 }: {
   code: string;
   kanal: RaumKanal;
   // Spielstand des Tischs, den die Handys per Nachricht bekommen (ADR 0006). null: noch kein Spiel.
   stand: TischStand | null;
   onGeschlossen: () => void;
+  // Im Online-Raum der Name des DJs: Er trägt ihn in Presence, damit kein Spieler denselben nimmt.
+  dj?: string;
 }) {
   const [liste, setListe] = useState<{
     bekannt: string[];
@@ -74,9 +77,13 @@ export default function RaumKopf({
   useEffect(() => {
     if (!verbunden) return;
     kanal
-      .anmelden({ schluessel: tabSchluessel(), rolle: "tisch" })
+      .anmelden({
+        schluessel: tabSchluessel(),
+        rolle: "tisch",
+        ...(dj !== undefined && { name: dj }),
+      })
       .catch((e: Error) => setFehler(e.message));
-  }, [kanal, verbunden]);
+  }, [kanal, verbunden, dj]);
 
   // Nach dem Verbinden und jedem Wiederbeitritt die Handys nach ihrem Stand fragen.
   useEffect(() => {

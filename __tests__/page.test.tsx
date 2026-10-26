@@ -5,7 +5,7 @@ import Page from "../app/page";
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 test("Startseite zeigt Überschrift und „Demo starten“", async () => {
-  // Ohne Supabase wie in den Vorschauen, sonst kommt erst „Raum eröffnen“.
+  // Ohne Supabase wie in den Vorschauen, sonst kommt erst „Lokal spielen“.
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
   render(<Page />);
   expect(

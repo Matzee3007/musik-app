@@ -33,6 +33,7 @@ function kopf(
   raum = nachgebauterRaum(),
   onGeschlossen = () => {},
   stand: TischStand | null = null,
+  dj?: string,
 ) {
   tischRaumSpeichern({ code: "ABCD", bekannt: [] });
   const zeigen = (stand: TischStand | null) => (
@@ -41,6 +42,7 @@ function kopf(
       kanal={raum.oeffnen("ABCD", "t")}
       stand={stand}
       onGeschlossen={onGeschlossen}
+      dj={dj}
     />
   );
   const { rerender } = render(zeigen(stand));
@@ -61,6 +63,17 @@ test("meldet den Tisch im Raum an", async () => {
     expect(raum.angemeldet).toContainEqual({
       schluessel: expect.any(String),
       rolle: "tisch",
+    }),
+  );
+});
+
+test("im Online-Raum meldet sich der Tisch mit dem Namen des DJs an", async () => {
+  const raum = kopf(nachgebauterRaum(), () => {}, null, "Matthias");
+  await waitFor(() =>
+    expect(raum.angemeldet).toContainEqual({
+      schluessel: expect.any(String),
+      rolle: "tisch",
+      name: "Matthias",
     }),
   );
 });

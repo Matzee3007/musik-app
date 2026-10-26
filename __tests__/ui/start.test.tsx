@@ -205,12 +205,12 @@ test("ein Klick auf eine Playlist öffnet das Vorbereiten, Zurück führt zur Li
   ).toBeDefined();
 });
 
-test("Raum eröffnen zeigt den Raum-Kopf, danach Demo und Anmelden", async () => {
+test("Lokal spielen zeigt den Raum-Kopf, danach Demo und Anmelden", async () => {
   mitSupabase();
   vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
-  fireEvent.click(await screen.findByRole("button", { name: "Raum eröffnen" }));
-  expect(screen.queryByRole("button", { name: "Raum eröffnen" })).toBeNull();
+  fireEvent.click(await screen.findByRole("button", { name: "Lokal spielen" }));
+  expect(screen.queryByRole("button", { name: "Lokal spielen" })).toBeNull();
   const raum = tischRaumLaden();
   expect(raum?.code).toMatch(/^[A-Z]{4}$/);
   expect(screen.getByText(raum!.code)).toBeDefined();
@@ -224,7 +224,7 @@ test("Raum eröffnen zeigt den Raum-Kopf, danach Demo und Anmelden", async () =>
 test("mit Supabase kommen Anmelden und Demo erst nach dem Eröffnen", async () => {
   mitSupabase();
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
-  await screen.findByRole("button", { name: "Raum eröffnen" });
+  await screen.findByRole("button", { name: "Lokal spielen" });
   expect(screen.queryByRole("button", { name: "Demo starten" })).toBeNull();
   expect(
     screen.queryByRole("button", { name: "Mit Spotify anmelden" }),
@@ -236,7 +236,7 @@ test("gespeicherter Raum ist nach dem Neuladen wieder da", async () => {
   tischRaumSpeichern({ code: "ABCD", bekannt: [] });
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   expect(await screen.findByText("ABCD")).toBeDefined();
-  expect(screen.queryByRole("button", { name: "Raum eröffnen" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Lokal spielen" })).toBeNull();
 });
 
 test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {
@@ -248,7 +248,7 @@ test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {
     await screen.findByRole("button", { name: "Raum schließen" }),
   );
   expect(
-    await screen.findByRole("button", { name: "Raum eröffnen" }),
+    await screen.findByRole("button", { name: "Lokal spielen" }),
   ).toBeDefined();
 });
 
@@ -270,7 +270,7 @@ test("Beitreten öffnet den Raum mit dem gelesenen Code", async () => {
 test("ohne Supabase sind Raum-Knöpfe aus, die Demo geht", async () => {
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   const eroeffnen = await screen.findByRole<HTMLButtonElement>("button", {
-    name: "Raum eröffnen",
+    name: "Lokal spielen",
   });
   expect(eroeffnen.disabled).toBe(true);
   expect(
@@ -301,4 +301,35 @@ test("Demo im Raum zeigt den Tisch ohne Karte und meldet den Stand", async () =>
       stand: { runde: null, bingo: [] },
     }),
   );
+});
+
+test("Online spielen fragt nach dem Namen und eröffnet einen Online-Raum", async () => {
+  mitSupabase();
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Online spielen" }),
+  );
+  const eroeffnen = screen.getByRole<HTMLButtonElement>("button", {
+    name: "Online-Raum eröffnen",
+  });
+  expect(eroeffnen.disabled).toBe(true);
+  fireEvent.change(screen.getByLabelText("Dein Name"), {
+    target: { value: "  Matthias " },
+  });
+  expect(eroeffnen.disabled).toBe(false);
+  fireEvent.click(eroeffnen);
+  expect(tischRaumLaden()).toMatchObject({ dj: "Matthias" });
+  expect(screen.getByRole("button", { name: "Raum schließen" })).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "Demo starten" }));
+  fireEvent.click(screen.getByRole("button", { name: "Spiel starten" }));
+  expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
+});
+
+test("gespeicherter Online-Raum ist nach dem Neuladen wieder online", async () => {
+  mitSupabase();
+  tischRaumSpeichern({ code: "ABCD", bekannt: [], dj: "Matthias" });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Demo starten" }));
+  fireEvent.click(screen.getByRole("button", { name: "Spiel starten" }));
+  expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
 });

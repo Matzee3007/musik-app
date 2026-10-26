@@ -7,6 +7,7 @@ import RaumKopf from "@/app/ui/raum-kopf";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
 import { neuerRaumCode, raumCodeLesen } from "@/lib/raum/code";
+import { nameLesen } from "@/lib/raum/spieler";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
 import type { TischStand } from "@/lib/raum/stand";
 import {
@@ -46,6 +47,8 @@ export default function Start({
     undefined,
   );
   const [codeEingabe, setCodeEingabe] = useState("");
+  // Name des DJs für einen Online-Raum, null: "Online spielen" noch nicht gewählt.
+  const [djEingabe, setDjEingabe] = useState<string | null>(null);
   // Spielstand für die Handys, die Spielansicht meldet ihn, der Raum-Kopf trägt ihn in Presence.
   const [stand, setStand] = useState<TischStand | null>(null);
   const id = clientId();
@@ -89,18 +92,52 @@ export default function Start({
 
   if (token === undefined || tischRaum === undefined) return null;
 
-  function eroeffnen() {
-    const raum = { code: neuerRaumCode(), bekannt: [] };
+  // Mit dj ein Online-Raum (ADR 0008), ohne ein lokaler.
+  function eroeffnen(dj?: string) {
+    const raum: TischRaum = {
+      code: neuerRaumCode(),
+      bekannt: [],
+      ...(dj !== undefined && { dj }),
+    };
     tischRaumSpeichern(raum);
     setTischRaum(raum);
+    setDjEingabe(null);
   }
 
   const gelesenerCode = raumCodeLesen(codeEingabe);
+  const djName = djEingabe === null ? null : nameLesen(djEingabe);
   const raumWahl = (
     <div className="flex flex-col items-center gap-10">
-      <Knopf disabled={!supabase} onClick={eroeffnen}>
-        Raum eröffnen
-      </Knopf>
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-wrap justify-center gap-3">
+          <Knopf disabled={!supabase} onClick={() => eroeffnen()}>
+            Lokal spielen
+          </Knopf>
+          <Knopf
+            art="neben"
+            disabled={!supabase}
+            onClick={() => setDjEingabe("")}
+          >
+            Online spielen
+          </Knopf>
+        </div>
+        {djEingabe !== null && (
+          <div className="flex w-full max-w-xs flex-col items-stretch gap-3">
+            <label htmlFor="dj-name" className="text-licht/70">
+              Dein Name
+            </label>
+            <input
+              id="dj-name"
+              className="rounded-lg bg-flaeche px-4 py-3 text-xl outline-akzent focus-visible:outline-2"
+              value={djEingabe}
+              onChange={(e) => setDjEingabe(e.target.value)}
+            />
+            <Knopf disabled={!djName} onClick={() => eroeffnen(djName!)}>
+              Online-Raum eröffnen
+            </Knopf>
+          </div>
+        )}
+      </div>
       {/* Wie eine Anzeigetafel. Kein maxLength: raumCodeLesen nimmt auch "EH MF" mit Leerzeichen. */}
       <div className="flex flex-col items-center gap-3">
         <label htmlFor="raum-code" className="text-licht/70">
@@ -151,6 +188,7 @@ export default function Start({
         code={tischRaum.code}
         kanal={kanal}
         stand={stand}
+        dj={tischRaum.dj}
         onGeschlossen={() => {
           setTischRaum(null);
           setStand(null);
@@ -162,7 +200,9 @@ export default function Start({
 
   // Der Ablauf ohne Raum: Anmelden, Playlists, Vorbereiten, Demo.
   function ablauf() {
-    const raum = kanal ? { kanal, onStand: setStand } : undefined;
+    const raum = kanal
+      ? { kanal, onStand: setStand, dj: tischRaum?.dj }
+      : undefined;
     if (demo) return <SpielAnsicht songs={SONGLISTE} raum={raum} />;
     if (token && gewaehlt) {
       return (
