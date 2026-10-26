@@ -1,0 +1,17 @@
+# Dependabot öffnet PRs, wenn Pakete oder Actions eine neue Version haben. Jeder PR läuft durch die CI.
+# Einrichtung und Ablauf: docs/tools/Dependabot - Einrichtung.md
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Kleine Updates (minor, patch) kommen gesammelt in einem PR, große (major) einzeln
+    groups:
+      npm-klein:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
