@@ -33,11 +33,20 @@ export class Tisch {
   seite!: Page;
   code = "";
 
-  static async eroeffnen(browser: Browser): Promise<Tisch> {
+  // Ohne dj ein lokaler Raum, mit dj ein Online-Raum, in dem der DJ unter diesem Namen mitspielt.
+  static async eroeffnen(browser: Browser, dj?: string): Promise<Tisch> {
     const tisch = new Tisch();
     tisch.seite = await geraet(browser, tisch.fehler);
     await tisch.seite.goto("/");
-    await tisch.seite.getByRole("button", { name: "Raum eröffnen" }).click();
+    if (dj === undefined) {
+      await tisch.seite.getByRole("button", { name: "Lokal spielen" }).click();
+    } else {
+      await tisch.seite.getByRole("button", { name: "Online spielen" }).click();
+      await tisch.seite.getByLabel("Dein Name").fill(dj);
+      await tisch.seite
+        .getByRole("button", { name: "Online-Raum eröffnen" })
+        .click();
+    }
     const code = await tisch.seite.getByText(/^[A-Z]{4}$/).textContent();
     expect(code).toMatch(/^[A-Z]{4}$/);
     tisch.code = code!;

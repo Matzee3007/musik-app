@@ -29,20 +29,23 @@ function drehen(knopf: string) {
 }
 
 // Zufall 0: Das Rad wählt immer Titel.
+// Mit dj ist es ein Online-Raum, in dem der DJ mitspielt.
 function spielen(
   abspieler?: Abspieler,
   onJahrKorrigiert?: (songId: string, jahr: number) => void,
+  dj?: string,
+  zufall: () => number = () => 0,
 ) {
   const raum = nachgebauterRaum();
   const onStand = vi.fn<(stand: TischStand | null) => void>();
   const { unmount } = render(
     <SpielAnsicht
       songs={SONGLISTE.slice(0, 5)}
-      zufall={() => 0}
+      zufall={zufall}
       sofort
       abspieler={abspieler}
       onJahrKorrigiert={onJahrKorrigiert}
-      raum={{ kanal: raum.oeffnen("ABCD", "t"), onStand }}
+      raum={{ kanal: raum.oeffnen("ABCD", "t"), onStand, dj }}
     />,
   );
   const stand = () => onStand.mock.lastCall![0]!;
@@ -161,4 +164,59 @@ test("ohne Raum braucht das Spiel keine Kennung, auch ohne crypto.randomUUID", (
   vi.stubGlobal("crypto", {});
   render(<SpielAnsicht songs={SONGLISTE.slice(0, 5)} sofort />);
   expect(screen.getByRole("region", { name: "Karte" })).toBeDefined();
+});
+
+test("online: Karte des DJs am Tisch, Stand mit online und nach der Auflösung mit Song", () => {
+  const { stand } = spielen(undefined, undefined, "Matthias");
+  expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
+  drehen("Rad drehen");
+  expect(stand()).toMatchObject({ online: true });
+  expect(stand().runde?.song).toBeUndefined();
+  klick("Lösung anzeigen");
+  // Zufall 0: Kategorie Titel, die Lösung ist der Titel des Songs.
+  expect(stand().runde?.song?.titel).toBe(
+    screen.getByRole("heading", { level: 2 }).textContent,
+  );
+});
+
+// Mit Zufall 0.999 tauscht das Mischen nichts: Die letzte Zeile der Karte (Felder 20 bis 24) ist ganz „Jahr ±3“,
+// und das Rad wählt immer „Jahr ±3“.
+test("online: Bingo des DJs und eines Spielers stehen beide in der Liste", () => {
+  const { raum, stand } = spielen(
+    undefined,
+    undefined,
+    "Matthias",
+    () => 0.999,
+  );
+  for (let runde = 0; runde < 5; runde++) {
+    drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    klick("Lösung anzeigen");
+    if (runde === 4) {
+      act(() => raum.nachrichtSchicken(mitBingo("Anna", stand().spiel)));
+    }
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
+    );
+  }
+  expect(stand().bingo).toEqual(["Anna", "Matthias"]);
+  expect(
+    screen.getByRole("heading", { name: "Bingo! Anna, Matthias" }),
+  ).toBeDefined();
+});
+
+// Fund aus dem Review: Wie bei den Spielern (darfZuruecknehmen) bleibt ein Bingo bestehen.
+test("online: nach dem Bingo des DJs lässt sich nichts zurücknehmen", () => {
+  vi.spyOn(window, "confirm").mockReturnValue(true);
+  const { stand } = spielen(undefined, undefined, "Matthias", () => 0.999);
+  for (let runde = 0; runde < 5; runde++) {
+    drehen(runde === 0 ? "Rad drehen" : "Nächste Runde");
+    klick("Lösung anzeigen");
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Feld / })[20 + runde],
+    );
+  }
+  const feld = screen.getAllByRole("button", { name: /^Feld / })[20];
+  fireEvent.click(feld);
+  expect(feld.getAttribute("aria-pressed")).toBe("true");
+  expect(stand().bingo).toEqual(["Matthias"]);
 });

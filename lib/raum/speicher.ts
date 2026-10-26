@@ -9,7 +9,8 @@ const KARTE = "musik-app:handy-karte";
 const NOTIZEN = "musik-app:notizen";
 const RAUM_SICHTBAR = "musik-app:raum-sichtbar";
 
-export type TischRaum = { code: string; bekannt: string[] };
+// dj ist der Name des DJs im Online-Raum (ADR 0008), lokal fehlt er.
+export type TischRaum = { code: string; bekannt: string[]; dj?: string };
 export type HandyRaum = { code: string; name: string };
 
 export function tischRaumLaden(): TischRaum | null {

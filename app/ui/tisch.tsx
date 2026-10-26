@@ -21,6 +21,7 @@ export default function Tisch({
   musik,
   onJahrKorrigieren,
   meldung,
+  zuschauer = false,
 }: {
   runde: Runde | null;
   stapelLeer: boolean;
@@ -51,11 +52,21 @@ export default function Tisch({
   onJahrKorrigieren?: (jahr: number) => void;
   // Nur mit Spotify: Ein Befehl an Spotify ist gescheitert.
   meldung?: string | null;
+  // Der Tisch eines Spielers im Online-Modus: dieselbe Ansicht ohne Knöpfe, gesteuert vom DJ.
+  zuschauer?: boolean;
 }) {
   // Kategorie und Knöpfe erst zeigen, wenn das Rad steht.
   const [dreht, setDreht] = useState(false);
   // Eingabe für "Jahr korrigieren", null: geschlossen.
   const [jahrFeld, setJahrFeld] = useState<string | null>(null);
+  // Eine neue Runde dreht das Rad, auch ohne Klick (Zuschauer). Beim ersten Rendern nicht: Wer mitten in einer Runde
+  // beitritt, sieht ihre Kategorie gleich.
+  const nummer = runde?.nummer ?? null;
+  const [gesehen, setGesehen] = useState(nummer);
+  if (nummer !== gesehen) {
+    setGesehen(nummer);
+    if (nummer !== null) setDreht(true);
+  }
 
   function drehen() {
     setDreht(true);
@@ -284,52 +295,54 @@ export default function Tisch({
                 ))}
             </div>
 
-            <div className="flex min-h-[3.4rem] flex-wrap items-center justify-end gap-2.5">
-              {bingo && <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>}
-              {!bingo && !runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
-              {!bingo && offen && (
-                <>
-                  {musik?.vorbei && (
-                    <>
-                      <Knopf art="neben" onClick={musik.onNochmal}>
-                        Nochmal
-                      </Knopf>
-                      {!musik.fehler && (
-                        <Knopf art="neben" onClick={musik.onWeiterhoeren}>
-                          Weiterhören
+            {!zuschauer && (
+              <div className="flex min-h-[3.4rem] flex-wrap items-center justify-end gap-2.5">
+                {bingo && <Knopf onClick={onNeuesSpiel}>Neues Spiel</Knopf>}
+                {!bingo && !runde && <Knopf onClick={drehen}>Rad drehen</Knopf>}
+                {!bingo && offen && (
+                  <>
+                    {musik?.vorbei && (
+                      <>
+                        <Knopf art="neben" onClick={musik.onNochmal}>
+                          Nochmal
                         </Knopf>
-                      )}
-                    </>
-                  )}
-                  {musik?.laeuft && (
-                    <Knopf art="neben" onClick={musik.onAnhalten}>
-                      Anhalten
-                    </Knopf>
-                  )}
-                  <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
-                </>
-              )}
-              {!bingo && aufgeloest && (
-                // Läuft der Song, "Anhalten", steht er, "Weiterhören".
-                <>
-                  {musik && (
-                    <Knopf
-                      art="neben"
-                      onClick={
-                        musik.laeuft ? musik.onAnhalten : musik.onWeiterhoeren
-                      }
-                    >
-                      {musik.laeuft ? "Anhalten" : "Weiterhören"}
-                    </Knopf>
-                  )}
-                  {stapelLeer ? (
-                    <Knopf onClick={onVonVorn}>Von vorn</Knopf>
-                  ) : (
-                    <Knopf onClick={drehen}>Nächste Runde</Knopf>
-                  )}
-                </>
-              )}
-            </div>
+                        {!musik.fehler && (
+                          <Knopf art="neben" onClick={musik.onWeiterhoeren}>
+                            Weiterhören
+                          </Knopf>
+                        )}
+                      </>
+                    )}
+                    {musik?.laeuft && (
+                      <Knopf art="neben" onClick={musik.onAnhalten}>
+                        Anhalten
+                      </Knopf>
+                    )}
+                    <Knopf onClick={onLoesungAnzeigen}>Lösung anzeigen</Knopf>
+                  </>
+                )}
+                {!bingo && aufgeloest && (
+                  // Läuft der Song, "Anhalten", steht er, "Weiterhören".
+                  <>
+                    {musik && (
+                      <Knopf
+                        art="neben"
+                        onClick={
+                          musik.laeuft ? musik.onAnhalten : musik.onWeiterhoeren
+                        }
+                      >
+                        {musik.laeuft ? "Anhalten" : "Weiterhören"}
+                      </Knopf>
+                    )}
+                    {stapelLeer ? (
+                      <Knopf onClick={onVonVorn}>Von vorn</Knopf>
+                    ) : (
+                      <Knopf onClick={drehen}>Nächste Runde</Knopf>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </section>
       </div>

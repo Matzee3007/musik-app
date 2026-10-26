@@ -25,6 +25,12 @@ test("der eigene Eintrag zählt nicht, so übersteht ein Handy das Neuladen", ()
   expect(nameVergeben([anna], "Anna", "s1")).toBe(false);
 });
 
+test("der Name des DJs im Online-Raum ist vergeben, ohne Groß- und Kleinschreibung", () => {
+  const dj = { schluessel: "t", rolle: "tisch", name: "Matthias" } as const;
+  expect(nameVergeben([dj], "matthias", "s2")).toBe(true);
+  expect(nameVergeben([tisch], "matthias", "s2")).toBe(false);
+});
+
 test("tischDa erkennt den Tisch unter den Anwesenden", () => {
   expect(tischDa([anna])).toBe(false);
   expect(tischDa([tisch, anna])).toBe(true);
