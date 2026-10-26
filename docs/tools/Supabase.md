@@ -61,6 +61,21 @@ Er führt durch vier Stufen:
 Im Code: `lib/supabase.ts` mit `supabaseKonfiguriert()` (sind beide Variablen gesetzt?) und `supabaseClient()` (ein
 Client für die ganze App).
 
+## Pausiert das kostenlose Projekt?
+
+Ja. Supabase pausiert ein Projekt im kostenlosen Plan nach **7 Tagen** ohne genug Datenbank-Aktivität, etwa eine
+Woche vorher kommt eine Warn-Mail. Ein pausiertes Projekt lässt sich bis zu einem Jahr lang wieder starten:
+Dashboard → Projekt `musik-bingo` → **„Resume project“**. Daten und Einstellungen bleiben erhalten.
+Quelle: [Project Pausing](https://supabase.com/docs/guides/platform/free-project-pausing) (gelesen 2026-10-26).
+
+Offen: Ob unsere Realtime-Kanäle als Aktivität zählen, sagt die Doku nicht, sie nennt nur Datenbank-Anfragen. Die
+App benutzt (noch) keine Tabellen, also muss man damit rechnen, dass `musik-bingo` zwischen zwei Spieleabenden
+pausiert. Am 2026-10-26 war es aktiv (3 Tage nach dem letzten Test).
+
+**Vor jedem Spieleabend** prüfen, ob das Projekt läuft (Befehl unten). Antwortet es nicht mit `200`, im Dashboard
+„Resume project“ drücken und ein paar Minuten warten. PartyKit als Ersatz für Realtime lohnt erst, wenn das Wecken
+lästig wird. Mit Tabellen für Songs und Jahre (Phase 4) entsteht ohnehin Datenbank-Aktivität.
+
 ## Typischer Ablauf
 
 1. Der Tisch öffnet den Kanal `raum:ABCD` und meldet sich per Presence als Tisch an.
@@ -77,6 +92,8 @@ Client für die ganze App).
 ```bash
 npm install -E @supabase/supabase-js@2.117.2   # Bibliothek, genaue Version
 bash scripts/supabase-einrichten.sh            # Einrichtung (eigenes Terminal)
+# Läuft das Projekt? 200 = ja. Liest URL und Schlüssel aus .env.local, ohne sie anzuzeigen
+(set -a; source .env.local; /usr/bin/curl -s -o /dev/null -w '%{http_code}\n' "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/health" -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")
 ```
 
 ## Fehler, die uns passiert sind
