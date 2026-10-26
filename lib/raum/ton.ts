@@ -144,3 +144,76 @@ export function tonSenden(
     verbindungen.clear();
   };
 }
+
+// Ein Spieler bittet mit "hallo" um Ton, beim Start, nach jedem Wiederbeitritt und wenn ein DJ "bereit" meldet. Er
+// nimmt das erste Angebot an, das an ihn geht, und gibt die ankommende Tonspur an beiStrom. Liefert eine Funktion, die
+// den Empfang beendet.
+export function tonEmpfangen(
+  kanal: RaumKanal,
+  ich: string,
+  beiStrom: (strom: MediaStream) => void,
+  neu: () => Verbindung = () => new RTCPeerConnection(ICE),
+  beiFehler: (fehler: unknown) => void = console.error,
+): () => void {
+  let verbindung: Verbindung | null = null;
+  // Der DJ, dessen Angebot angenommen ist. Weitere Angebote (etwa eines zweiten Tabs) zählen nicht.
+  let dj: string | null = null;
+
+  // Der DJ legt auf "hallo" eine neue Verbindung an und schließt die alte, deshalb hier ebenso von vorn.
+  function vonVorn() {
+    verbindung?.close();
+    verbindung = null;
+    dj = null;
+    signalSenden(kanal, { art: "hallo", von: ich }).catch(beiFehler);
+  }
+
+  const abmelden = nacheinander(
+    kanal,
+    async (signal) => {
+      if (signal.art === "bereit") {
+        vonVorn();
+        return;
+      }
+      if (signal.art !== "angebot" && signal.art !== "kandidat") return;
+      if (signal.an !== ich) return;
+      if (signal.art === "kandidat") {
+        if (signal.von === dj)
+          await verbindung!.addIceCandidate(signal.kandidat);
+        return;
+      }
+      if (dj !== null) return;
+      const sender = signal.von;
+      dj = sender;
+      const v = neu();
+      verbindung = v;
+      v.ontrack = (e) => beiStrom(e.streams[0]);
+      v.onicecandidate = (e) => {
+        if (!e.candidate) return;
+        signalSenden(kanal, {
+          art: "kandidat",
+          an: sender,
+          von: ich,
+          kandidat: e.candidate.toJSON(),
+        }).catch(beiFehler);
+      };
+      await v.setRemoteDescription(signal.sdp);
+      await v.setLocalDescription(await v.createAnswer());
+      await signalSenden(kanal, {
+        art: "antwort",
+        an: sender,
+        von: ich,
+        sdp: v.localDescription!,
+      });
+    },
+    beiFehler,
+  );
+  const verbundenAb = kanal.beiVerbunden(vonVorn);
+  vonVorn();
+
+  return () => {
+    abmelden();
+    verbundenAb();
+    verbindung?.close();
+    verbindung = null;
+  };
+}
