@@ -294,3 +294,10 @@ test("online: Ton vom DJ mit Lautstärke, lokal nicht", () => {
   spielen(runde3);
   expect(screen.queryByText(/Ton vom DJ/)).toBeNull();
 });
+
+// Fund aus dem Review von PR #66: Zwischen zwei Spielen (Stand null) brach der Ton ab.
+test("online bleibt der Ton vom DJ, auch wenn gerade kein Spiel läuft", () => {
+  const { raum } = spielen(online);
+  act(() => raum.nachrichtSchicken({ art: "tisch", stand: null }));
+  expect(screen.getByText("Ton vom DJ: noch nicht geteilt")).toBeDefined();
+});

@@ -105,6 +105,9 @@ export default function HandySpiel({
 
   const linie = karte && bingoLinie(karte.karte);
   const online = stand?.online === true;
+  // Einmal online, bleibt der Ton, auch zwischen zwei Spielen (Stand null), sonst bräche er jedes Mal ab.
+  const [tonAn, setTonAn] = useState(false);
+  if (online && !tonAn) setTonAn(true);
 
   function feldKlick(index: number) {
     if (!stand || !karte) return;
@@ -137,6 +140,7 @@ export default function HandySpiel({
       ) : (
         !karte && <p>Warte auf das Spiel …</p>
       )}
+      {tonAn && <TonEmpfang kanal={kanal} />}
       {linie ? (
         <h2 className="font-schild text-5xl text-akzent">Bingo!</h2>
       ) : (
@@ -152,25 +156,22 @@ export default function HandySpiel({
       {stand &&
         karte &&
         (online ? (
-          <>
-            <TonEmpfang kanal={kanal} />
-            <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
-              <Tisch
-                zuschauer
-                runde={rundeAusStand(stand)}
-                stapelLeer={false}
-                bingo={stand.bingo.length > 0}
-                gewinner={stand.bingo}
-                onRadDrehen={() => {}}
-                onLoesungAnzeigen={() => {}}
-                onVonVorn={() => {}}
-                onNeuesSpiel={() => {}}
-              />
-              <div className="flex flex-col items-center gap-4">
-                {kartenteil(stand, karte)}
-              </div>
+          <div className="grid w-full max-w-5xl gap-8 md:grid-cols-2">
+            <Tisch
+              zuschauer
+              runde={rundeAusStand(stand)}
+              stapelLeer={false}
+              bingo={stand.bingo.length > 0}
+              gewinner={stand.bingo}
+              onRadDrehen={() => {}}
+              onLoesungAnzeigen={() => {}}
+              onVonVorn={() => {}}
+              onNeuesSpiel={() => {}}
+            />
+            <div className="flex flex-col items-center gap-4">
+              {kartenteil(stand, karte)}
             </div>
-          </>
+          </div>
         ) : (
           kartenteil(stand, karte)
         ))}
