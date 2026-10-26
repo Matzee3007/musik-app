@@ -22,20 +22,34 @@ Workflow `.github/workflows/ci.yml`, Job `check`, bei jedem Pull Request und jed
 4. `npm run build`: Produktionsfassung bauen.
 
 Die CI benutzt nur die npm-Skripte aus `package.json`. So prüfen lokal und CI dasselbe. Ein Lauf dauert etwa
-40 Sekunden.
+1,5 bis 2 Minuten (Stand 2026-10-26).
+
+Drei Einstellungen sichern den Workflow ab:
+
+- `concurrency` mit `cancel-in-progress`: Ein neuer Push in einen PR bricht dessen noch laufenden Lauf ab, das
+  spart Freiminuten. Die Gruppe ist `github.ref`, bei einem PR also `refs/pull/<nr>/merge`, je PR eine Gruppe.
+  Auf `main` bricht nichts ab (`cancel-in-progress` nur bei `pull_request`): Werden zwei PRs kurz nacheinander
+  gemergt, wird trotzdem jeder Merge-Commit geprüft.
+- `permissions: contents: read`: Das Token der CI (`GITHUB_TOKEN`) darf das Repo nur lesen. Ein manipuliertes
+  npm-Paket, das während `npm ci` läuft, kann damit nichts ins Repo schreiben. Code ausführen und Daten nach außen
+  schicken kann es trotzdem, deshalb später keine Geheimnisse (Secrets) in die CI, ohne das neu zu bedenken.
+- `timeout-minutes: 10`: Ein hängender Lauf bricht nach 10 Minuten ab, nicht erst nach der Grenze von GitHub
+  (6 Stunden).
 
 ## Wie haben wir es eingerichtet?
 
 1. **2026-10-18, Phase 0:** `ci.yml` mit PR #4, nach dem Plan
    [[2026-10-18-ci-und-prettier-hook|Plan: CI und Prettier-Hook]]. Zuerst mit einer absichtlich falsch formatierten
    Probedatei: Die CI wurde rot. Nach dem Löschen der Datei wurde sie grün. So ist belegt, dass sie Fehler findet.
+2. **2026-10-26, Phase 4:** `concurrency`, `permissions` und `timeout-minutes` ergänzt, wie in tages-dashboard
+   (Fund aus dessen `/code-review` von PR #4).
 
 ## Regeln
 
 - **Vor jedem Merge `gh pr checks <nr>`: Die CI muss grün sein.** Das Repo ist privat und läuft mit GitHub Free.
   Dort gibt es keinen Branch-Schutz, GitHub verbietet einen Merge bei roter CI also nicht von selbst.
 - Private Repos haben bei GitHub Free ein Kontingent an Freiminuten pro Monat (Stand: 2000 Minuten). Verbrauch unter
-  GitHub → Settings → Billing. Bei rund 40 Sekunden pro Lauf reicht das weit.
+  GitHub → Settings → Billing. Bei rund 2 Minuten pro Lauf reicht das weit.
 
 ## Befehle
 
