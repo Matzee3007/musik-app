@@ -79,6 +79,12 @@ als Nächstes ansteht. Vorschläge:
 
 Vor dem Start eines neuen Plans `docs/Tools für später.md` auf vorgemerkte Werkzeuge für Phase 4 prüfen.
 
+**Aus tages-dashboard (2026-11-04), klein, ein PR mit `/code-review`: `.github/dependabot.yml` nachziehen** (Erklärung in dessen `docs/tools/Dependabot - Einrichtung.md`):
+
+- `npm-klein` mit `exclude-patterns` für die Familien `next` und `react`, weil React hier trotz eigener Gruppe im Sammel-PR landete (#57, #62). Im ersten Lauf dort kam React als eigener PR, bewiesen ist die Wirkung noch nicht.
+- Große Updates von `typescript` ignorieren: `typescript-eslint` verlangt eine Fassung unter 6.1, das erklärt das rote #59. Prüfen, ob auch ESLint 10 (#60) ignoriert werden sollte: `eslint-plugin-react`, `-import` und `-jsx-a11y` erlauben dort nur ESLint bis 9, obwohl die CI grün war.
+- `cooldown` mit `default-days: 7` für beide Einträge, gegen ganz frische, womöglich manipulierte Versionen.
+
 ## Passende Skills
 
 - `plan-schreiben`: Teil 2 des Online-Modus planen
