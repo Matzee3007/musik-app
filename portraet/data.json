@@ -1,135 +1,1281 @@
 {
-  "schema": 1,
-  "erstellt": "2026-10-23",
-  "projekt": {
-    "name": "musik-app",
-    "titel": "Musik-Bingo",
-    "kurz": "Musik-Bingo als Web-App: Rad, 5×5-Bingo-Karte und Songs aus eigenen Spotify-Playlists.",
-    "zweck": "Der Entwickler will ein Musik-Bingo-Kartenspiel mit seinen Freunden spielen: Der Laptop ist der Tisch mit Rad, Musik und Auflösung, jeder Spieler hat Karte und Notizfläche auf dem eigenen Handy. Gleichwertiges Ziel ist das Lernen von TypeScript, Spotify-Anbindung und dem Weg von der Idee zur fertigen App.",
-    "stack": ["TypeScript", "Next.js", "React", "Tailwind CSS", "Supabase Realtime", "Vercel", "Spotify Web API", "MusicBrainz", "Vitest", "Playwright"],
-    "repo": "https://github.com/Matzee3007/musik-app",
-    "kennzahlen": { "commits": 213, "prs": 47, "adrs": 7, "journale": 7 },
-    "quelle": "docs/Projektvision.md"
+ "schema": 1,
+ "erstellt": "2026-11-05",
+ "projekt": {
+  "name": "musik-app",
+  "titel": "Musik-Bingo",
+  "kurz": "Musik-Bingo als Web-App: Ein Rad wählt die Kategorie, ein Song aus einer eigenen Spotify-Playlist läuft, wer richtig liegt, hakt ein Feld seiner 5×5-Karte ab.",
+  "zweck": "Der Entwickler baut das Originalspiel als Web-App nach, um es mit seinen Freunden zu spielen, am Tisch mit Handys oder online mit Ton vom DJ. Gleichwertiges Ziel ist das Lernen: TypeScript, Spotify einbinden und aus einer Idee Schritt für Schritt eine funktionierende App entwickeln. Es ist kein Streamingdienst und kein öffentliches Produkt unter dem Namen des Originalspiels.",
+  "stack": [
+   "TypeScript",
+   "Next.js",
+   "React",
+   "Node.js 24",
+   "Tailwind CSS",
+   "Supabase",
+   "Vercel",
+   "Spotify Web API",
+   "Web Playback SDK",
+   "MusicBrainz",
+   "Vitest",
+   "Playwright"
+  ],
+  "repo": "https://github.com/Matzee3007/musik-app",
+  "kennzahlen": {
+   "commits": 284,
+   "prs": 65,
+   "adrs": 8,
+   "journale": 8
   },
-  "phasen": [
-    { "nr": 0, "name": "Fundament", "status": "abgeschlossen", "ziel": "Repo, CLAUDE.md, Next.js mit TypeScript, ESLint, Prettier und Vitest, CI mit GitHub Actions, Projektvision mit /grill-with-docs geschärft.", "abgeschlossen": "2026-10-18", "quelle": "docs/Projektvision.md" },
-    { "nr": 1, "name": "Spiel auf einem Gerät", "status": "abgeschlossen", "ziel": "Rad, 5×5-Karte, Auflösung, Abhaken und Bingo-Erkennung testgetrieben, Tisch und Karte nebeneinander am Laptop, noch ohne Spotify.", "abgeschlossen": "2026-10-19", "quelle": "docs/Projektvision.md" },
-    { "nr": 2, "name": "Spotify", "status": "abgeschlossen", "ziel": "Anmeldung des DJs per OAuth, eigene Playlist laden und abspielen, Erscheinungsjahr über MusicBrainz mit Korrektur, animierte Musikspur.", "abgeschlossen": "2026-10-20", "quelle": "docs/Projektvision.md" },
-    { "nr": 3, "name": "Mehrspieler", "status": "abgeschlossen", "ziel": "Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase Realtime, Deployment auf Vercel, Spieler-Bots für Browser-Tests.", "abgeschlossen": "2026-10-22", "quelle": "docs/Projektvision.md" },
-    { "nr": 4, "name": "Eigene Ideen", "status": "aktiv", "ziel": "Scoreboard über einen Spieleabend, weitere Kategorien, Tisch ganz am Handy, dazu Verschobenes aus Phase 3.", "quelle": "docs/Projektvision.md" }
-  ],
-  "elemente": [
-    { "id": "musik-app", "typ": "app", "name": "Musik-Bingo", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Die Web-App selbst: Tisch am Laptop, Karte und Notizfläche auf den Handys.", "quelle": "CLAUDE.md" },
-    { "id": "claude-code", "typ": "claude", "name": "Claude Code", "ebene": "global", "herkunft": "beides", "phasen": [], "wofuer": "KI-Entwickler im Terminal, im Projekt mit Prettier-Hook und Sperre für .env eingerichtet.", "quelle": "docs/tools/Claude Code - Einrichtung.md" },
-
-    { "id": "nextjs", "typ": "tool", "name": "Next.js", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Framework der App mit React, TypeScript und Node.js 24: Seiten, Server-Route fürs Erscheinungsjahr, Schriften über next/font.", "quelle": "docs/tools/Next.js.md" },
-    { "id": "tailwind", "typ": "tool", "name": "Tailwind CSS", "ebene": "projekt", "herkunft": "beides", "phasen": [4], "wofuer": "Gestaltung der Oberfläche, Farben des Designs „Spielshow“ als Tailwind-Tokens.", "quelle": "docs/journal/Lernjournal Phase 4 - Design Spielshow.md" },
-    { "id": "qrcode-react", "typ": "tool", "name": "qrcode.react", "ebene": "projekt", "herkunft": "beides", "phasen": [3], "wofuer": "Zeigt am Tisch den QR-Code, mit dem Handys dem Raum beitreten.", "quelle": "docs/plaene/2026-10-21-raum-beitritt.md" },
-    { "id": "vitest", "typ": "tool", "name": "Vitest", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Unit- und Komponententests mit React Testing Library und jsdom, Grundlage der testgetriebenen Spiellogik.", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "id": "eslint", "typ": "tool", "name": "ESLint", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Sucht Fehler und schlechte Muster im Code.", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "id": "prettier", "typ": "tool", "name": "Prettier", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Formatiert den Code einheitlich (Markdown nicht).", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "id": "playwright", "typ": "tool", "name": "Playwright", "ebene": "projekt", "herkunft": "beides", "phasen": [3, 4], "wofuer": "Browser-Tests mit Spieler-Bots: Tisch und Handys spielen über das echte Supabase, auch unter WebKit, dazu Screenshots fürs Design.", "quelle": "docs/tools/Playwright.md" },
-
-    { "id": "github", "typ": "dienst", "name": "GitHub", "ebene": "global", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Repo, ein PR pro Feature, Commit-Status von CI und Vercel.", "quelle": "docs/tools/Tools Übersicht.md" },
-    { "id": "spotify", "typ": "dienst", "name": "Spotify Web API", "ebene": "projekt", "herkunft": "beides", "phasen": [2, 3, 4], "wofuer": "Anmeldung des DJs (OAuth mit PKCE), seine Playlists und Songs, Abspielen über das Web Playback SDK.", "quelle": "docs/tools/Spotify Web API.md" },
-    { "id": "musicbrainz", "typ": "dienst", "name": "MusicBrainz", "ebene": "projekt", "herkunft": "beides", "phasen": [2], "wofuer": "Liefert das Erscheinungsjahr eines Songs über den ISRC.", "quelle": "docs/tools/MusicBrainz.md" },
-    { "id": "supabase", "typ": "dienst", "name": "Supabase", "ebene": "projekt", "herkunft": "beides", "phasen": [3, 4], "wofuer": "Realtime-Kanäle ohne Tabellen: Presence zeigt, wer im Raum ist, Broadcast trägt den Spielstand.", "quelle": "docs/tools/Supabase.md" },
-    { "id": "vercel", "typ": "dienst", "name": "Vercel", "ebene": "projekt", "herkunft": "beides", "phasen": [3], "wofuer": "Bringt die App unter musik-bingo.vercel.app ins Internet, dazu eine Vorschau je PR.", "quelle": "docs/tools/Vercel.md" },
-    { "id": "claude-artifacts", "typ": "dienst", "name": "Claude Artifacts", "ebene": "global", "herkunft": "benutzt", "phasen": [4], "wofuer": "Klickbare Prototypen für Tisch, Handy und Playlists vor dem Plan.", "quelle": "docs/journal/Lernjournal Phase 4 - Prototypen Tisch und Handy.md" },
-
-    { "id": "ci", "typ": "ci", "name": "CI (GitHub Actions)", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3, 4], "wofuer": "Prüft jeden PR und jeden Push auf main mit npm run check und npm run build.", "quelle": ".github/workflows/ci.yml" },
-    { "id": "hook-prettier", "typ": "hook", "name": "Prettier-Hook", "ebene": "projekt", "herkunft": "beides", "phasen": [0, 1, 2, 3], "wofuer": "Formatiert nach jedem Edit oder Write von Claude die Datei mit Prettier und prüft sie mit ESLint.", "quelle": ".claude/hooks/prettier-nach-aenderung.sh" },
-    { "id": "mcp-playwright-test", "typ": "mcp", "name": "Playwright-MCP (playwright-test)", "ebene": "projekt", "herkunft": "beides", "phasen": [4], "wofuer": "Steuert den Browser für die Playwright-Agents, laut Plan auch für Screenshots vor jedem PR.", "quelle": ".mcp.json" },
-    { "id": "playwright-test-planner", "typ": "agent", "name": "playwright-test-planner", "ebene": "projekt", "herkunft": "eingerichtet", "phasen": [], "wofuer": "Erkundet eine Ansicht im Browser und schreibt einen Testplan nach specs/.", "quelle": ".claude/agents/playwright-test-planner.md" },
-    { "id": "playwright-test-generator", "typ": "agent", "name": "playwright-test-generator", "ebene": "projekt", "herkunft": "eingerichtet", "phasen": [], "wofuer": "Macht aus einem Testplan Playwright-Tests.", "quelle": ".claude/agents/playwright-test-generator.md" },
-    { "id": "playwright-test-healer", "typ": "agent", "name": "playwright-test-healer", "ebene": "projekt", "herkunft": "eingerichtet", "phasen": [], "wofuer": "Lässt Tests laufen und repariert scheiternde Tests (nicht die App).", "quelle": ".claude/agents/playwright-test-healer.md" },
-
-    { "id": "skill-projekt-starten", "typ": "skill", "name": "projekt-starten", "ebene": "global", "herkunft": "benutzt", "phasen": [0], "wofuer": "Hat das Projekt aus der Vorlage des Ecosystems angelegt.", "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md" },
-    { "id": "skill-grill-with-docs", "typ": "skill", "name": "grill-with-docs", "ebene": "global", "herkunft": "benutzt", "phasen": [0, 2, 3], "wofuer": "Klärt Vision und jede Phase in Fragerunden, schreibt Glossar und ADRs mit.", "quelle": "docs/journal/Lernjournal Phase 3 - Mehrspieler.md" },
-    { "id": "skill-plan-schreiben", "typ": "skill", "name": "plan-schreiben", "ebene": "global", "herkunft": "benutzt", "phasen": [0, 1, 3, 4], "wofuer": "Schreibt die Umsetzungspläne in docs/plaene/ mit Aufgaben, Test und Prüfbefehl.", "quelle": "docs/journal/Lernjournal Phase 4 - Prototypen Tisch und Handy.md" },
-    { "id": "skill-tdd", "typ": "skill", "name": "tdd", "ebene": "global", "herkunft": "benutzt", "phasen": [0, 1, 2, 3, 4], "wofuer": "Rot-Grün-Schleife für Spiellogik, Raum und Oberfläche.", "quelle": "docs/plaene/2026-10-19-spiellogik.md" },
-    { "id": "skill-fehler-diagnose", "typ": "skill", "name": "fehler-diagnose", "ebene": "global", "herkunft": "benutzt", "phasen": [3], "wofuer": "Grenzte Fehler im Raum und im Spielstand ein (u. a. per WebSocket-Mitschnitt).", "quelle": "docs/plaene/2026-10-22-spielstand-broadcast.md" },
-    { "id": "skill-assistent-bauen", "typ": "skill", "name": "assistent-bauen", "ebene": "global", "herkunft": "benutzt", "phasen": [3], "wofuer": "Erzeugte den Assistenten scripts/supabase-einrichten.sh für die Supabase-Einrichtung von Hand.", "quelle": "docs/plaene/2026-10-21-raum-beitritt.md" },
-    { "id": "skill-archify", "typ": "skill", "name": "archify", "ebene": "global", "herkunft": "benutzt", "phasen": [2], "wofuer": "Einmal getestet: Sequenzdiagramm der Spotify-Anmeldung.", "quelle": "docs/journal/Lernjournal Phase 2 - Spotify.md" },
-    { "id": "skill-frontend-design", "typ": "skill", "name": "frontend-design", "ebene": "global", "herkunft": "benutzt", "phasen": [4], "wofuer": "Plugin-Skill von Anthropic, lieferte den Designplan „Spielshow im Studio“.", "quelle": "docs/journal/Lernjournal Phase 4 - Design Spielshow.md" },
-    { "id": "skill-code-review", "typ": "skill", "name": "/code-review", "ebene": "global", "herkunft": "benutzt", "phasen": [3, 4], "wofuer": "Eingebautes Review vor jedem Merge, Funde mit dem Entwickler durchgegangen.", "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md" },
-    { "id": "skill-journal", "typ": "skill", "name": "journal", "ebene": "global", "herkunft": "benutzt", "phasen": [1, 2], "wofuer": "Schreibt das Lernjournal am Session- und Phasenende.", "quelle": "docs/plaene/2026-10-19-abspielen.md" },
-    { "id": "skill-naechste-session", "typ": "skill", "name": "naechste-session", "ebene": "global", "herkunft": "benutzt", "phasen": [1, 2], "wofuer": "Schreibt die Übergabe docs/Nächste Session.md und mergt die PRs der Session.", "quelle": "docs/plaene/2026-10-19-abspielen.md" },
-    { "id": "agent-plan-pruefer", "typ": "agent", "name": "plan-pruefer", "ebene": "global", "herkunft": "benutzt", "phasen": [3, 4], "wofuer": "Prüft mit frischem Kontext, ob ein Branch seinen Plan erfüllt.", "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md" },
-
-    { "id": "hook-datenschutz", "typ": "hook", "name": "datenschutz.py", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Fragt nach, bevor persönliche Daten in einem Aufruf nach außen gehen.", "quelle": "~/claude-ecosystem/hooks/datenschutz.py" },
-    { "id": "hook-vault-frontmatter", "typ": "hook", "name": "vault-pruefen --hook", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Prüft nach jedem Edit oder Write das Frontmatter der geschriebenen Notiz.", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "id": "hook-links-pruefen", "typ": "hook", "name": "links-pruefen.sh", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Prüft beim Sessionstart die Links von install.sh in ~/.claude/.", "quelle": "~/claude-ecosystem/links-pruefen.sh" },
-    { "id": "hook-projektstand", "typ": "hook", "name": "projektstand.sh", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Liest beim Sessionstart den Stand aller Projekte frisch aus Git, GitHub und Übergabe.", "quelle": "~/claude-ecosystem/projektstand.sh" },
-    { "id": "hook-orca", "typ": "hook", "name": "Orca", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Meldet jedes Ereignis der Session an Orca, das am Reiter zeigt, ob der Agent arbeitet oder fertig ist.", "quelle": "~/claude-ecosystem/docs/adr/0016-orca-statt-multica-und-omc.md" },
-    { "id": "mod-session-band", "typ": "mod", "name": "session-band", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Band über dem Prompt: Projekt, Phase, Branch, offene PRs, Füllstand des Kontexts; /stand.", "quelle": "~/claude-ecosystem/mods/README.md" },
-    { "id": "mod-was-passiert", "typ": "mod", "name": "was-passiert", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Zeitleiste jeder Aktion von Claude in Klartext neben dem Gespräch.", "quelle": "~/claude-ecosystem/mods/README.md" },
-    { "id": "mod-replay-theater", "typ": "mod", "name": "replay-theater", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Zeigt mit /replay jede Dateiänderung einer Runde einzeln als Diff.", "quelle": "~/claude-ecosystem/mods/README.md" },
-    { "id": "mod-blast-radius", "typ": "mod", "name": "blast-radius", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Hält riskante Befehle an und zeigt, was sie treffen.", "quelle": "~/claude-ecosystem/mods/README.md" },
-    { "id": "mod-swarm", "typ": "mod", "name": "swarm", "ebene": "global", "herkunft": "benutzt", "phasen": [], "wofuer": "Live-Karte der Subagents mit /swarm.", "quelle": "~/claude-ecosystem/mods/README.md" }
-  ],
-  "verbindungen": [
-    { "von": "musik-app", "nach": "nextjs", "art": "nutzt", "text": "baut auf Next.js mit React und TypeScript", "quelle": "package.json" },
-    { "von": "musik-app", "nach": "tailwind", "art": "nutzt", "text": "gestaltet die Oberfläche mit Tailwind", "quelle": "package.json" },
-    { "von": "musik-app", "nach": "qrcode-react", "art": "nutzt", "text": "zeigt den QR-Code zum Beitreten", "quelle": "app/ui/raum-kopf.tsx" },
-    { "von": "musik-app", "nach": "spotify", "art": "nutzt", "text": "Anmeldung, Playlists und Abspielen beim DJ", "quelle": "lib/spotify/playlists.ts" },
-    { "von": "musik-app", "nach": "musicbrainz", "art": "nutzt", "text": "fragt das Erscheinungsjahr über den ISRC ab", "quelle": "lib/musicbrainz.ts" },
-    { "von": "musik-app", "nach": "supabase", "art": "nutzt", "text": "Raum-Kanäle über Supabase Realtime", "quelle": "lib/supabase.ts" },
-    { "von": "github", "nach": "vercel", "art": "liefert", "text": "Vercel holt den Code von GitHub", "quelle": "docs/tools/Vercel.md" },
-    { "von": "vercel", "nach": "musik-app", "art": "deployt", "text": "jeder Merge in main erneuert musik-bingo.vercel.app, jeder PR bekommt eine Vorschau", "quelle": "docs/tools/Vercel.md" },
-    { "von": "github", "nach": "ci", "art": "startet", "text": "startet die CI bei jedem PR und Push auf main", "quelle": ".github/workflows/ci.yml" },
-    { "von": "ci", "nach": "musik-app", "art": "prueft", "text": "npm run check und npm run build", "quelle": ".github/workflows/ci.yml" },
-    { "von": "ci", "nach": "vitest", "art": "nutzt", "text": "führt die Tests über npm run check aus", "quelle": "package.json" },
-    { "von": "ci", "nach": "eslint", "art": "nutzt", "text": "lint über npm run check", "quelle": "package.json" },
-    { "von": "ci", "nach": "prettier", "art": "nutzt", "text": "format:check über npm run check", "quelle": "package.json" },
-    { "von": "vitest", "nach": "musik-app", "art": "prueft", "text": "Spiellogik und Komponenten", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "von": "eslint", "nach": "musik-app", "art": "prueft", "text": "prüft den Code", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "von": "prettier", "nach": "musik-app", "art": "prueft", "text": "einheitliches Format", "quelle": "docs/tools/Vitest, ESLint und Prettier.md" },
-    { "von": "playwright", "nach": "musik-app", "art": "prueft", "text": "Tisch und Handys im echten Browser, nur lokal", "quelle": "docs/tools/Playwright.md" },
-    { "von": "playwright", "nach": "supabase", "art": "nutzt", "text": "Bots spielen über das echte Supabase, Abbruch per routeWebSocket", "quelle": "docs/tools/Playwright.md" },
-    { "von": "claude-code", "nach": "hook-prettier", "art": "startet", "text": "nach jedem Edit oder Write", "quelle": ".claude/settings.json" },
-    { "von": "hook-prettier", "nach": "prettier", "art": "startet", "text": "formatiert die geänderte Datei", "quelle": ".claude/hooks/prettier-nach-aenderung.sh" },
-    { "von": "hook-prettier", "nach": "eslint", "art": "startet", "text": "prüft .ts/.tsx/.js/.mjs ohne --fix", "quelle": ".claude/hooks/prettier-nach-aenderung.sh" },
-    { "von": "mcp-playwright-test", "nach": "playwright", "art": "nutzt", "text": "npx playwright run-test-mcp-server", "quelle": ".mcp.json" },
-    { "von": "playwright-test-planner", "nach": "mcp-playwright-test", "art": "nutzt", "text": "erkundet die App über die Browser-Werkzeuge", "quelle": ".claude/agents/playwright-test-planner.md" },
-    { "von": "playwright-test-planner", "nach": "playwright-test-generator", "art": "liefert", "text": "Testplan in specs/", "quelle": "docs/Agents.md" },
-    { "von": "playwright-test-generator", "nach": "mcp-playwright-test", "art": "nutzt", "text": "führt die Schritte im Browser aus und schreibt den Test", "quelle": ".claude/agents/playwright-test-generator.md" },
-    { "von": "playwright-test-healer", "nach": "mcp-playwright-test", "art": "nutzt", "text": "test_run und test_debug zum Reparieren", "quelle": ".claude/agents/playwright-test-healer.md" },
-    { "von": "skill-projekt-starten", "nach": "musik-app", "art": "liefert", "text": "legte Gerüst, CLAUDE.md und erstes Journal an", "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md" },
-    { "von": "skill-grill-with-docs", "nach": "skill-plan-schreiben", "art": "liefert", "text": "geklärte Anforderung, dann der Plan", "quelle": "docs/Projektvision.md" },
-    { "von": "skill-plan-schreiben", "nach": "skill-tdd", "art": "liefert", "text": "Plan mit Test je Aufgabe, umgesetzt testgetrieben", "quelle": "docs/Projektvision.md" },
-    { "von": "skill-plan-schreiben", "nach": "agent-plan-pruefer", "art": "liefert", "text": "der Plan ist der Maßstab der Prüfung", "quelle": "~/claude-ecosystem/skills/planungs-skills/plan-schreiben/SKILL.md" },
-    { "von": "skill-tdd", "nach": "vitest", "art": "nutzt", "text": "jeder Baustein mit eigenem Test-Zyklus", "quelle": "docs/plaene/2026-10-19-spiellogik.md" },
-    { "von": "agent-plan-pruefer", "nach": "musik-app", "art": "prueft", "text": "prüft den Branch gegen den Plan", "quelle": "docs/plaene/2026-10-22-live-spiel.md" },
-    { "von": "skill-code-review", "nach": "musik-app", "art": "prueft", "text": "Review jedes PRs vor dem Merge", "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md" },
-    { "von": "skill-fehler-diagnose", "nach": "musik-app", "art": "prueft", "text": "grenzte Fehler im Spielstand ein", "quelle": "docs/plaene/2026-10-22-spielstand-broadcast.md" },
-    { "von": "skill-assistent-bauen", "nach": "supabase", "art": "liefert", "text": "Assistent scripts/supabase-einrichten.sh führt durch die Einrichtung", "quelle": "scripts/supabase-einrichten.sh" },
-    { "von": "claude-code", "nach": "skill-archify", "art": "startet", "text": "von Hand mit /archify aufgerufen", "quelle": "docs/journal/Lernjournal Phase 2 - Spotify.md" },
-    { "von": "skill-frontend-design", "nach": "skill-plan-schreiben", "art": "liefert", "text": "Designplan als Anforderung des Plans Design Spielshow", "quelle": "docs/plaene/2026-10-22-design-spielshow.md" },
-    { "von": "claude-artifacts", "nach": "skill-plan-schreiben", "art": "liefert", "text": "Prototypen Tisch, Handy und Playlists als Grundlage des Plans", "quelle": "docs/plaene/2026-10-23-tisch-und-handy-nach-prototyp.md" },
-    { "von": "skill-journal", "nach": "skill-naechste-session", "art": "liefert", "text": "die Übergabe läuft nach dem Journal", "quelle": "~/claude-ecosystem/skills/dokumentations-skills/naechste-session/SKILL.md" },
-    { "von": "skill-naechste-session", "nach": "github", "art": "nutzt", "text": "mergt alle PRs der Session", "quelle": "~/claude-ecosystem/skills/dokumentations-skills/naechste-session/SKILL.md" },
-    { "von": "hook-datenschutz", "nach": "claude-code", "art": "erweitert", "text": "PreToolUse vor Bash, Web, Artifact und MCP", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "hook-vault-frontmatter", "nach": "claude-code", "art": "erweitert", "text": "PostToolUse nach Edit und Write", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "hook-links-pruefen", "nach": "claude-code", "art": "erweitert", "text": "SessionStart", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "hook-projektstand", "nach": "claude-code", "art": "erweitert", "text": "SessionStart, Stand aller Orte als Kontext", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "hook-projektstand", "nach": "github", "art": "nutzt", "text": "liest offene PRs", "quelle": "~/claude-ecosystem/projektstand.sh" },
-    { "von": "hook-orca", "nach": "claude-code", "art": "erweitert", "text": "an allen 13 Ereignissen der Session", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "mod-session-band", "nach": "claude-code", "art": "erweitert", "text": "Band über dem Prompt", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "mod-was-passiert", "nach": "claude-code", "art": "erweitert", "text": "Bereich neben dem Gespräch", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "mod-replay-theater", "nach": "claude-code", "art": "erweitert", "text": "/replay", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "mod-blast-radius", "nach": "claude-code", "art": "erweitert", "text": "hält riskante Befehle an", "quelle": "~/claude-ecosystem/config/settings.json" },
-    { "von": "mod-swarm", "nach": "claude-code", "art": "erweitert", "text": "/swarm", "quelle": "~/claude-ecosystem/config/settings.json" }
-  ],
-  "luecken": [
-    "Die drei Playwright-Agents sind eingerichtet, laut Journal Phase 3 aber noch nicht benutzt; spätere Benutzung ist nicht belegt.",
-    "Der Playwright-MCP-Server ist nur als Vorgabe im Plan Tisch und Handy (Phase 4) für Screenshots belegt, ein Lauf steht in keinem Journal.",
-    "journal und naechste-session sind nur in den Plänen von Phase 1 und 2 namentlich als Schritt genannt; dass alle sieben Journale und die Übergabe mit ihnen entstanden, ist wahrscheinlich, aber nicht belegt.",
-    "fertig-pruefen steht nur als Ablaufregel in der Projektvision und im Skills-Katalog des Projekts, eine Benutzung ist nicht belegt (nicht aufgenommen).",
-    "Für Phase 2 gibt es drei Pläne, plan-schreiben ist dort aber nicht namentlich genannt; die Phasen von plan-schreiben enthalten 2 deshalb nicht.",
-    "Supabase CLI und Docker Desktop stehen in docs/Arbeitsumgebung.md als Bedarf ab Phase 3, eine Benutzung ist nicht belegt (ADR 0004: keine Tabellen), nicht aufgenommen.",
-    "Ob die CI Vercel auslöst, ist nicht belegt: Vercel baut über die eigene GitHub-Anbindung, die CI prüft nur. Daher keine Kante ci → vercel.",
-    "archify hat keine fachliche Kante zur App: Das Sequenzdiagramm der Spotify-Anmeldung war ein Test, wo es liegt, nennt das Journal nicht.",
-    "Leere phasen bei Claude Code, globalen Hooks und Mods heißen: läuft in jeder Session. Orca läuft erst seit 2026-10-22/23 (ADR 0016 des Ecosystems), also faktisch nur in Phase 4."
-  ]
+  "quelle": "docs/Projektvision.md"
+ },
+ "phasen": [
+  {
+   "nr": 0,
+   "name": "Fundament",
+   "status": "abgeschlossen",
+   "ziel": "Repo, CLAUDE.md, Node, TypeScript und Next.js stehen, dazu ESLint, Prettier, Vitest und CI, die Projektvision ist geschärft.",
+   "abgeschlossen": "2026-10-18",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "nr": 1,
+   "name": "Spiel auf einem Gerät",
+   "status": "abgeschlossen",
+   "ziel": "Rad, Karte 5×5, Auflösung, Abhaken und Bingo-Erkennung testgetrieben, Tisch und Karte nebeneinander am Laptop, noch ohne Spotify.",
+   "abgeschlossen": "2026-10-19",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "nr": 2,
+   "name": "Spotify",
+   "status": "abgeschlossen",
+   "ziel": "Anmeldung des DJs, eigene Playlist laden und abspielen, Erscheinungsjahr über MusicBrainz mit Korrektur, animierte Musikspur am Tisch.",
+   "abgeschlossen": "2026-10-20",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "nr": 3,
+   "name": "Mehrspieler",
+   "status": "abgeschlossen",
+   "ziel": "Raum mit Code, jeder spielt auf dem eigenen Handy, Live-Abgleich über Supabase Realtime, Deployment auf Vercel, Spieler-Bots für Browser-Tests.",
+   "abgeschlossen": "2026-10-22",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "nr": 4,
+   "name": "Eigene Ideen",
+   "status": "aktiv",
+   "ziel": "Online-Modus, Scoreboard über einen Spieleabend, weitere Kategorien und Tisch ganz am Handy, dazu verschobene Punkte aus Phase 3.",
+   "quelle": "docs/Projektvision.md"
+  }
+ ],
+ "elemente": [
+  {
+   "id": "musik-app",
+   "typ": "app",
+   "name": "Musik-Bingo",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Die Web-App selbst: Rad, 5×5-Karte und Songs aus eigenen Spotify-Playlists, lokal am Tisch oder online.",
+   "quelle": "CLAUDE.md"
+  },
+  {
+   "id": "claude-code",
+   "typ": "claude",
+   "name": "Claude Code",
+   "ebene": "global",
+   "herkunft": "beides",
+   "phasen": [],
+   "wofuer": "KI-Entwickler im Terminal, der die App baut und alle Skills, Agents und Hooks ausführt.",
+   "quelle": "docs/tools/Claude Code - Einrichtung.md"
+  },
+  {
+   "id": "nextjs",
+   "typ": "tool",
+   "name": "Next.js",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Framework für Oberfläche und Server-Teil, mit React und Node.js 24.",
+   "quelle": "docs/tools/Next.js.md"
+  },
+  {
+   "id": "typescript",
+   "typ": "tool",
+   "name": "TypeScript",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1
+   ],
+   "wofuer": "Sprache der App und Lernziel; `npm run typecheck` prüft die Typen.",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "id": "tailwind",
+   "typ": "tool",
+   "name": "Tailwind CSS",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    3,
+    4
+   ],
+   "wofuer": "Gestaltung der Oberfläche, im Design „Spielshow“ mit Farben als Tokens.",
+   "quelle": "docs/journal/Lernjournal Phase 4 - Design Spielshow.md"
+  },
+  {
+   "id": "qrcode-react",
+   "typ": "tool",
+   "name": "qrcode.react",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    3
+   ],
+   "wofuer": "Zeigt am Tisch den QR-Code zum Beitritt in den Raum.",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "id": "vitest",
+   "typ": "tool",
+   "name": "Vitest",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Tests der Spiellogik und der Ansichten, zusammen mit Testing Library und jsdom.",
+   "quelle": "docs/tools/Vitest, ESLint und Prettier.md"
+  },
+  {
+   "id": "eslint",
+   "typ": "tool",
+   "name": "ESLint",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2
+   ],
+   "wofuer": "Prüft den Code, auch direkt nach jeder Änderung durch Claude.",
+   "quelle": "docs/tools/Vitest, ESLint und Prettier.md"
+  },
+  {
+   "id": "prettier",
+   "typ": "tool",
+   "name": "Prettier",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "wofuer": "Formatiert den Code einheitlich, Markdown ausgenommen.",
+   "quelle": "docs/tools/Vitest, ESLint und Prettier.md"
+  },
+  {
+   "id": "playwright",
+   "typ": "tool",
+   "name": "Playwright",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    3,
+    4
+   ],
+   "wofuer": "Browser-Tests mit Bots als Tisch und Spielern gegen das echte Supabase, nur lokal.",
+   "quelle": "docs/tools/Playwright.md"
+  },
+  {
+   "id": "webrtc",
+   "typ": "tool",
+   "name": "WebRTC",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Schickt im Online-Modus den Ton vom DJ direkt an jeden Spieler, Web Audio regelt beim Spieler die Lautstärke.",
+   "quelle": "docs/tools/WebRTC.md"
+  },
+  {
+   "id": "supabase-einrichten",
+   "typ": "tool",
+   "name": "supabase-einrichten.sh",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    3
+   ],
+   "wofuer": "Assistent im Terminal, der durch die Einrichtung von Supabase von Hand führt.",
+   "quelle": "scripts/supabase-einrichten.sh"
+  },
+  {
+   "id": "obsidian",
+   "typ": "tool",
+   "name": "Obsidian",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0
+   ],
+   "wofuer": "`docs/` ist Teil des Vaults; die Obsidian-CLI half beim Prüfen der Links.",
+   "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md"
+  },
+  {
+   "id": "github",
+   "typ": "dienst",
+   "name": "GitHub",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Repo, Pull Requests und Ablage der CI-Ergebnisse, bedient mit `git` und `gh`.",
+   "quelle": "docs/tools/Tools Übersicht.md"
+  },
+  {
+   "id": "vercel",
+   "typ": "dienst",
+   "name": "Vercel",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    3,
+    4
+   ],
+   "wofuer": "Hostet die App unter musik-bingo.vercel.app, mit einer Vorschau je PR.",
+   "quelle": "docs/tools/Vercel.md"
+  },
+  {
+   "id": "supabase",
+   "typ": "dienst",
+   "name": "Supabase",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    3,
+    4
+   ],
+   "wofuer": "Realtime-Kanäle für die Spielräume, noch ohne Tabellen.",
+   "quelle": "docs/tools/Supabase.md"
+  },
+  {
+   "id": "spotify",
+   "typ": "dienst",
+   "name": "Spotify",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Anmeldung des DJs, seine Playlists und das Abspielen über Web API und Web Playback SDK.",
+   "quelle": "docs/tools/Spotify Web API.md"
+  },
+  {
+   "id": "musicbrainz",
+   "typ": "dienst",
+   "name": "MusicBrainz",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    2,
+    3
+   ],
+   "wofuer": "Liefert über den ISRC das verlässliche Erscheinungsjahr eines Songs.",
+   "quelle": "docs/tools/MusicBrainz.md"
+  },
+  {
+   "id": "dependabot",
+   "typ": "dienst",
+   "name": "Dependabot",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Öffnet wöchentlich PRs für neue Paketversionen und Actions.",
+   "quelle": "docs/tools/Dependabot - Einrichtung.md"
+  },
+  {
+   "id": "claude-artifacts",
+   "typ": "dienst",
+   "name": "Claude Artifacts",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Private Webseiten auf claude.ai für klickbare Prototypen und dieses Porträt.",
+   "quelle": "docs/journal/Lernjournal Phase 4 - Prototypen Tisch und Handy.md"
+  },
+  {
+   "id": "ci",
+   "typ": "ci",
+   "name": "CI (GitHub Actions)",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "wofuer": "Prüft jeden PR und jeden Push auf main mit `npm run check` und `npm run build`.",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "id": "playwright-test-planner",
+   "typ": "agent",
+   "name": "playwright-test-planner",
+   "ebene": "projekt",
+   "herkunft": "eingerichtet",
+   "phasen": [],
+   "wofuer": "Erkundet eine Ansicht im Browser und schreibt einen Testplan nach `specs/`.",
+   "quelle": ".claude/agents/playwright-test-planner.md"
+  },
+  {
+   "id": "playwright-test-generator",
+   "typ": "agent",
+   "name": "playwright-test-generator",
+   "ebene": "projekt",
+   "herkunft": "eingerichtet",
+   "phasen": [],
+   "wofuer": "Macht aus einem Testplan Playwright-Tests.",
+   "quelle": ".claude/agents/playwright-test-generator.md"
+  },
+  {
+   "id": "playwright-test-healer",
+   "typ": "agent",
+   "name": "playwright-test-healer",
+   "ebene": "projekt",
+   "herkunft": "eingerichtet",
+   "phasen": [],
+   "wofuer": "Lässt Tests laufen und repariert scheiternde, nicht die App.",
+   "quelle": ".claude/agents/playwright-test-healer.md"
+  },
+  {
+   "id": "plan-pruefer",
+   "typ": "agent",
+   "name": "plan-pruefer",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    3,
+    4
+   ],
+   "wofuer": "Prüft mit frischem Kontext, ob ein Branch einen Plan aus `docs/plaene/` erfüllt.",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "id": "projekt-analyst",
+   "typ": "agent",
+   "name": "projekt-analyst",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Sammelt die belegten Fakten für das Porträt in `data.json`.",
+   "quelle": "portraet/README.md"
+  },
+  {
+   "id": "skill-grill-with-docs",
+   "typ": "skill",
+   "name": "grill-with-docs",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0,
+    2,
+    3
+   ],
+   "wofuer": "Klärt Vision und Phasen in Fragerunden, dabei entstehen Glossar und ADRs.",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "id": "skill-plan-schreiben",
+   "typ": "skill",
+   "name": "plan-schreiben",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0,
+    3,
+    4
+   ],
+   "wofuer": "Schreibt die Umsetzungspläne in `docs/plaene/`.",
+   "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md"
+  },
+  {
+   "id": "skill-tdd",
+   "typ": "skill",
+   "name": "tdd",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    1,
+    2,
+    3
+   ],
+   "wofuer": "Rot-Grün-Schleife für die Spiellogik und weitere Bausteine.",
+   "quelle": "docs/plaene/2026-10-19-spiellogik.md"
+  },
+  {
+   "id": "skill-fehler-diagnose",
+   "typ": "skill",
+   "name": "fehler-diagnose",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    3
+   ],
+   "wofuer": "Grenzt Fehler ein, zum Beispiel beim Presence-Limit von Supabase.",
+   "quelle": "docs/plaene/2026-10-22-spielstand-broadcast.md"
+  },
+  {
+   "id": "skill-code-review",
+   "typ": "skill",
+   "name": "/code-review",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    3,
+    4
+   ],
+   "wofuer": "Eingebauter Befehl, der die PRs vor dem Merge auf Fehler prüft, hier zusätzlich mit `REVIEW.md`.",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "id": "skill-frontend-design",
+   "typ": "skill",
+   "name": "frontend-design",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Plugin, das den Designplan „Spielshow im Studio“ lieferte.",
+   "quelle": "docs/journal/Lernjournal Phase 4 - Design Spielshow.md"
+  },
+  {
+   "id": "skill-archify",
+   "typ": "skill",
+   "name": "archify",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    2
+   ],
+   "wofuer": "Zeichnete die Spotify-Anmeldung als Sequenzdiagramm.",
+   "quelle": "docs/journal/Lernjournal Phase 2 - Spotify.md"
+  },
+  {
+   "id": "skill-assistent-bauen",
+   "typ": "skill",
+   "name": "assistent-bauen",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    3
+   ],
+   "wofuer": "Erzeugte den Assistenten für die Einrichtung von Supabase.",
+   "quelle": "docs/plaene/2026-10-21-raum-beitritt.md"
+  },
+  {
+   "id": "skill-projekt-starten",
+   "typ": "skill",
+   "name": "projekt-starten",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0
+   ],
+   "wofuer": "Legte das Projekt am 2026-10-18 aus der Vorlage an.",
+   "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md"
+  },
+  {
+   "id": "skill-journal",
+   "typ": "skill",
+   "name": "journal",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    2
+   ],
+   "wofuer": "Schreibt die Lernjournale in `docs/journal/`.",
+   "quelle": "docs/plaene/2026-10-19-abspielen.md"
+  },
+  {
+   "id": "skill-naechste-session",
+   "typ": "skill",
+   "name": "naechste-session",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    2
+   ],
+   "wofuer": "Schreibt die Übergabe in `docs/Nächste Session.md`.",
+   "quelle": "docs/plaene/2026-10-19-abspielen.md"
+  },
+  {
+   "id": "skill-vault-pruefen",
+   "typ": "skill",
+   "name": "vault-pruefen",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    0
+   ],
+   "wofuer": "Prüft die Notizen mit `pruefen.py`; `.vault-pruefung.json` schließt `node_modules/` aus.",
+   "quelle": "docs/journal/Lernjournal Phase 0 - Projektstart.md"
+  },
+  {
+   "id": "skill-portraet-bauen",
+   "typ": "skill",
+   "name": "portraet-bauen",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [
+    4
+   ],
+   "wofuer": "Erzeugt dieses Porträt aus fester Vorlage und frischen Daten.",
+   "quelle": "portraet/README.md"
+  },
+  {
+   "id": "hook-prettier",
+   "typ": "hook",
+   "name": "prettier-nach-aenderung.sh",
+   "ebene": "projekt",
+   "herkunft": "beides",
+   "phasen": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "wofuer": "Formatiert und prüft jede Datei, die Claude mit Edit oder Write ändert.",
+   "quelle": ".claude/hooks/prettier-nach-aenderung.sh"
+  },
+  {
+   "id": "hook-datenschutz",
+   "typ": "hook",
+   "name": "datenschutz.py",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Fragt nach, bevor persönliche Daten in einem Aufruf nach außen gehen; der Anlass stammt aus Phase 2 dieses Projekts.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "id": "hook-vault-frontmatter",
+   "typ": "hook",
+   "name": "pruefen.py --hook",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Prüft das Frontmatter jeder Datei, die Claude schreibt.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "id": "hook-links-pruefen",
+   "typ": "hook",
+   "name": "links-pruefen.sh",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Prüft beim Sessionstart die Links von `install.sh` in `~/.claude/`.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "id": "hook-projektstand",
+   "typ": "hook",
+   "name": "projektstand.sh",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Liest beim Sessionstart den Stand aller Repos frisch aus Git, GitHub und Übergabe.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "id": "hook-orca",
+   "typ": "hook",
+   "name": "Orca-Hooks",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Melden der App Orca bei fast jedem Ereignis, was der Agent tut.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "id": "mcp-playwright-test",
+   "typ": "mcp",
+   "name": "playwright-test",
+   "ebene": "projekt",
+   "herkunft": "eingerichtet",
+   "phasen": [],
+   "wofuer": "MCP-Server, der den Playwright-Agents Browser und Testläufe bereitstellt.",
+   "quelle": ".mcp.json"
+  },
+  {
+   "id": "mod-session-band",
+   "typ": "mod",
+   "name": "session-band",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Band über dem Prompt mit Projekt, Phase, Branch, PRs und Kontext.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-was-passiert",
+   "typ": "mod",
+   "name": "was-passiert",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Bereich mit einer Zeitleiste jeder Aktion von Claude in Klartext.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-replay-theater",
+   "typ": "mod",
+   "name": "replay-theater",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Zeigt mit `/replay` jede Dateiänderung einer Runde als Diff.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-blast-radius",
+   "typ": "mod",
+   "name": "blast-radius",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Hält riskante Befehle an und zeigt, was sie treffen.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-swarm",
+   "typ": "mod",
+   "name": "swarm",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Live-Karte der Subagents.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-session-wrapped",
+   "typ": "mod",
+   "name": "session-wrapped",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Rückblick auf die Session mit `/wrapped`.",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "id": "mod-statusline",
+   "typ": "mod",
+   "name": "Statuszeile",
+   "ebene": "global",
+   "herkunft": "benutzt",
+   "phasen": [],
+   "wofuer": "Eigene Statuszeile über `~/.claude/statusline.sh`.",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  }
+ ],
+ "verbindungen": [
+  {
+   "von": "musik-app",
+   "nach": "nextjs",
+   "art": "nutzt",
+   "text": "App Router und Server-Routen der App",
+   "quelle": "CLAUDE.md"
+  },
+  {
+   "von": "musik-app",
+   "nach": "typescript",
+   "art": "nutzt",
+   "text": "Der ganze Code ist in TypeScript geschrieben",
+   "quelle": "CLAUDE.md"
+  },
+  {
+   "von": "musik-app",
+   "nach": "tailwind",
+   "art": "nutzt",
+   "text": "Farben und Layout über Tailwind in `app/globals.css`",
+   "quelle": "app/globals.css"
+  },
+  {
+   "von": "musik-app",
+   "nach": "qrcode-react",
+   "art": "nutzt",
+   "text": "`QRCodeSVG` im Raum-Kopf am Tisch",
+   "quelle": "app/ui/raum-kopf.tsx"
+  },
+  {
+   "von": "musik-app",
+   "nach": "supabase",
+   "art": "nutzt",
+   "text": "Raum-Kanäle über `@supabase/supabase-js`",
+   "quelle": "lib/supabase.ts"
+  },
+  {
+   "von": "musik-app",
+   "nach": "spotify",
+   "art": "nutzt",
+   "text": "Playlists laden und Songs abspielen",
+   "quelle": "lib/spotify/playlists.ts"
+  },
+  {
+   "von": "musik-app",
+   "nach": "musicbrainz",
+   "art": "nutzt",
+   "text": "Erscheinungsjahr über den ISRC, abgefragt über den Next.js-Server",
+   "quelle": "lib/musicbrainz.ts"
+  },
+  {
+   "von": "musik-app",
+   "nach": "webrtc",
+   "art": "nutzt",
+   "text": "Ton vom DJ über `RTCPeerConnection`",
+   "quelle": "lib/raum/ton.ts"
+  },
+  {
+   "von": "webrtc",
+   "nach": "supabase",
+   "art": "nutzt",
+   "text": "Das Signaling läuft als Raum-Nachricht über den Supabase-Kanal",
+   "quelle": "docs/tools/WebRTC.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "musik-app",
+   "art": "liefert",
+   "text": "Schreibt den Code der App",
+   "quelle": "docs/tools/Tools Übersicht.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "github",
+   "art": "nutzt",
+   "text": "Branches, PRs und `gh pr checks` vor jedem Merge",
+   "quelle": "CLAUDE.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "hook-prettier",
+   "art": "startet",
+   "text": "Nach jedem Edit und Write",
+   "quelle": ".claude/settings.json"
+  },
+  {
+   "von": "hook-prettier",
+   "nach": "prettier",
+   "art": "nutzt",
+   "text": "Formatiert die geänderte Datei",
+   "quelle": ".claude/hooks/prettier-nach-aenderung.sh"
+  },
+  {
+   "von": "hook-prettier",
+   "nach": "eslint",
+   "art": "nutzt",
+   "text": "Prüft Code-Dateien ohne `--fix`",
+   "quelle": ".claude/hooks/prettier-nach-aenderung.sh"
+  },
+  {
+   "von": "github",
+   "nach": "ci",
+   "art": "startet",
+   "text": "Jeder PR und jeder Push auf main löst die CI aus",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Prüfungen und Produktionsbau je PR",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "eslint",
+   "art": "nutzt",
+   "text": "`npm run check` enthält `lint`",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "prettier",
+   "art": "nutzt",
+   "text": "`npm run check` enthält `format:check`",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "typescript",
+   "art": "nutzt",
+   "text": "`npm run check` enthält `typecheck`",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "vitest",
+   "art": "nutzt",
+   "text": "`npm run check` enthält die Tests",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "ci",
+   "nach": "nextjs",
+   "art": "nutzt",
+   "text": "`npm run build` baut die Produktionsfassung",
+   "quelle": ".github/workflows/ci.yml"
+  },
+  {
+   "von": "github",
+   "nach": "vercel",
+   "art": "liefert",
+   "text": "Vercel holt den Code von GitHub und baut ihn selbst, kein Workflow beteiligt",
+   "quelle": "docs/tools/Vercel.md"
+  },
+  {
+   "von": "vercel",
+   "nach": "musik-app",
+   "art": "deployt",
+   "text": "Jeder Merge in main erneuert Production, jeder PR bekommt eine Vorschau",
+   "quelle": "docs/tools/Vercel.md"
+  },
+  {
+   "von": "dependabot",
+   "nach": "github",
+   "art": "liefert",
+   "text": "Öffnet wöchentlich PRs für neue Versionen",
+   "quelle": ".github/dependabot.yml"
+  },
+  {
+   "von": "dependabot",
+   "nach": "ci",
+   "art": "liefert",
+   "text": "Jeder Dependabot-PR läuft durch die CI",
+   "quelle": "docs/tools/Dependabot - Einrichtung.md"
+  },
+  {
+   "von": "vitest",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Tests in `__tests__/`",
+   "quelle": "vitest.config.mts"
+  },
+  {
+   "von": "eslint",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Linter des Projekts",
+   "quelle": "eslint.config.mjs"
+  },
+  {
+   "von": "prettier",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "`format:check` meldet Abweichungen",
+   "quelle": "package.json"
+  },
+  {
+   "von": "typescript",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "`tsc --noEmit` prüft die Typen",
+   "quelle": "package.json"
+  },
+  {
+   "von": "playwright",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Tests in `e2e/` gegen die laufende App, nicht in der CI",
+   "quelle": "playwright.config.ts"
+  },
+  {
+   "von": "playwright",
+   "nach": "supabase",
+   "art": "nutzt",
+   "text": "Browser-Tests laufen gegen das echte Supabase-Projekt",
+   "quelle": "playwright.config.ts"
+  },
+  {
+   "von": "mcp-playwright-test",
+   "nach": "playwright",
+   "art": "nutzt",
+   "text": "Startet `npx playwright run-test-mcp-server`",
+   "quelle": ".mcp.json"
+  },
+  {
+   "von": "playwright-test-planner",
+   "nach": "mcp-playwright-test",
+   "art": "nutzt",
+   "text": "Bedient den Browser und speichert den Plan",
+   "quelle": ".claude/agents/playwright-test-planner.md"
+  },
+  {
+   "von": "playwright-test-generator",
+   "nach": "mcp-playwright-test",
+   "art": "nutzt",
+   "text": "Führt Schritte im Browser aus und schreibt daraus Tests",
+   "quelle": ".claude/agents/playwright-test-generator.md"
+  },
+  {
+   "von": "playwright-test-healer",
+   "nach": "mcp-playwright-test",
+   "art": "nutzt",
+   "text": "`test_run` und `test_debug` für scheiternde Tests",
+   "quelle": ".claude/agents/playwright-test-healer.md"
+  },
+  {
+   "von": "playwright-test-planner",
+   "nach": "playwright-test-generator",
+   "art": "liefert",
+   "text": "Testplan in `specs/` als Vorlage",
+   "quelle": "docs/Agents.md"
+  },
+  {
+   "von": "playwright-test-generator",
+   "nach": "playwright",
+   "art": "liefert",
+   "text": "Erzeugt Playwright-Tests",
+   "quelle": "docs/Agents.md"
+  },
+  {
+   "von": "playwright-test-healer",
+   "nach": "playwright",
+   "art": "nutzt",
+   "text": "Repariert scheiternde E2E-Tests",
+   "quelle": "docs/Agents.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-grill-with-docs",
+   "art": "startet",
+   "text": "Nur von Hand mit `/grill-with-docs`",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-projekt-starten",
+   "art": "startet",
+   "text": "Nur von Hand mit `/projekt-starten`",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-archify",
+   "art": "startet",
+   "text": "Nur von Hand mit `/archify`",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-vault-pruefen",
+   "art": "startet",
+   "text": "Nur von Hand mit `/vault-pruefen`",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-portraet-bauen",
+   "art": "startet",
+   "text": "Nur von Hand mit `/portraet-bauen`",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "claude-code",
+   "nach": "skill-code-review",
+   "art": "startet",
+   "text": "`/code-review` vor dem Merge",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "von": "skill-projekt-starten",
+   "nach": "musik-app",
+   "art": "liefert",
+   "text": "Gerüst und Repo des Projekts",
+   "quelle": "README.md"
+  },
+  {
+   "von": "skill-grill-with-docs",
+   "nach": "skill-plan-schreiben",
+   "art": "liefert",
+   "text": "Geklärte Entscheidungen fließen in die Pläne",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "von": "skill-plan-schreiben",
+   "nach": "skill-tdd",
+   "art": "liefert",
+   "text": "Pläne nennen Nahtstellen und Tests für die Umsetzung",
+   "quelle": "docs/Projektvision.md"
+  },
+  {
+   "von": "skill-plan-schreiben",
+   "nach": "plan-pruefer",
+   "art": "liefert",
+   "text": "Der Plan ist der Maßstab der Prüfung",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "von": "plan-pruefer",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Fand zum Beispiel einen fehlenden Test für das Abhaken nach einem Bingo",
+   "quelle": "docs/journal/Lernjournal Phase 3 - Raum und Beitritt.md"
+  },
+  {
+   "von": "skill-tdd",
+   "nach": "vitest",
+   "art": "nutzt",
+   "text": "Rot-Grün-Schleife mit Vitest-Tests",
+   "quelle": "docs/plaene/2026-10-19-spiellogik.md"
+  },
+  {
+   "von": "skill-code-review",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Prüft PRs auf Fehler, Funde gehen an den Entwickler",
+   "quelle": "docs/journal/Lernjournal Phase 4 - Restpunkte und Dependabot.md"
+  },
+  {
+   "von": "skill-fehler-diagnose",
+   "nach": "musik-app",
+   "art": "prueft",
+   "text": "Grenzte per WebSocket-Mitschnitt den Fehler im Spielstand ein",
+   "quelle": "docs/plaene/2026-10-22-spielstand-broadcast.md"
+  },
+  {
+   "von": "skill-frontend-design",
+   "nach": "musik-app",
+   "art": "liefert",
+   "text": "Designplan für das Design „Spielshow im Studio“",
+   "quelle": "docs/plaene/2026-10-22-design-spielshow.md"
+  },
+  {
+   "von": "claude-artifacts",
+   "nach": "musik-app",
+   "art": "liefert",
+   "text": "Klickbare Prototypen von Tisch und Handy als Vorlage für den Plan",
+   "quelle": "docs/journal/Lernjournal Phase 4 - Prototypen Tisch und Handy.md"
+  },
+  {
+   "von": "skill-assistent-bauen",
+   "nach": "supabase-einrichten",
+   "art": "liefert",
+   "text": "Das Skript nennt den Skill als Ursprung",
+   "quelle": "scripts/supabase-einrichten.sh"
+  },
+  {
+   "von": "supabase-einrichten",
+   "nach": "supabase",
+   "art": "nutzt",
+   "text": "Führt durch das Dashboard und schreibt die Werte nach `.env.local`",
+   "quelle": "scripts/supabase-einrichten.sh"
+  },
+  {
+   "von": "skill-journal",
+   "nach": "github",
+   "art": "nutzt",
+   "text": "Committet bei Session-Ende und öffnet den PR",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "skill-naechste-session",
+   "nach": "github",
+   "art": "nutzt",
+   "text": "Merged am Session-Ende die offenen PRs",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "skill-naechste-session",
+   "nach": "hook-projektstand",
+   "art": "liefert",
+   "text": "Die Übergabe gehört zu den Quellen des Skripts",
+   "quelle": "~/claude-ecosystem/projektstand.sh"
+  },
+  {
+   "von": "hook-projektstand",
+   "nach": "github",
+   "art": "nutzt",
+   "text": "Fragt offene PRs mit `gh search prs` ab",
+   "quelle": "~/claude-ecosystem/projektstand.sh"
+  },
+  {
+   "von": "skill-vault-pruefen",
+   "nach": "obsidian",
+   "art": "nutzt",
+   "text": "Tote und verwaiste Links kommen aus der Obsidian-CLI",
+   "quelle": "~/claude-ecosystem/docs/Skills.md"
+  },
+  {
+   "von": "hook-vault-frontmatter",
+   "nach": "skill-vault-pruefen",
+   "art": "nutzt",
+   "text": "Startet das Skript `pruefen.py` des Skills",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "skill-portraet-bauen",
+   "nach": "projekt-analyst",
+   "art": "startet",
+   "text": "Holt die Fakten für das Porträt",
+   "quelle": "~/.claude/skills/portraet-bauen/SKILL.md"
+  },
+  {
+   "von": "projekt-analyst",
+   "nach": "skill-portraet-bauen",
+   "art": "liefert",
+   "text": "`data.json` im Bericht",
+   "quelle": "~/.claude/skills/portraet-bauen/SKILL.md"
+  },
+  {
+   "von": "skill-portraet-bauen",
+   "nach": "claude-artifacts",
+   "art": "nutzt",
+   "text": "Veröffentlicht das Porträt als privates Artifact",
+   "quelle": "portraet/README.md"
+  },
+  {
+   "von": "hook-datenschutz",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Prüft Aufrufe vor Bash, Web, Artifacts und MCP",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "hook-vault-frontmatter",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Läuft nach Write und Edit",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "hook-links-pruefen",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Läuft beim Sessionstart",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "hook-projektstand",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Gibt den Stand als Kontext an die Session",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "hook-orca",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Hängt an fast jedem Ereignis der Session",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  },
+  {
+   "von": "mod-session-band",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Band über dem Prompt, `/stand`",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-was-passiert",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Bereich neben dem Gespräch",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-replay-theater",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "`/replay` nach jeder Runde",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-blast-radius",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Hält riskante Befehle an",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-swarm",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "`/swarm` mit Karte der Subagents",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-session-wrapped",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "`/wrapped` und Einlesen beim Sessionstart",
+   "quelle": "~/claude-ecosystem/mods/README.md"
+  },
+  {
+   "von": "mod-statusline",
+   "nach": "claude-code",
+   "art": "erweitert",
+   "text": "Statuszeile der Session",
+   "quelle": "~/claude-ecosystem/config/settings.json"
+  }
+ ],
+ "luecken": [
+  "Die drei Playwright-Agents und der MCP-Server `playwright-test` sind nur eingerichtet: Das Journal von Phase 3 nennt sie „noch nicht ausprobiert“, in Phase 4 wurden sie nur neu erzeugt, `specs/` enthält nur eine README. Ihre leeren Phasen heißen hier: keine Benutzung belegt.",
+  "`fertig-pruefen` steht nur als Vorgabe in `docs/Projektvision.md` und in `docs/Skills.md`, kein Journal, Plan oder ADR belegt einen Lauf. Deshalb fehlt der Skill im Graphen.",
+  "`journal` und `naechste-session` sind namentlich nur im abgehakten Schritt zum Abschluss von Phase 2 als benutzt belegt. Journale und Übergabe gibt es auch sonst, nennen den Skill aber nicht, im Plan zu Phase 1 steht er nur als Vorgabe.",
+  "`plan-schreiben` ist für die Phasen 1 und 2 nicht namentlich belegt, obwohl es dort Pläne gibt. Im Plan zu Phase 1 steht der Skill nur als nächster Schritt.",
+  "`tdd` ist namentlich nur für die Phasen 1 bis 3 belegt. Die Journale von Phase 4 sagen „testgetrieben“ ohne den Skill zu nennen. Auch die Fragerunden von Phase 4 nennen `grill-with-docs` nicht, dort steht er nur als nächster Schritt.",
+  "Die Phasen bei TypeScript, ESLint, Prettier und Tailwind zeigen nur, wo Journale sie ausdrücklich nennen. Laut `npm run check` und CI laufen die Prüfungen in jeder Phase seit ihrer Einrichtung.",
+  "`fehler-diagnose` steht für Phase 4 nur als Empfehlung im Journal und in der Übergabe, belegt ist nur Phase 3.",
+  "`dashboard-entwickler` und `dashboard-visualizer` stehen in `docs/Agents.md` nur als Beispiele, Treffer ohne Benutzung. Für alle übrigen Namen aus den Katalogen gab es in `docs/` keinen Treffer oder nur Zufallstreffer wie `lib/raum/stand.ts` bei `/stand`. Sie fehlen im Graphen.",
+  "Das Plugin `claude-code-setup` und `rust-analyzer-lsp` sind global aktiv, ihre Benutzung im Projekt ist nicht belegt. Der eingebaute Mod `/diff` steht nicht in `config/settings.json`, `token-weather` ist abgeschaltet. Alle vier fehlen im Graphen.",
+  "Orca erscheint nur über seine globalen Hooks. Der Design-Modus von Orca wurde laut Journal von Phase 1 bewusst verschoben, eine spätere Benutzung ist nicht belegt.",
+  "Die globalen Hooks stammen aus dem Arbeitsstand von `config/settings.json`, der uncommittete Änderungen an Hooks und Plugins hat, darunter neue Orca-Hooks für `Elicitation`. `~/.claude/settings.json` verweist auf genau diese Datei.",
+  "Laut `docs/Projektvision.md` soll Playwright in Phase 4 in die CI und Supabase Tabellen bekommen. `ci.yml` enthält keinen Browser-Test, und laut `CLAUDE.md` gibt es noch keine Tabellen.",
+  "`docs/Arbeitsumgebung.md` nennt ab Phase 3 Supabase CLI und Docker Desktop, kein Journal belegt ihre Benutzung, deshalb fehlen sie. Dieselbe Notiz und `README.md` nennen außerdem `localhost:3000`, `package.json` startet die App aber auf `127.0.0.1`.",
+  "`docs/Nächste Session.md` hat den Stand vom 2026-10-26 und nennt die offenen PRs #59 und #60, offen sind heute #59 und #68. Der Stand von Phase 4 ist daher nur bis zu diesem Datum durch Journale belegt."
+ ]
 }
