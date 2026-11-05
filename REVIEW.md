@@ -27,6 +27,11 @@ mit der Regel aus dieser Datei als Begründung.
 - Eine neue Kategorie ist ein Eintrag in `lib/kategorien.ts` (Name, Farbe, Lösung), kein Sonderfall im Code
   (Architekturprinzip 3).
 
+## Name des Originalspiels
+
+- In Dateien, neuen Commits und PR-Texten heißt das Vorbild der App immer „Originalspiel“. Sein Markenname und seine
+  Website stehen nur in alten Commits, die bewusst unverändert bleiben. Jede andere Nennung ist ein Fund.
+
 ## Next.js
 
 - Code folgt der Doku der installierten Version in `node_modules/next/dist/docs/` (siehe `AGENTS.md`), nicht dem
