@@ -22,7 +22,7 @@ Plan A); [[0003-spotify-anmeldung-nur-im-browser|ADR 0003]] (zweite Redirect-URI
 
 ## Feste Vorgaben
 
-- Adresse `https://musik-bingo.vercel.app`, Name ohne „hitster“. Ist der Name vergeben, hängt Vercel etwas an; dann
+- Adresse `https://musik-bingo.vercel.app`, Name ohne den Namen des Originalspiels. Ist der Name vergeben, hängt Vercel etwas an; dann
   gilt die angezeigte Adresse überall, wo hier `musik-bingo.vercel.app` steht.
 - Redirect-URI bei Spotify genau `https://musik-bingo.vercel.app/callback`, ohne Schrägstrich am Ende. Die alte
   `http://127.0.0.1:3000/callback` bleibt eingetragen.

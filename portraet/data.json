@@ -4,8 +4,8 @@
   "projekt": {
     "name": "musik-app",
     "titel": "Musik-Bingo",
-    "kurz": "Hitster Bingo als Web-App: Rad, 5×5-Bingo-Karte und Songs aus eigenen Spotify-Playlists.",
-    "zweck": "Der Entwickler will das Kartenspiel Hitster Bingo mit seinen Freunden spielen: Der Laptop ist der Tisch mit Rad, Musik und Auflösung, jeder Spieler hat Karte und Notizfläche auf dem eigenen Handy. Gleichwertiges Ziel ist das Lernen von TypeScript, Spotify-Anbindung und dem Weg von der Idee zur fertigen App.",
+    "kurz": "Musik-Bingo als Web-App: Rad, 5×5-Bingo-Karte und Songs aus eigenen Spotify-Playlists.",
+    "zweck": "Der Entwickler will ein Musik-Bingo-Kartenspiel mit seinen Freunden spielen: Der Laptop ist der Tisch mit Rad, Musik und Auflösung, jeder Spieler hat Karte und Notizfläche auf dem eigenen Handy. Gleichwertiges Ziel ist das Lernen von TypeScript, Spotify-Anbindung und dem Weg von der Idee zur fertigen App.",
     "stack": ["TypeScript", "Next.js", "React", "Tailwind CSS", "Supabase Realtime", "Vercel", "Spotify Web API", "MusicBrainz", "Vitest", "Playwright"],
     "repo": "https://github.com/Matzee3007/musik-app",
     "kennzahlen": { "commits": 213, "prs": 47, "adrs": 7, "journale": 7 },

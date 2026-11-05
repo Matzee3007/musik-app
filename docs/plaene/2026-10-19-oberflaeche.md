@@ -7,7 +7,7 @@ tags: [plan, oberflaeche, react, phase-1]
 
 # Plan: Oberfläche Phase 1
 
-**Ziel:** Ein spielbares Hitster Bingo auf einem Gerät: links der Tisch (Rad drehen, Runde, Auflösung), rechts eine
+**Ziel:** Ein spielbares Musik-Bingo auf einem Gerät: links der Tisch (Rad drehen, Runde, Auflösung), rechts eine
 Karte zum Abhaken, mit Bingo-Anzeige und neuem Spiel.
 
 **Vorgehen:** Eine Client-Komponente `SpielAnsicht` hält den `Spiel`-Stand aus `lib/spiel.ts` in `useState` und ruft

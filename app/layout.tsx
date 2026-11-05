@@ -18,7 +18,7 @@ const barlow = Barlow({
 
 export const metadata: Metadata = {
   title: "Musik-Bingo",
-  description: "Hitster Bingo mit Freunden",
+  description: "Musik-Bingo mit Freunden",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

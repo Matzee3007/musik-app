@@ -9,7 +9,7 @@ tags: [projektvision, roadmap, musik-app]
 
 ## Ziel
 
-Das Kartenspiel [Hitster Bingo](https://hitstergame.com/de-de/pages/spielregeln-bingo) als Web-App nachbauen, damit
+Ein Musik-Bingo-Kartenspiel als Web-App nachbauen, damit
 ich es mit meinen Freunden spielen kann, und eigene Ideen einbauen.
 
 So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]):
@@ -51,7 +51,7 @@ Gruppe oder Solo, Vor 2000?, Jahr ±4 und ±2, Herkunftsland des Interpreten, Ti
 wählt dann je Spiel 5 Kategorien aus. Verworfen: Sprache (hört man), Genre und Album (Spotify-Daten unzuverlässig).
 
 **Was es nicht ist:** kein Streamingdienst. Die App greift nur auf Spotify und eigene Playlists zu, um Songs
-abzuspielen. Kein öffentliches Produkt unter dem Namen oder Logo „Hitster“.
+abzuspielen. Kein öffentliches Produkt unter dem Namen oder Logo des Originalspiels.
 
 Weitere Notizen: [[projects/musik-app/docs/Arbeitsumgebung|Arbeitsumgebung]] (was der Rechner braucht), [[projects/musik-app/docs/Nächste Session|Nächste Session]] (womit es weitergeht),
 [[projects/musik-app/docs/Tools für später|Tools für später]] (vorgemerkte Werkzeuge).
@@ -124,12 +124,12 @@ abgeschlossen (Regel „Phasenwechsel“ in der globalen `CLAUDE.md`).
 - **Abspielen nur mit Premium** über das Web Playback SDK. `preview_url` (30-Sekunden-Vorschau) liefert die API
   nicht mehr zuverlässig, den Ausschnitt steuert die App selbst. Auf iOS startet die Wiedergabe nicht von allein,
   der Nutzer muss tippen.
-- **Nur eigene oder kollaborative Playlists** sind auslesbar. Fremde Playlists (auch die offiziellen von Hitster)
+- **Nur eigene oder kollaborative Playlists** sind auslesbar. Fremde Playlists (auch die offiziellen des Originalspiels)
   liefern keine Songs. Lösung: Songs in eine eigene Playlist kopieren.
 - **Erscheinungsjahr:** Spotify liefert das Jahr des Albums, bei Remastern und Best-ofs falsch. MusicBrainz erlaubt
   1 Anfrage pro Sekunde, eine Suche nach Titel findet vor allem Live-Versionen (Test mit „Bohemian Rhapsody“ am
   2026-10-18: Original von 1975 nicht unter den ersten 10 Treffern).
-- **Marke „Hitster“:** privat kein Problem, öffentlich nicht unter diesem Namen oder Logo.
+- **Marke des Originalspiels:** privat kein Problem, öffentlich nicht unter diesem Namen oder Logo.
 
 ## Geklärte Fragen
 
@@ -195,7 +195,7 @@ Handys `127.0.0.1` nicht erreichen und Spotify außerhalb davon HTTPS verlangt.
 - **Tisch:** statt der Karte eine Leiste mit den Spielern und ihrer Zahl abgehakter Felder („Anna 7 · Ben 5“),
   nicht verbundene ausgegraut. Bei Bingo „Bingo! Anna“ (bei mehreren alle Namen), die Musik hört auf. Haben mehrere
   in derselben Runde Bingo, gewinnen alle (Stechen kommt in Phase 4).
-- **Deployment:** `https://musik-bingo.vercel.app` (ohne „hitster“), als zweite Redirect-URI bei Spotify eingetragen.
+- **Deployment:** `https://musik-bingo.vercel.app` (ohne den Namen des Originalspiels), als zweite Redirect-URI bei Spotify eingetragen.
   Vorschau-Deployments der PRs laufen nur mit der Demo, weil Spotify nur genau eingetragene Adressen erlaubt.
 - **Tests:** Playwright ab Plan B, vorerst nur lokal (`npm run e2e`) gegen das Supabase-Projekt, mit zwei Browsern
   (Tisch und Handy) im Demo-Raum. In die CI kommt er mit einem GitHub-Secret in Phase 4.

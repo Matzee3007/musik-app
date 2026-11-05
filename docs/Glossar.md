@@ -7,7 +7,7 @@ tags: [glossar, fachbegriffe]
 
 # Glossar
 
-Fachbegriffe der Musik-App, eines Nachbaus von Hitster Bingo als Web-App für Spieleabende mit Freunden.
+Fachbegriffe der Musik-App, eines Musik-Bingos als Web-App für Spieleabende mit Freunden.
 Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]]. Technische Abkürzungen stehen in `~/claude-ecosystem/docs/Abkürzungen.md`.
 
 ## Begriffe

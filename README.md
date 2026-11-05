@@ -1,6 +1,6 @@
 # Musik-App
 
-Hitster Bingo als Web-App zum Spielen mit Freunden: Rad, 5×5-Bingo-Karte und Songs aus eigenen Spotify-Playlists.
+Musik-Bingo als Web-App zum Spielen mit Freunden: Rad, 5×5-Bingo-Karte und Songs aus eigenen Spotify-Playlists.
 
 Entstanden mit `/projekt-starten` aus dem [claude-ecosystem](https://github.com/Matzee3007/claude-ecosystem)
 am 2026-10-18.

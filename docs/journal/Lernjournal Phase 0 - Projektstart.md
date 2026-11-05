@@ -13,7 +13,7 @@ Erstes Journal der Musik-App. Gehört zu [[projects/musik-app/docs/Projektvision
 
 ## Erledigt
 
-- [x] Projekt geklärt (Skill `projekt-starten`, Fragerunden): Name `musik-app`, Ziel Hitster Bingo als Web-App für
+- [x] Projekt geklärt (Skill `projekt-starten`, Fragerunden): Name `musik-app`, Ziel Musik-Bingo als Web-App für
   Spieleabende mit Freunden, Lernziel TypeScript und Spotify, Laptop als „Tisch“, Handys für Karte und Antworten
 - [x] Spielregeln des Originals und die aktuelle Spotify-Doku gelesen, MusicBrainz mit einer echten Abfrage getestet
 - [x] Gerüst aus der Vorlage des Ecosystems ausgefüllt: [[projects/musik-app/docs/Projektvision|Projektvision]], `CLAUDE.md`, [[projects/musik-app/docs/adr/0001-stack|ADR 0001]],
@@ -86,7 +86,7 @@ die Mitspieler treten über einen Raum-Code bei. Quellen: Quota Modes und Migrat
 ### Abspielen ja, Playlist lesen nur bei eigenen
 
 Jeder Song lässt sich über seine Spotify-Kennung abspielen. Seit Februar 2026 liefert die API aber nur bei eigenen oder
-kollaborativen Playlists die Songliste. Fremde Playlists (auch die offiziellen von Hitster) zeigen nur ihre
+kollaborativen Playlists die Songliste. Fremde Playlists (auch die offiziellen des Originalspiels) zeigen nur ihre
 Beschreibung. Abhilfe: Songs in der Spotify-App in eine eigene Playlist kopieren. Spotify nennt als Grund KI und
 Automatisierung und den Schutz der Künstler.
 
@@ -104,7 +104,7 @@ Schlüssel, mit Feld `first-release-date`, höchstens 1 Anfrage pro Sekunde und 
 nicht unter den ersten 10. Plan für Phase 2: über den ISRC (weltweite Kennnummer einer Aufnahme) suchen, frühestes
 Datum ohne Live-Versionen, einmal je Playlist speichern, der DJ kann korrigieren.
 
-### Hitster Bingo im Original
+### Das Originalspiel
 
 Unsere Kategorien sind Seite B („Experten“): Titel, Interpret, Jahrzehnt, genaues Jahr, ±3 Jahre. Seite A hat andere
 („Vor 2000?“, „Gruppe oder Solo“, ±2, ±4). Dazu ein Timer von 25 Sekunden und eine Bonusregel: genaues Jahr bei einer
@@ -218,7 +218,7 @@ der Entwickler `/grill-with-docs` tippt. So startet eine lange Fragerunde nicht 
 Empfehlung. Fakten sucht Claude selbst (heute die Originalregeln), Entscheidungen trifft der Entwickler. Begriffe
 kommen sofort ins Glossar, ein ADR nur, wenn eine Entscheidung schwer umkehrbar, überraschend und echt abgewogen ist.
 
-### Hitster im Original genauer
+### Das Originalspiel genauer
 
 Die 25 Sekunden sind der Timer fürs Aufschreiben, nicht die Länge der Musik. Die Musik läuft bei Spotify Free etwa 20
 Sekunden, bei Premium 30 Sekunden oder ganz. Die Bonusregel gibt es nur auf Seite A. Als Erscheinungsjahr zählt die

@@ -272,7 +272,7 @@ const eigene = (id: string, total: number) => ({ id, name: `Liste ${id}`, items:
 
 test("eigenePlaylists folgt allen Seiten und lässt fremde Playlists weg", async () => {
   const abruf = vi.fn<Abruf>()
-    .mockResolvedValueOnce(seite([eigene("p1", 120), { id: "fremd", name: "Hitster" }], "https://api.spotify.com/v1/me/playlists?offset=50&limit=50"))
+    .mockResolvedValueOnce(seite([eigene("p1", 120), { id: "fremd", name: "Fremde Playlist" }], "https://api.spotify.com/v1/me/playlists?offset=50&limit=50"))
     .mockResolvedValueOnce(seite([eigene("p2", 7)], null));
   expect(await eigenePlaylists("a1", abruf)).toEqual([
     { id: "p1", name: "Liste p1", anzahlSongs: 120 },

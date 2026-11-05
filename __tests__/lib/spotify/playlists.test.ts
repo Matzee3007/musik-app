@@ -35,7 +35,7 @@ test("eigenePlaylists fragt mit dem Token und liefert Name und Anzahl Songs", as
 
 test("eigenePlaylists lässt fremde Playlists weg, bei denen Spotify die Songs verschweigt", async () => {
   const abruf = spotify(
-    seite([{ id: "fremd", name: "Hitster" }, eigene("p1", 7)], null),
+    seite([{ id: "fremd", name: "Fremde Playlist" }, eigene("p1", 7)], null),
   );
   expect(await eigenePlaylists("a1", abruf)).toEqual([
     { id: "p1", name: "Liste p1", anzahlSongs: 7 },
