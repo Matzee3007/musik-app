@@ -9,7 +9,7 @@ tags: [projektvision, roadmap, musik-app]
 
 ## Ziel
 
-Ein gekauftes Musik-Bingo-Kartenspiel (hier „das Original“ oder „Originalspiel“, Karten mit einer Seite A und einer
+Ein Musik-Bingo-Kartenspiel (hier „das Original“ oder „Originalspiel“, Karten mit einer Seite A und einer
 Seite B „Experten“) als Web-App nachbauen, damit ich es mit meinen Freunden spielen kann, und eigene Ideen einbauen.
 
 So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]):
