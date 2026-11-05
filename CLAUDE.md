@@ -17,7 +17,7 @@ wer richtig liegt, hakt ein Feld seiner 5×5-Karte ab (die Spieler prüfen selbs
 Der Laptop ist der „Tisch“, jeder Spieler hat Karte und Notizfläche auf dem eigenen Handy. Daneben gibt es einen
 Online-Modus: Jeder spielt am eigenen PC, der DJ streamt den Ton per WebRTC
 (`docs/adr/0008-online-modus-mit-ton-vom-dj.md`). Kein Streamingdienst und kein
-öffentliches Produkt unter dem Namen des Originalspiels, der Name steht auch nicht im Repo. Fachbegriffe: `docs/Glossar.md`.
+öffentliches Produkt unter dem Namen des Originalspiels. Fachbegriffe: `docs/Glossar.md`.
 
 Gleichwertiges Ziel ist das **Lernen**: TypeScript, Spotify in eine App einbinden und aus einer Idee Schritt für
 Schritt eine funktionierende App entwickeln.

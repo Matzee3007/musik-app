@@ -9,8 +9,8 @@ tags: [projektvision, roadmap, musik-app]
 
 ## Ziel
 
-Ein Musik-Bingo-Kartenspiel als Web-App nachbauen, damit
-ich es mit meinen Freunden spielen kann, und eigene Ideen einbauen.
+Ein gekauftes Musik-Bingo-Kartenspiel (hier „das Original“ oder „Originalspiel“, Karten mit einer Seite A und einer
+Seite B „Experten“) als Web-App nachbauen, damit ich es mit meinen Freunden spielen kann, und eigene Ideen einbauen.
 
 So läuft eine Runde (Vorbild: Seite B „Experten“ des Originals, Begriffe im [[projects/musik-app/docs/Glossar|Glossar]]):
 
@@ -195,7 +195,7 @@ Handys `127.0.0.1` nicht erreichen und Spotify außerhalb davon HTTPS verlangt.
 - **Tisch:** statt der Karte eine Leiste mit den Spielern und ihrer Zahl abgehakter Felder („Anna 7 · Ben 5“),
   nicht verbundene ausgegraut. Bei Bingo „Bingo! Anna“ (bei mehreren alle Namen), die Musik hört auf. Haben mehrere
   in derselben Runde Bingo, gewinnen alle (Stechen kommt in Phase 4).
-- **Deployment:** `https://musik-bingo.vercel.app` (ohne den Namen des Originalspiels), als zweite Redirect-URI bei Spotify eingetragen.
+- **Deployment:** `https://musik-bingo.vercel.app` (ohne Bezug zum Originalspiel), als zweite Redirect-URI bei Spotify eingetragen.
   Vorschau-Deployments der PRs laufen nur mit der Demo, weil Spotify nur genau eingetragene Adressen erlaubt.
 - **Tests:** Playwright ab Plan B, vorerst nur lokal (`npm run e2e`) gegen das Supabase-Projekt, mit zwei Browsern
   (Tisch und Handy) im Demo-Raum. In die CI kommt er mit einem GitHub-Secret in Phase 4.
