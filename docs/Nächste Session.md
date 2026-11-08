@@ -59,6 +59,8 @@ Stand vom 2026-11-08. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 2. **Online-Spieleabend mit Freunden** als echter Test:
    - Vorher Supabase prüfen (pausiert nach 7 Tagen ohne Datenbank-Aktivität): Befehl in
      [[projects/musik-app/docs/tools/Supabase|Supabase]], Abschnitt „Pausiert das kostenlose Projekt?“.
+   - Vorher auch klären: Wer kann mit nur dem Raum-Code einem Raum-Kanal (Supabase Realtime) beitreten und mithören?
+     Ist das gewollt, als ADR festhalten (aus [[Build with AI - Auswertung]], Artikel 13, 2026-11-08).
    - DJ in Chrome oder Edge am Laptop: „Online spielen“, Playlist, „Ton teilen“, im Dialog „Dieser Tab“ mit
      „Tab-Audio teilen“. Spieler treten mit dem Raum-Code auf `musik-bingo.vercel.app` bei.
    - Beobachten: Bekommt jeder Ton (sonst braucht jemand hinter strengem NAT TURN, siehe [[WebRTC]])? Passen Tisch
