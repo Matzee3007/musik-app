@@ -37,8 +37,8 @@ export default function Buehne({
   const code = raumCodeLesen(codeEingabe);
 
   return (
-    <div className="flex w-full flex-col text-left">
-      <section className="relative overflow-hidden border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] sm:min-h-[640px]">
+    <div className="flex w-full flex-1 flex-col text-left">
+      <section className="relative flex-1 overflow-hidden border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] sm:min-h-[640px]">
         <div
           aria-hidden
           className="absolute top-[70px] -right-[150px] size-[300px] rounded-full opacity-35 sm:top-[76px] sm:-right-[140px] sm:size-[720px] sm:opacity-90"

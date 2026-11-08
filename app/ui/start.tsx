@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Buehne from "@/app/ui/buehne";
 import Knopf from "@/app/ui/knopf";
+import PlaylistAuswahl from "@/app/ui/playlist-auswahl";
 import RaumKopf from "@/app/ui/raum-kopf";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import TonTeilen from "@/app/ui/ton-teilen";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
-import { neuerRaumCode, raumCodeLesen } from "@/lib/raum/code";
-import { nameLesen } from "@/lib/raum/spieler";
+import { neuerRaumCode } from "@/lib/raum/code";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
 import type { TischStand } from "@/lib/raum/stand";
 import {
@@ -42,14 +43,13 @@ export default function Start({
   // Ohne Netz ließ sich das Token nicht erneuern, es bleibt aber gespeichert.
   const [unerreichbar, setUnerreichbar] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  // Spotify hat die Playlists geliefert, erst dann heißt eine leere Liste "keine Playlist".
+  const [geladen, setGeladen] = useState(false);
   const [gewaehlt, setGewaehlt] = useState<Playlist | null>(null);
   // Wie das Token erst im Effekt gelesen: undefined heißt noch nicht gelesen.
   const [tischRaum, setTischRaum] = useState<TischRaum | null | undefined>(
     undefined,
   );
-  const [codeEingabe, setCodeEingabe] = useState("");
-  // Name des DJs für einen Online-Raum, null: "Online spielen" noch nicht gewählt.
-  const [djEingabe, setDjEingabe] = useState<string | null>(null);
   // Spielstand für die Handys, die Spielansicht meldet ihn, der Raum-Kopf trägt ihn in Presence.
   const [stand, setStand] = useState<TischStand | null>(null);
   const id = clientId();
@@ -78,7 +78,10 @@ export default function Start({
   useEffect(() => {
     if (!token) return;
     eigenePlaylists(token.accessToken)
-      .then(setPlaylists)
+      .then((p) => {
+        setPlaylists(p);
+        setGeladen(true);
+      })
       .catch((fehler) => {
         // 401: Spotify nimmt das Token nicht mehr an, also neu anmelden lassen.
         if (fehler instanceof SpotifyFehler && fehler.status === 401) {
@@ -102,71 +105,15 @@ export default function Start({
     };
     tischRaumSpeichern(raum);
     setTischRaum(raum);
-    setDjEingabe(null);
   }
 
-  const gelesenerCode = raumCodeLesen(codeEingabe);
-  const djName = djEingabe === null ? null : nameLesen(djEingabe);
   const raumWahl = (
-    <div className="flex flex-col items-center gap-10">
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex flex-wrap justify-center gap-3">
-          <Knopf disabled={!supabase} onClick={() => eroeffnen()}>
-            Lokal spielen
-          </Knopf>
-          <Knopf
-            art="neben"
-            disabled={!supabase}
-            onClick={() => setDjEingabe("")}
-          >
-            Online spielen
-          </Knopf>
-        </div>
-        {djEingabe !== null && (
-          <div className="flex w-full max-w-xs flex-col items-stretch gap-3">
-            <label htmlFor="dj-name" className="text-licht/70">
-              Dein Name
-            </label>
-            <input
-              id="dj-name"
-              className="rounded-lg bg-flaeche px-4 py-3 text-xl outline-akzent focus-visible:outline-2"
-              value={djEingabe}
-              onChange={(e) => setDjEingabe(e.target.value)}
-            />
-            <Knopf disabled={!djName} onClick={() => eroeffnen(djName!)}>
-              Online-Raum eröffnen
-            </Knopf>
-          </div>
-        )}
-      </div>
-      {/* Wie eine Anzeigetafel. Kein maxLength: raumCodeLesen nimmt auch "EH MF" mit Leerzeichen. */}
-      <div className="flex flex-col items-center gap-3">
-        <label htmlFor="raum-code" className="text-licht/70">
-          Raum-Code
-        </label>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <input
-            id="raum-code"
-            className="w-48 rounded-lg bg-flaeche px-4 py-2 text-center font-schild text-3xl tracking-[0.3em] uppercase outline-akzent focus-visible:outline-2 disabled:opacity-40"
-            value={codeEingabe}
-            onChange={(e) => setCodeEingabe(e.target.value)}
-            disabled={!supabase}
-          />
-          <Knopf
-            art="neben"
-            disabled={!supabase || !gelesenerCode}
-            onClick={() => router.push(`/raum/${gelesenerCode}`)}
-          >
-            Beitreten
-          </Knopf>
-        </div>
-      </div>
-      {!supabase && (
-        <p className="max-w-sm text-sm text-licht/70">
-          Supabase ist hier nicht eingerichtet, nur die Demo ohne Raum.
-        </p>
-      )}
-    </div>
+    <Buehne
+      supabase={supabase}
+      onTisch={() => eroeffnen()}
+      onOnline={eroeffnen}
+      onBeitreten={(c) => router.push(`/raum/${c}`)}
+    />
   );
 
   // Mit Supabase zuerst der Raum, Anmelden und Demo erst danach.
@@ -174,30 +121,38 @@ export default function Start({
 
   if (!tischRaum || !kanal) {
     return (
-      <div className="flex flex-col items-center gap-8">
+      <div className="flex w-full flex-col">
         {raumWahl}
-        {ablauf()}
+        <div className="flex flex-col items-center gap-8 p-8 text-center">
+          {ablauf()}
+        </div>
       </div>
     );
   }
 
   // Im Raum wie im Studio: die Bühne über die ganze Breite, links oben die Schublade mit Code und Spielern.
   // Schmaler als lg steht die Schublade über der Bühne, darüber Platz für den Knopf.
+  // Die Hülle mit der Überschrift stand bis zur Bühne in app/page.tsx, Tisch und Vorbereiten sehen aus wie vorher.
   return (
-    <div className="relative flex w-full flex-col items-center gap-8 pt-14 lg:pt-0">
-      <RaumKopf
-        code={tischRaum.code}
-        kanal={kanal}
-        stand={stand}
-        dj={tischRaum.dj}
-        onGeschlossen={() => {
-          setTischRaum(null);
-          setStand(null);
-        }}
-      />
-      {/* Online hört jeder den Song im eigenen Browser (ADR 0008). */}
-      {tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />}
-      <div className="flex w-full justify-center">{ablauf()}</div>
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 p-8 text-center">
+      <h1 className="font-schild text-4xl text-akzent sm:text-5xl">
+        Musik-Bingo
+      </h1>
+      <div className="relative flex w-full flex-col items-center gap-8 pt-14 lg:pt-0">
+        <RaumKopf
+          code={tischRaum.code}
+          kanal={kanal}
+          stand={stand}
+          dj={tischRaum.dj}
+          onGeschlossen={() => {
+            setTischRaum(null);
+            setStand(null);
+          }}
+        />
+        {/* Online hört jeder den Song im eigenen Browser (ADR 0008). */}
+        {tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />}
+        <div className="flex w-full justify-center">{ablauf()}</div>
+      </div>
     </div>
   );
 
@@ -226,6 +181,7 @@ export default function Start({
       abmelden();
       setToken(null);
       setPlaylists([]);
+      setGeladen(false);
     }
 
     const demoKnopf = (
@@ -242,28 +198,17 @@ export default function Start({
     );
 
     if (token) {
+      // Im Raum liegt ab lg links oben die Schublade (w-64) über dem Inhalt, das Raster lässt ihr Platz.
       return (
-        <div className="flex w-full max-w-md flex-col items-center gap-4">
-          <h2 className="font-schild text-2xl">Deine Playlists</h2>
-          {unerreichbarHinweis}
-          <ul className="flex w-full flex-col gap-2">
-            {playlists.map((p) => (
-              <li key={p.id}>
-                <button
-                  className="w-full rounded-lg bg-flaeche px-4 py-3 text-left font-semibold outline-akzent focus-visible:outline-2"
-                  onClick={() => setGewaehlt(p)}
-                >
-                  {p.name} ({p.anzahlSongs} Songs)
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-wrap justify-center gap-3">
-            {demoKnopf}
-            <Knopf art="neben" onClick={abmeldenKlick}>
-              Abmelden
-            </Knopf>
-          </div>
+        <div className={kanal ? "w-full lg:pl-72" : "w-full"}>
+          <PlaylistAuswahl
+            playlists={playlists}
+            geladen={geladen}
+            hinweis={unerreichbarHinweis}
+            onWaehlen={setGewaehlt}
+            onDemo={() => setDemo(true)}
+            onAbmelden={abmeldenKlick}
+          />
         </div>
       );
     }

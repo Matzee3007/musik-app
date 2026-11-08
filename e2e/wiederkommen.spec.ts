@@ -7,7 +7,7 @@ test("ein Handy, das zurückkommt, wird am Tisch wieder normal", async ({
   test.setTimeout(180_000);
   const tisch = await (await browser.newContext()).newPage();
   await tisch.goto("/");
-  await tisch.getByRole("button", { name: "Lokal spielen" }).click();
+  await tisch.getByRole("button", { name: "Am Tisch spielen" }).click();
   const code = await tisch.getByText(/^[A-Z]{4}$/).textContent();
 
   const handyKontext = await browser.newContext();

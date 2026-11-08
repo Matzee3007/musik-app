@@ -19,7 +19,7 @@ export default function PlaylistAuswahl({
   onAbmelden: () => void;
 }) {
   return (
-    <div className="w-full max-w-7xl px-5 pt-7 pb-10 text-left sm:px-12 sm:pt-11 sm:pb-16">
+    <div className="w-full max-w-7xl text-left">
       <h2 className="mb-8 font-schild text-[32px] sm:text-[44px]">
         Playlist wählen
       </h2>
@@ -51,7 +51,7 @@ export default function PlaylistAuswahl({
                   {p.name.charAt(0)}
                 </span>
               )}
-              <span className="mt-3 line-clamp-2 block font-semibold break-words sm:text-lg">
+              <span className="mt-3 line-clamp-2 font-semibold break-words sm:text-lg">
                 {p.name}
               </span>
               <span className="block text-[15px] text-licht/70">

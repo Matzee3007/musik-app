@@ -39,7 +39,9 @@ export class Tisch {
     tisch.seite = await geraet(browser, tisch.fehler);
     await tisch.seite.goto("/");
     if (dj === undefined) {
-      await tisch.seite.getByRole("button", { name: "Lokal spielen" }).click();
+      await tisch.seite
+        .getByRole("button", { name: "Am Tisch spielen" })
+        .click();
     } else {
       await tisch.seite.getByRole("button", { name: "Online spielen" }).click();
       await tisch.seite.getByLabel("Dein Name").fill(dj);

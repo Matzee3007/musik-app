@@ -4,12 +4,16 @@ import Page from "../app/page";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
-test("Startseite zeigt Überschrift und „Demo starten“", async () => {
-  // Ohne Supabase wie in den Vorschauen, sonst kommt erst „Lokal spielen“.
+test("Startseite zeigt Schlagzeile und „Demo starten“", async () => {
+  // Ohne Supabase wie in den Vorschauen: Bühne mit Schlagzeile und darunter die Demo.
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
   render(<Page />);
+  // Start zeichnet erst, nachdem ein Effekt den Speicher gelesen hat.
   expect(
-    screen.getByRole("heading", { level: 1, name: "Musik-Bingo" }),
+    await screen.findByRole("heading", {
+      level: 1,
+      name: "Dreh das Rad. Erkenn den Song.",
+    }),
   ).toBeDefined();
   expect(
     await screen.findByRole("button", { name: "Demo starten" }),
