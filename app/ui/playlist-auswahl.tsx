@@ -2,17 +2,15 @@ import Knopf from "@/app/ui/knopf";
 import type { Playlist } from "@/lib/spotify/playlists";
 
 // Playlists des DJs als Raster mit Cover (Plan docs/plaene/2026-11-08-startseite-buehne.md).
-// geladen: Spotify hat geantwortet, erst dann heißt eine leere Liste "keine Playlist".
+// playlists null: Spotify hat noch nicht geantwortet, erst eine leere Liste heißt "keine Playlist".
 export default function PlaylistAuswahl({
   playlists,
-  geladen,
   hinweis,
   onWaehlen,
   onDemo,
   onAbmelden,
 }: {
-  playlists: Playlist[];
-  geladen: boolean;
+  playlists: Playlist[] | null;
   hinweis?: React.ReactNode;
   onWaehlen: (p: Playlist) => void;
   onDemo: () => void;
@@ -24,14 +22,14 @@ export default function PlaylistAuswahl({
         Playlist wählen
       </h2>
       {hinweis}
-      {geladen && playlists.length === 0 && (
+      {playlists?.length === 0 && (
         <p className="max-w-md text-licht/70">
           Du hast noch keine eigene Playlist mit Songs. Leg in Spotify eine an
           und lade die Seite neu.
         </p>
       )}
       <ul className="grid grid-cols-2 gap-x-3.5 gap-y-6 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-8 lg:grid-cols-4">
-        {playlists.map((p) => (
+        {playlists?.map((p) => (
           <li key={p.id} className="min-w-0">
             <button
               className="block w-full rounded-lg text-left outline-akzent focus-visible:outline-2 focus-visible:outline-offset-[6px]"
@@ -48,7 +46,8 @@ export default function PlaylistAuswahl({
                 />
               ) : (
                 <span className="flex aspect-square w-full items-end rounded-md bg-flaeche p-2.5 font-schild text-3xl font-bold text-akzent">
-                  {p.name.charAt(0)}
+                  {/* Nach Zeichen, nicht nach UTF-16-Einheiten: sonst zerfällt ein Emoji am Anfang. */}
+                  {[...p.name][0]}
                 </span>
               )}
               <span className="mt-3 line-clamp-2 font-semibold break-words sm:text-lg">

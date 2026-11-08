@@ -37,16 +37,21 @@ export default function Buehne({
   const code = raumCodeLesen(codeEingabe);
 
   return (
-    <div className="flex w-full flex-1 flex-col text-left">
-      <section className="relative flex-1 overflow-hidden border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] sm:min-h-[640px]">
+    // Ohne Supabase (Vorschauen) bleibt die Bühne niedrig, damit Demo und Anmelden darunter gleich zu sehen sind.
+    <div
+      className={`flex w-full flex-col text-left ${supabase ? "flex-1" : ""}`}
+    >
+      <section
+        className={`relative overflow-hidden border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] ${supabase ? "flex-1 sm:min-h-[640px]" : ""}`}
+      >
         <div
           aria-hidden
-          className="absolute top-[70px] -right-[150px] size-[300px] rounded-full opacity-35 sm:top-[76px] sm:-right-[140px] sm:size-[720px] sm:opacity-90"
+          className="absolute top-[70px] -right-[150px] size-[300px] rounded-full opacity-35 xl:top-[76px] xl:-right-[140px] xl:size-[720px] xl:opacity-90"
           style={ring}
         />
         <div
           aria-hidden
-          className="absolute top-[70px] right-[202px] z-[1] hidden border-x-[18px] border-t-[34px] border-x-transparent border-t-licht sm:block"
+          className="absolute top-[70px] right-[202px] z-[1] hidden border-x-[18px] border-t-[34px] border-x-transparent border-t-licht xl:block"
         />
         <header className="relative z-[2] flex h-[60px] items-center px-5 sm:h-[68px] sm:px-12">
           <div className="flex items-center gap-2.5">
@@ -108,31 +113,33 @@ export default function Buehne({
           )}
         </div>
       </section>
-      <section className="bg-flaeche">
-        <div className="flex flex-col items-stretch gap-3.5 px-5 py-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-7 sm:px-12 sm:py-7">
-          <div>
-            <h2 className="font-schild text-[28px]">Mitspielen</h2>
-            <p className="text-licht/70">Code vom DJ eingeben, ohne Konto.</p>
+      {supabase && (
+        <section className="bg-flaeche">
+          <div className="flex flex-col items-stretch gap-3.5 px-5 py-6 sm:flex-row sm:flex-wrap sm:items-center sm:gap-7 sm:px-12 sm:py-7">
+            <div>
+              <h2 className="font-schild text-[28px]">Mitspielen</h2>
+              <p className="text-licht/70">Code vom DJ eingeben, ohne Konto.</p>
+            </div>
+            {/* Wie eine Anzeigetafel. Kein maxLength: raumCodeLesen nimmt auch "EH MF" mit Leerzeichen. */}
+            <div className="flex flex-col items-stretch gap-3 sm:ml-auto sm:flex-row sm:items-center">
+              <input
+                aria-label="Raum-Code"
+                className="rounded-lg border border-licht/10 bg-grund px-4 py-2 text-center font-schild text-[32px] tracking-[0.3em] uppercase outline-akzent focus-visible:outline-2 disabled:opacity-40 sm:w-[200px]"
+                value={codeEingabe}
+                onChange={(e) => setCodeEingabe(e.target.value)}
+                disabled={!supabase}
+              />
+              <Knopf
+                art="neben"
+                disabled={!code}
+                onClick={() => onBeitreten(code!)}
+              >
+                Beitreten
+              </Knopf>
+            </div>
           </div>
-          {/* Wie eine Anzeigetafel. Kein maxLength: raumCodeLesen nimmt auch "EH MF" mit Leerzeichen. */}
-          <div className="flex flex-col items-stretch gap-3 sm:ml-auto sm:flex-row sm:items-center">
-            <input
-              aria-label="Raum-Code"
-              className="rounded-lg border border-licht/10 bg-grund px-4 py-2 text-center font-schild text-[32px] tracking-[0.3em] uppercase outline-akzent focus-visible:outline-2 disabled:opacity-40 sm:w-[200px]"
-              value={codeEingabe}
-              onChange={(e) => setCodeEingabe(e.target.value)}
-              disabled={!supabase}
-            />
-            <Knopf
-              art="neben"
-              disabled={!code}
-              onClick={() => onBeitreten(code!)}
-            >
-              Beitreten
-            </Knopf>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

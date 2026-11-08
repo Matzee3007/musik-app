@@ -18,10 +18,10 @@ const rock: Playlist = {
   cover: null,
 };
 
-function zeigen(playlists: Playlist[], geladen = true) {
+function zeigen(playlists: Playlist[] | null) {
   const handler = { onWaehlen: vi.fn(), onDemo: vi.fn(), onAbmelden: vi.fn() };
   const { container } = render(
-    <PlaylistAuswahl playlists={playlists} geladen={geladen} {...handler} />,
+    <PlaylistAuswahl playlists={playlists} {...handler} />,
   );
   return { ...handler, container };
 }
@@ -56,13 +56,13 @@ test("Klick auf eine Kachel ruft onWaehlen mit der Playlist", () => {
   expect(onWaehlen).toHaveBeenCalledWith(rock);
 });
 
-test("geladen ohne Playlists: Hinweis statt leerem Raster", () => {
+test("ohne Playlists: Hinweis statt leerem Raster, solange geladen wird keiner", () => {
   const hinweis =
     "Du hast noch keine eigene Playlist mit Songs. Leg in Spotify eine an und lade die Seite neu.";
   zeigen([]);
   expect(screen.getByText(hinweis)).toBeDefined();
   cleanup();
-  zeigen([], false);
+  zeigen(null);
   expect(screen.queryByText(hinweis)).toBeNull();
 });
 
@@ -72,4 +72,11 @@ test("Demo starten und Abmelden rufen ihre Handler", () => {
   fireEvent.click(screen.getByRole("button", { name: "Abmelden" }));
   expect(onDemo).toHaveBeenCalledOnce();
   expect(onAbmelden).toHaveBeenCalledOnce();
+});
+
+test("Platzhalter zeigt ein Emoji am Namensanfang ganz", () => {
+  zeigen([{ ...rock, name: "🎸 Rock" }]);
+  expect(screen.getByRole("button", { name: /Rock/ }).textContent).toMatch(
+    /^🎸/,
+  );
 });

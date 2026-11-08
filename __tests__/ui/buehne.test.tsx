@@ -56,13 +56,12 @@ test("Beitreten ist erst mit gültigem Code an und ruft onBeitreten", () => {
   expect(onBeitreten).toHaveBeenCalledWith("ABCD");
 });
 
-test("ohne Supabase sind Raum-Knöpfe und Code-Feld aus, ein Hinweis erklärt warum", () => {
+test("ohne Supabase sind Raum-Knöpfe aus, ein Hinweis erklärt warum, Mitspielen entfällt", () => {
   zeigen(false);
   expect(knopf("Am Tisch spielen").disabled).toBe(true);
   expect(knopf("Online spielen").disabled).toBe(true);
-  expect(screen.getByLabelText<HTMLInputElement>("Raum-Code").disabled).toBe(
-    true,
-  );
+  // Ohne Supabase gibt es keinen Raum zum Beitreten, das Band "Mitspielen" entfällt.
+  expect(screen.queryByLabelText("Raum-Code")).toBeNull();
   expect(
     screen.getByText(
       "Supabase ist hier nicht eingerichtet, nur die Demo ohne Raum.",

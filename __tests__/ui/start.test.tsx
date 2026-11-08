@@ -275,10 +275,7 @@ test("ohne Supabase sind Raum-Knöpfe aus, die Demo geht", async () => {
     name: "Am Tisch spielen",
   });
   expect(eroeffnen.disabled).toBe(true);
-  expect(
-    screen.getByRole<HTMLButtonElement>("button", { name: "Beitreten" })
-      .disabled,
-  ).toBe(true);
+  expect(screen.queryByRole("button", { name: "Beitreten" })).toBeNull();
   expect(
     screen.getByText(
       "Supabase ist hier nicht eingerichtet, nur die Demo ohne Raum.",
@@ -349,4 +346,19 @@ test("im Online-Raum gibt es Ton teilen, im lokalen nicht", async () => {
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   await screen.findByText("ABCD");
   expect(screen.queryByRole("button", { name: "Ton teilen" })).toBeNull();
+});
+
+test("mit Supabase steht die Bühne sofort da, auch wenn Spotify noch nicht geantwortet hat", async () => {
+  mitSupabase();
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(0);
+  // Das abgelaufene Token wird erneuert, die Antwort kommt nie.
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => new Promise<Response>(() => {})),
+  );
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  expect(
+    await screen.findByRole("button", { name: "Am Tisch spielen" }),
+  ).toBeDefined();
 });

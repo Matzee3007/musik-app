@@ -42,9 +42,8 @@ export default function Start({
   const [token, setToken] = useState<Token | null | undefined>(undefined);
   // Ohne Netz ließ sich das Token nicht erneuern, es bleibt aber gespeichert.
   const [unerreichbar, setUnerreichbar] = useState(false);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  // Spotify hat die Playlists geliefert, erst dann heißt eine leere Liste "keine Playlist".
-  const [geladen, setGeladen] = useState(false);
+  // null: Spotify hat die Playlists noch nicht geliefert.
+  const [playlists, setPlaylists] = useState<Playlist[] | null>(null);
   const [gewaehlt, setGewaehlt] = useState<Playlist | null>(null);
   // Wie das Token erst im Effekt gelesen: undefined heißt noch nicht gelesen.
   const [tischRaum, setTischRaum] = useState<TischRaum | null | undefined>(
@@ -56,16 +55,16 @@ export default function Start({
   const supabase = supabaseKonfiguriert();
 
   useEffect(() => {
+    // Den Raum unabhängig vom Token lesen: Die Bühne braucht keins und soll nicht auf Spotify warten. Wie das Token
+    // über ein Promise, denn direkt im Effekt Zustand setzen verbietet react-hooks/set-state-in-effect.
+    Promise.resolve(tischRaumLaden()).then(setTischRaum);
     (id ? gueltigesToken(id) : Promise.resolve(null))
       .catch((fehler) => {
         console.error(fehler);
         setUnerreichbar(true);
         return null;
       })
-      .then((t) => {
-        setToken(t);
-        setTischRaum(tischRaumLaden());
-      });
+      .then(setToken);
   }, [id]);
 
   // Ein Kanal je Raum, sonst bräche bei jedem Neuzeichnen die Verbindung ab.
@@ -78,10 +77,7 @@ export default function Start({
   useEffect(() => {
     if (!token) return;
     eigenePlaylists(token.accessToken)
-      .then((p) => {
-        setPlaylists(p);
-        setGeladen(true);
-      })
+      .then(setPlaylists)
       .catch((fehler) => {
         // 401: Spotify nimmt das Token nicht mehr an, also neu anmelden lassen.
         if (fehler instanceof SpotifyFehler && fehler.status === 401) {
@@ -94,7 +90,7 @@ export default function Start({
       });
   }, [token]);
 
-  if (token === undefined || tischRaum === undefined) return null;
+  if (tischRaum === undefined) return null;
 
   // Mit dj ein Online-Raum (ADR 0008), ohne ein lokaler.
   function eroeffnen(dj?: string) {
@@ -118,6 +114,7 @@ export default function Start({
 
   // Mit Supabase zuerst der Raum, Anmelden und Demo erst danach.
   if (supabase && !tischRaum) return raumWahl;
+  if (token === undefined) return null;
 
   if (!tischRaum || !kanal) {
     return (
@@ -180,8 +177,7 @@ export default function Start({
     function abmeldenKlick() {
       abmelden();
       setToken(null);
-      setPlaylists([]);
-      setGeladen(false);
+      setPlaylists(null);
     }
 
     const demoKnopf = (
@@ -203,7 +199,6 @@ export default function Start({
         <div className={kanal ? "w-full lg:pl-72" : "w-full"}>
           <PlaylistAuswahl
             playlists={playlists}
-            geladen={geladen}
             hinweis={unerreichbarHinweis}
             onWaehlen={setGewaehlt}
             onDemo={() => setDemo(true)}
