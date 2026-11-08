@@ -20,6 +20,11 @@ von selbst PRs öffnet, wenn ein Paket eine neue Version hat (**Versions-Updates
      kommen kleine Updates (minor, patch) gesammelt (Gruppe `npm-klein`), große (major) einzeln, weil sie oft Umbauten
      brauchen. Ein Paket landet in der ersten Gruppe, die passt.
    - Große Updates von `@types/node` ignoriert Dependabot: Die Typen sollen zu Node 24 passen, auf dem die App läuft.
+   - **2026-11-08:** Große Updates von `typescript` ignoriert Dependabot ebenfalls. PR #59 (TypeScript 5.9 → 7.0) brach
+     `npm run lint` mit `typescript-eslint does not support TS 7.0.`. Ursache: `typescript-eslint` aus
+     `eslint-config-next` unterstützt höchstens TypeScript 6.0. Lösung: PR geschlossen, Eintrag in `ignore`. Wieder
+     entfernen, sobald [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940)
+     TypeScript 7 unterstützt.
    - `github-actions`: einmal pro Woche, alle Actions in einem PR (Gruppe `actions`), z. B. `actions/checkout@v7` →
      `@v8`.
 
