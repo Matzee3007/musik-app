@@ -52,7 +52,7 @@ finden. Ein Test spielt Tisch und zwei Handys gleichzeitig.
 - `alleSchliessen()` in `test.afterEach` schließt alle Browser-Kontexte der Bots, auch nach einem Fehler.
 - `e2e/zwei-runden.spec.ts`: Regressionstest für das Presence-Limit von Supabase.
 - `e2e/seed.spec.ts`: Ausgangspunkt der Test-Agents (frische Startseite), testet selbst nichts.
-- `e2e/raum.spec.ts`: Raum eröffnen („Lokal spielen“), beitreten, „Name schon vergeben“, Neuladen, Raum schließen.
+- `e2e/raum.spec.ts`: Raum eröffnen („Am Tisch spielen“), beitreten, „Name schon vergeben“, Neuladen, Raum schließen.
 - `e2e/online.spec.ts`: Online-Raum (ADR 0008), `Tisch.eroeffnen(browser, "Matthias")` eröffnet ihn mit dem Namen
   des DJs. Der Spieler sieht Rad, Kategorie (erst nach dem Stillstand) und Lösung, DJ und Spieler haken ab.
 - `e2e/wiederkommen.spec.ts`: Handy geht offline (`context.setOffline(true)`, wie gesperrter Bildschirm) und kommt

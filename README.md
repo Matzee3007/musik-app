@@ -3,7 +3,7 @@
 Musik-Bingo als Web-App für Spieleabende mit Freunden: Ein Rad wählt die Kategorie, ein Song aus einer eigenen
 Spotify-Playlist läuft, und wer richtig liegt, hakt ein Feld seiner 5×5-Karte ab.
 
-**Live:** https://musik-bingo.vercel.app (unter „Lokal spielen“ läuft eine Demo ohne Spotify-Konto)
+**Live:** https://musik-bingo.vercel.app („Demo starten“ zeigt das Spiel ohne Spotify-Konto)
 
 ![Tisch mit Rad und laufendem Song](docs/bilder/tisch.png)
 

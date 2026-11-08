@@ -22,7 +22,7 @@ test("nach dem Abhaken in Runde 1 ist in Runde 2 wieder ein Feld frei", async ({
 }) => {
   const tisch = await (await browser.newContext()).newPage();
   await tisch.goto("/");
-  await tisch.getByRole("button", { name: "Lokal spielen" }).click();
+  await tisch.getByRole("button", { name: "Am Tisch spielen" }).click();
   const code = await tisch.getByText(/^[A-Z]{4}$/).textContent();
 
   const anna = await (await browser.newContext()).newPage();

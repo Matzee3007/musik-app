@@ -6,7 +6,7 @@ test("Spieler treten bei, laden neu und erfahren, dass der Raum geschlossen ist"
 }) => {
   const tisch = await (await browser.newContext()).newPage();
   await tisch.goto("/");
-  await tisch.getByRole("button", { name: "Lokal spielen" }).click();
+  await tisch.getByRole("button", { name: "Am Tisch spielen" }).click();
   const code = await tisch.getByText(/^[A-Z]{4}$/).textContent();
   expect(code).toMatch(/^[A-Z]{4}$/);
 

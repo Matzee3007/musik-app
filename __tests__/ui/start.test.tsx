@@ -94,9 +94,11 @@ test("angemeldet: Playlists mit Anzahl, Abmelden führt zurück zum Anmelden", a
   );
   render(<Start />);
   expect(
-    await screen.findByRole("heading", { name: "Deine Playlists" }),
+    await screen.findByRole("heading", { name: "Playlist wählen" }),
   ).toBeDefined();
-  expect(await screen.findByText("Partyhits (98 Songs)")).toBeDefined();
+  expect(
+    (await screen.findByRole("button", { name: /Partyhits/ })).textContent,
+  ).toContain("98 Songs");
   fireEvent.click(screen.getByRole("button", { name: "Abmelden" }));
   expect(
     await screen.findByRole("button", { name: "Mit Spotify anmelden" }),
@@ -195,22 +197,22 @@ test("ein Klick auf eine Playlist öffnet das Vorbereiten, Zurück führt zur Li
     ),
   );
   render(<Start />);
-  fireEvent.click(
-    await screen.findByRole("button", { name: "Partyhits (98 Songs)" }),
-  );
+  fireEvent.click(await screen.findByRole("button", { name: /Partyhits/ }));
   expect(screen.getByRole("heading", { name: "Partyhits" })).toBeDefined();
   fireEvent.click(screen.getByRole("button", { name: "Zurück" }));
   expect(
-    await screen.findByRole("heading", { name: "Deine Playlists" }),
+    await screen.findByRole("heading", { name: "Playlist wählen" }),
   ).toBeDefined();
 });
 
-test("Lokal spielen zeigt den Raum-Kopf, danach Demo und Anmelden", async () => {
+test("Am Tisch spielen zeigt den Raum-Kopf, danach Demo und Anmelden", async () => {
   mitSupabase();
   vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
-  fireEvent.click(await screen.findByRole("button", { name: "Lokal spielen" }));
-  expect(screen.queryByRole("button", { name: "Lokal spielen" })).toBeNull();
+  fireEvent.click(
+    await screen.findByRole("button", { name: "Am Tisch spielen" }),
+  );
+  expect(screen.queryByRole("button", { name: "Am Tisch spielen" })).toBeNull();
   const raum = tischRaumLaden();
   expect(raum?.code).toMatch(/^[A-Z]{4}$/);
   expect(screen.getByText(raum!.code)).toBeDefined();
@@ -224,7 +226,7 @@ test("Lokal spielen zeigt den Raum-Kopf, danach Demo und Anmelden", async () => 
 test("mit Supabase kommen Anmelden und Demo erst nach dem Eröffnen", async () => {
   mitSupabase();
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
-  await screen.findByRole("button", { name: "Lokal spielen" });
+  await screen.findByRole("button", { name: "Am Tisch spielen" });
   expect(screen.queryByRole("button", { name: "Demo starten" })).toBeNull();
   expect(
     screen.queryByRole("button", { name: "Mit Spotify anmelden" }),
@@ -236,7 +238,7 @@ test("gespeicherter Raum ist nach dem Neuladen wieder da", async () => {
   tischRaumSpeichern({ code: "ABCD", bekannt: [] });
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   expect(await screen.findByText("ABCD")).toBeDefined();
-  expect(screen.queryByRole("button", { name: "Lokal spielen" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "Am Tisch spielen" })).toBeNull();
 });
 
 test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {
@@ -248,7 +250,7 @@ test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {
     await screen.findByRole("button", { name: "Raum schließen" }),
   );
   expect(
-    await screen.findByRole("button", { name: "Lokal spielen" }),
+    await screen.findByRole("button", { name: "Am Tisch spielen" }),
   ).toBeDefined();
 });
 
@@ -270,13 +272,10 @@ test("Beitreten öffnet den Raum mit dem gelesenen Code", async () => {
 test("ohne Supabase sind Raum-Knöpfe aus, die Demo geht", async () => {
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   const eroeffnen = await screen.findByRole<HTMLButtonElement>("button", {
-    name: "Lokal spielen",
+    name: "Am Tisch spielen",
   });
   expect(eroeffnen.disabled).toBe(true);
-  expect(
-    screen.getByRole<HTMLButtonElement>("button", { name: "Beitreten" })
-      .disabled,
-  ).toBe(true);
+  expect(screen.queryByRole("button", { name: "Beitreten" })).toBeNull();
   expect(
     screen.getByText(
       "Supabase ist hier nicht eingerichtet, nur die Demo ohne Raum.",
@@ -347,4 +346,19 @@ test("im Online-Raum gibt es Ton teilen, im lokalen nicht", async () => {
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   await screen.findByText("ABCD");
   expect(screen.queryByRole("button", { name: "Ton teilen" })).toBeNull();
+});
+
+test("mit Supabase steht die Bühne sofort da, auch wenn Spotify noch nicht geantwortet hat", async () => {
+  mitSupabase();
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(0);
+  // Das abgelaufene Token wird erneuert, die Antwort kommt nie.
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => new Promise<Response>(() => {})),
+  );
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  expect(
+    await screen.findByRole("button", { name: "Am Tisch spielen" }),
+  ).toBeDefined();
 });
