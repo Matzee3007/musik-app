@@ -112,12 +112,14 @@ test("eigenePlaylists liefert das erste Bild als Cover, ohne Bild null", async (
       [
         { ...eigene("p1", 30), images: [{ url: "https://i.scdn.co/a" }] },
         { ...eigene("p2", 30), images: null },
+        { ...eigene("p3", 30), images: [] },
       ],
       null,
     ),
   );
   expect((await eigenePlaylists("a1", abruf)).map((p) => p.cover)).toEqual([
     "https://i.scdn.co/a",
+    null,
     null,
   ]);
 });

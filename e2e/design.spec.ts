@@ -124,3 +124,61 @@ for (const [breite, hoch] of [
     expect(await hoehe(anna.seite)).toBeLessThanOrEqual(hoch);
   });
 }
+
+// Startseite und Playlist-Auswahl (docs/plaene/2026-11-08-startseite-buehne.md). Spotify ist nachgebaut, damit die
+// Playlists ohne echte Anmeldung erscheinen.
+const playlists = [
+  "80er Party",
+  "Indie Abend mit einem ziemlich langen Namen für die Kachel im Raster",
+  "Rock Hymnen",
+].map((name, i) => ({
+  id: `p${i}`,
+  name,
+  owner: { id: "dj" },
+  items: { total: 30 },
+  images: null,
+}));
+
+for (const [breite, hoch] of [
+  [1440, 900],
+  [390, 844],
+]) {
+  test(`Bühne und Playlist-Raster bei ${breite} px ohne seitliches Scrollen, lange Namen höchstens zweizeilig`, async ({
+    browser,
+  }) => {
+    const kontext = await browser.newContext({
+      viewport: { width: breite, height: hoch },
+    });
+    const seite = await kontext.newPage();
+    await seite.route("https://api.spotify.com/v1/me", (r) =>
+      r.fulfill({ json: { id: "dj" } }),
+    );
+    await seite.route("https://api.spotify.com/v1/me/playlists**", (r) =>
+      r.fulfill({ json: { items: playlists, next: null } }),
+    );
+    await seite.addInitScript(() =>
+      localStorage.setItem(
+        "musik-app:spotify-token",
+        JSON.stringify({
+          accessToken: "a1",
+          refreshToken: "r1",
+          ablauf: Date.now() + 3_600_000,
+        }),
+      ),
+    );
+    const breiteDerSeite = () =>
+      seite.evaluate(() => document.documentElement.scrollWidth);
+    await seite.goto("/");
+    await seite.getByRole("button", { name: "Online spielen" }).click();
+    expect(await breiteDerSeite()).toBeLessThanOrEqual(breite);
+    await seite.getByRole("button", { name: "Am Tisch spielen" }).click();
+    const lang = seite.getByText(/^Indie Abend/);
+    await lang.waitFor();
+    expect(await breiteDerSeite()).toBeLessThanOrEqual(breite);
+    const zeilen = await lang.evaluate(
+      (e) => e.clientHeight / parseFloat(getComputedStyle(e).lineHeight),
+    );
+    expect(zeilen).toBeLessThanOrEqual(2);
+    await kontext.close();
+  });
+}

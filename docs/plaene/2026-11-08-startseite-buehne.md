@@ -24,7 +24,9 @@ Pakete.
 ## Feste Vorgaben
 
 - Farben bleiben „Anthrazit und Messing“: `grund`, `flaeche`, `akzent`, `licht`, `signal`. Neue Abstufungen nur als
-  Deckkraft (`licht/70`, `akzent/40` …), keine neuen Tokens.
+  Deckkraft (`licht/70`, `akzent/40` …), keine neuen Tokens. Ausnahme: Rad-Ring, Logo-Ring und Verlauf der Bühne
+  nehmen die Messing-Abstufungen aus dem Mock als Hex-Werte (`#dcbd7e`, `#8a6f3b` …). Sie sind reine Dekoration und
+  kommen nur in `app/ui/buehne.tsx` vor (Befund `plan-pruefer` 2026-11-08).
 - Schriften bleiben Barlow (Text) und Barlow Condensed (`font-schild` für Logo, Schlagzeile, Titel, Raum-Code).
 - Knöpfe nur über `app/ui/knopf.tsx` (`haupt`, `neben`).
 - Texte aus dem Mock: „Dreh das Rad. Erkenn den Song.“, Unterzeile „Musik-Bingo für den Abend mit Freunden. Du bist der
@@ -44,6 +46,9 @@ Pakete.
 3. Ohne Supabase (Vorschauen auf Vercel): Raum-Knöpfe und Code-Feld aus, Hinweis sichtbar, Demo geht weiter. → Aufgabe 2
 4. Langer Playlist-Name: bricht in der Kachel höchstens zweizeilig um und schiebt das Raster nicht breiter. → Aufgabe 4
 5. Tisch im Spiel passt weiter ohne Scrollen auf den Laptop (die Überschrift „Musik-Bingo“ zieht um). → Aufgabe 4
+
+Nachgetragen nach `plan-pruefer`: `images: []` im Test von Aufgabe 1, Schwerpunkt 4 und die Breiten 1440/390 px im
+Test „Bühne und Playlist-Raster bei … px ohne seitliches Scrollen …“ in `e2e/design.spec.ts`.
 
 ## Dateien
 
