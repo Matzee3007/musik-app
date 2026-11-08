@@ -76,3 +76,6 @@ npm run check        # vor jedem Commit
 - Konflikt bei der Installation von Vitest (`ERESOLVE`): siehe [[Next.js.md|Next.js]], Abschnitt „Fehler“.
 - `Found multiple elements with the text: Titel` und `[warn] Code style issues found` (2026-10-19): siehe
   [[Lernjournal Phase 1 - Spiel auf einem Gerät]], Abschnitt „Fehler und Lösungen“.
+- `typescript-eslint does not support TS 7.0.` bei `npm run lint` (2026-11-08, Dependabot-PR #59): `typescript-eslint`
+  aus `eslint-config-next` kann höchstens TypeScript 6.0. Lösung: bei TypeScript 6 bleiben, siehe
+  [[Dependabot - Einrichtung]].

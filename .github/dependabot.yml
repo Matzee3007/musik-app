@@ -19,6 +19,11 @@ updates:
       # Die Typen folgen der Laufzeit Node 24 (engines in package.json), nicht der neuesten Node-Version
       - dependency-name: "@types/node"
         update-types: [version-update:semver-major]
+      # TypeScript 7 bricht npm run lint: typescript-eslint (aus eslint-config-next) unterstützt höchstens TS 6.0.
+      # Nur 7 sperren, 6 bleibt erlaubt. Wieder freigeben, sobald `npm view @typescript-eslint/parser peerDependencies`
+      # bei typescript 7 einschließt (2026-11-08: >=4.8.4 <6.1.0).
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
