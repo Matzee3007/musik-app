@@ -77,7 +77,14 @@ Stand vom 2026-11-08. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
      Sammel-PR landete (#57, #62).
    - `cooldown` mit `default-days: 7` gegen ganz frische, womöglich manipulierte Versionen.
    - Erledigt am 2026-11-08: TypeScript ab 7 ignoriert (#75), ESLint 10 gemergt (#68).
-6. **Restpunkte**, wenn Zeit ist: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) ohne Netz, Karte im Querformat oder
+6. **Aus [[Engineering for Vibe Coders - Auswertung]] (2026-11-08), ungeprüft:**
+   - Lädt ein Client nach einer Unterbrechung von Supabase Realtime den ganzen Stand des Raums neu, statt nur auf
+     neue Ereignisse zu warten (Artikel 84, 132)?
+   - Erlauben die Spotify Developer Terms, den Ton aus dem Web Playback SDK per WebRTC an andere weiterzugeben? Vor
+     dem Spieleabend nachlesen und als ADR festhalten (Artikel 51).
+   - Was passiert bei HTTP 429 von Spotify: wird `Retry-After` beachtet, sehen die Spieler eine Meldung (Artikel 38)?
+   - Schon in Ordnung: In `NEXT_PUBLIC_` stehen nur Client-ID, URL und Publishable Key.
+7. **Restpunkte**, wenn Zeit ist: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) ohne Netz, Karte im Querformat oder
    auf dem Tablet, `e2e/raum.spec.ts` beobachten, Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`,
    `minimatch`-Warnung (bewusst gelassen, verschwindet mit einem ESLint-Update). Weitere Roadmap-Punkte in der
    Projektvision.
