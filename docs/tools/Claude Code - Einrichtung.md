@@ -58,3 +58,5 @@ Markdown (unverändert, 0), Datei außerhalb des Projekts (nichts passiert, 0).
 - Ursache: Das Skript gab es noch nicht.
 - Lösung: Skript anlegen und mit `chmod +x` ausführbar machen. Ohne `chmod +x` kommt stattdessen
   `permission denied`.
+
+- **2026-11-08:** Plugin `vercel@claude-plugins-official` in `.claude/settings.json` (Block `enabledPlugins`), nur in diesem Projekt statt für alle. Seine Nutzungsdaten an Vercel schaltet `VERCEL_PLUGIN_TELEMETRY=off` in der globalen Einstellung ab, siehe [[docs/Skills|Skills]] des Ecosystems.
