@@ -12,7 +12,12 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const partyhits: Playlist = { id: "p1", name: "Partyhits", anzahlSongs: 1 };
+const partyhits: Playlist = {
+  id: "p1",
+  name: "Partyhits",
+  anzahlSongs: 1,
+  cover: null,
+};
 
 const spotifySeite = antwort({
   next: null,

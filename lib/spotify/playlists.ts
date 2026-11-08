@@ -1,6 +1,11 @@
 import { jsonOderFehler, type Abruf } from "@/lib/spotify/abruf";
 
-export type Playlist = { id: string; name: string; anzahlSongs: number };
+export type Playlist = {
+  id: string;
+  name: string;
+  anzahlSongs: number;
+  cover: string | null;
+};
 
 // Seit Februar 2026 gibt Spotify die Songs nur bei Playlists heraus, die dem DJ gehören oder mit ihm geteilt sind.
 // Bei anderen fehlt "items" meist, bei gefolgten steht es aber da, deshalb zählen Besitzer und "collaborative".
@@ -11,6 +16,8 @@ type PlaylistSeite = {
     owner: { id: string };
     collaborative?: boolean;
     items?: { total: number };
+    // Spotify schickt bei Playlists ohne Bild null statt einer leeren Liste.
+    images?: { url: string }[] | null;
   }[];
   next: string | null;
 };
@@ -31,7 +38,12 @@ export async function eigenePlaylists(
     const seite = await jsonOderFehler<PlaylistSeite>(antwort);
     for (const p of seite.items) {
       if (p.items && (p.owner.id === dj.id || p.collaborative)) {
-        playlists.push({ id: p.id, name: p.name, anzahlSongs: p.items.total });
+        playlists.push({
+          id: p.id,
+          name: p.name,
+          anzahlSongs: p.items.total,
+          cover: p.images?.[0]?.url ?? null,
+        });
       }
     }
     url = seite.next;
