@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Startseite „Bühne“ und Playlist-Raster"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-11-08
 tags: [plan, oberflaeche, design, phase-4]
 ---
