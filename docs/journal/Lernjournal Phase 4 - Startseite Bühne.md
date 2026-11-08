@@ -136,7 +136,7 @@ Läuft das Setzen über ein Promise (`.then(setTischRaum)`), ist es erlaubt.
 ## Offene Fragen
 
 - Wie wirken echte Spotify-Cover im neuen Raster?
-- Beachtet Dependabot den Eintrag `versions: [">=7.0.0"]` beim nächsten wöchentlichen Lauf?
+- ~~Beachtet Dependabot den Eintrag `versions: [">=7.0.0"]`?~~ Ja: Direkt nach dem Merge von #75 kam #80 mit TypeScript 6.0.3.
 
 ## Nächste Schritte
 
