@@ -182,3 +182,51 @@ for (const [breite, hoch] of [
     await kontext.close();
   });
 }
+
+// Plan docs/plaene/2026-11-09-raum-offen-buehne.md: Raum offen, noch nicht bei Spotify angemeldet.
+for (const [breite, hoch] of [
+  [1440, 900],
+  [390, 844],
+]) {
+  test(`Raum offen bei ${breite} px ohne seitliches Scrollen, Schublade ein und aus`, async ({
+    browser,
+  }) => {
+    const kontext = await browser.newContext({
+      viewport: { width: breite, height: hoch },
+    });
+    const seite = await kontext.newPage();
+    const breiteDerSeite = () =>
+      seite.evaluate(() => document.documentElement.scrollWidth);
+    await seite.goto("/");
+    await seite.getByRole("button", { name: "Am Tisch spielen" }).click();
+    await expect(
+      seite.getByRole("heading", { level: 1, name: /ist offen/ }),
+    ).toBeVisible();
+    const anmelden = seite.getByRole("button", {
+      name: "Mit Spotify anmelden",
+    });
+    for (const umschalten of [false, true]) {
+      if (umschalten)
+        await seite.getByRole("button", { name: "Raum ausblenden" }).click();
+      expect(await breiteDerSeite()).toBeLessThanOrEqual(breite);
+      const pruefen = umschalten
+        ? [anmelden]
+        : [anmelden, seite.getByRole("button", { name: "Raum schließen" })];
+      for (const ziel of pruefen) {
+        await ziel.scrollIntoViewIfNeeded();
+        await expect(ziel).toBeInViewport();
+        // Liegt an der Mitte des Knopfs ein anderes Element obenauf, ist er überdeckt oder abgeschnitten.
+        // Anders als ein Probeklick geht das auch, wenn Anmelden ohne Client-ID aus ist (Review PR #85, Fund 5).
+        expect(
+          await ziel.evaluate((e) => {
+            const r = e.getBoundingClientRect();
+            return e.contains(
+              document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2),
+            );
+          }),
+        ).toBe(true);
+      }
+    }
+    await kontext.close();
+  });
+}

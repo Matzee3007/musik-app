@@ -6,7 +6,8 @@ import { raumCodeLesen } from "@/lib/raum/code";
 import { nameLesen } from "@/lib/raum/spieler";
 
 // Ring aus fünf Segmenten wie das Rad, in Messing-Tönen und Signal. Die Maske lässt nur den Kranz stehen.
-const ring: React.CSSProperties = {
+// Auch RaumOffen nimmt Ring und Logo von hier, damit die Messing-Werte nur in dieser Datei stehen.
+export const ring: React.CSSProperties = {
   background:
     "conic-gradient(from -20deg, var(--color-akzent) 0 72deg, #3a3226 0 144deg, #dcbd7e 0 216deg, #5a4a2d 0 288deg, var(--color-signal) 0)",
   mask: "radial-gradient(circle, transparent 54%, #000 54.5%, #000 70%, transparent 70.5%)",
@@ -17,6 +18,15 @@ const logoRing: React.CSSProperties = {
     "conic-gradient(var(--color-akzent) 0 72deg, #8a6f3b 0 144deg, #dcbd7e 0 216deg, #6e5a35 0 288deg, var(--color-signal) 0)",
   mask: "radial-gradient(circle, transparent 38%, #000 40%)",
 };
+
+export function Logo() {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="size-[30px] rounded-full" style={logoRing} />
+      <span className="font-schild text-2xl font-bold">Musik-Bingo</span>
+    </div>
+  );
+}
 
 // Startseite vor dem Raum (Plan docs/plaene/2026-11-08-startseite-buehne.md): oben der DJ, darunter die Mitspieler.
 export default function Buehne({
@@ -54,10 +64,7 @@ export default function Buehne({
           className="absolute top-[70px] right-[202px] z-[1] hidden border-x-[18px] border-t-[34px] border-x-transparent border-t-licht xl:block"
         />
         <header className="relative z-[2] flex h-[60px] items-center px-5 sm:h-[68px] sm:px-12">
-          <div className="flex items-center gap-2.5">
-            <span className="size-[30px] rounded-full" style={logoRing} />
-            <span className="font-schild text-2xl font-bold">Musik-Bingo</span>
-          </div>
+          <Logo />
         </header>
         <div className="relative z-[2] max-w-[660px] px-5 pt-7 pb-9 sm:px-12 sm:pt-[72px] sm:pb-16">
           <h1 className="mb-[18px] font-schild text-[52px] leading-[0.95] font-bold sm:text-[84px]">
