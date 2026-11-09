@@ -141,6 +141,29 @@ test("ohne Netz: Anmelden und Demo mit Hinweis, das Token bleibt gespeichert", a
   expect(localStorage.getItem("musik-app:spotify-token")).not.toBeNull();
 });
 
+test("im Raum ohne Netz: Raum offen mit Hinweis, das Token bleibt gespeichert", async () => {
+  mitSupabase();
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(0);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => {
+      throw new TypeError("Failed to fetch");
+    }),
+  );
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  expect(
+    await screen.findByText(
+      "Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu laden.",
+    ),
+  ).toBeDefined();
+  expect(
+    screen.getByRole("heading", { level: 1, name: /^Raum ABCD ist offen\./ }),
+  ).toBeDefined();
+  expect(localStorage.getItem("musik-app:spotify-token")).not.toBeNull();
+});
+
 test("ohne Netz mit gültigem Token: Hinweis statt leerer Playlist-Liste", async () => {
   vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
   angemeldet(Date.now() + 3_600_000);
