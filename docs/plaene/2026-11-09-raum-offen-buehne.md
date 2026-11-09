@@ -1,6 +1,6 @@
 ---
 titel: "Plan: Schritt „Raum offen“ im Stil der Bühne"
-status: aktiv
+status: abgeschlossen
 erstellt: 2026-11-09
 tags: [plan, oberflaeche, design, phase-4]
 ---
