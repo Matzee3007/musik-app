@@ -43,6 +43,20 @@ Die Versions-Updates regelt die Datei. Die Warnungen und Sicherheits-Updates sin
    - Rot nur bei `format:check` nach einem Prettier-Update: Prettier formatiert jetzt anders. Im Branch
      `npm run format` ausführen, committen, pushen. Nicht den ganzen PR schließen, sonst gehen die anderen Updates
      der Gruppe mit verloren.
+5. Mehrere PRs auf einmal: einen nach dem anderen mergen. Jeder Merge ändert `package-lock.json`, die übrigen PRs stehen
+   danach oft auf `CONFLICTING`. Dann mit `gh pr comment <nr> --body "@dependabot rebase"` neu aufbauen lassen und die
+   CI abwarten. Bei einem Sammel-PR kann Dependabot dabei den alten PR schließen („no longer needed“) und einen neuen
+   mit weiteren Updates öffnen (2026-11-09: #77 → #83, jetzt mit Playwright). Den neuen PR wie einen frischen prüfen.
+
+## Fehler und Meldungen
+
+- **`npm audit` meldet 10 moderate Lücken** (2026-11-09): Alle kommen aus `minimatch` 7–11 (GHSA-g3hv-75wg-m249,
+  Denial of Service über Glob-Muster) über `@typescript-eslint`. Das ist ein Entwicklungswerkzeug, kein Code, der in
+  der App läuft. `npm audit fix --force` würde große Versionssprünge erzwingen, deshalb bleibt es liegen, bis
+  `typescript-eslint` eine neue Version mitbringt.
+- **`.mcp.json` nach `npx playwright init-agents` geändert** (2026-11-09): Der Generator schreibt das Array mehrzeilig
+  und ohne Zeilenumbruch am Ende, Prettier hatte die Datei glattgezogen. Am Inhalt ändert sich nichts:
+  `git restore .mcp.json`.
 
 ## Befehle
 
