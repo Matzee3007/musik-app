@@ -182,3 +182,38 @@ for (const [breite, hoch] of [
     await kontext.close();
   });
 }
+
+// Plan docs/plaene/2026-11-09-raum-offen-buehne.md: Raum offen, noch nicht bei Spotify angemeldet.
+for (const [breite, hoch] of [
+  [1440, 900],
+  [390, 844],
+]) {
+  test(`Raum offen bei ${breite} px ohne seitliches Scrollen, Schublade ein und aus`, async ({
+    browser,
+  }) => {
+    const kontext = await browser.newContext({
+      viewport: { width: breite, height: hoch },
+    });
+    const seite = await kontext.newPage();
+    const breiteDerSeite = () =>
+      seite.evaluate(() => document.documentElement.scrollWidth);
+    await seite.goto("/");
+    await seite.getByRole("button", { name: "Am Tisch spielen" }).click();
+    await expect(
+      seite.getByRole("heading", { level: 1, name: /ist offen/ }),
+    ).toBeVisible();
+    const anmelden = seite.getByRole("button", {
+      name: "Mit Spotify anmelden",
+    });
+    for (const umschalten of [false, true]) {
+      if (umschalten)
+        await seite.getByRole("button", { name: "Raum ausblenden" }).click();
+      expect(await breiteDerSeite()).toBeLessThanOrEqual(breite);
+      await anmelden.scrollIntoViewIfNeeded();
+      await expect(anmelden).toBeInViewport();
+      // Probeklick ohne Auslösen: scheitert, wenn etwas den Knopf überdeckt.
+      await anmelden.click({ trial: true });
+    }
+    await kontext.close();
+  });
+}
