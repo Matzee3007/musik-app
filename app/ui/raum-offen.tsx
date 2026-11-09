@@ -3,13 +3,13 @@ import Knopf from "@/app/ui/knopf";
 
 // Der DJ hat einen Raum eröffnet, ist aber noch nicht bei Spotify angemeldet
 // (Plan docs/plaene/2026-11-09-raum-offen-buehne.md). Sieht aus wie die Bühne, die Schublade steht links,
-// wo sie auch im Spiel liegt. Schublade und Ton teilen kommen fertig aus Start.
+// wo sie auch im Spiel liegt. Die Schublade kommt fertig aus Start. Ton teilen fehlt hier: Vor dem Anmelden gibt es
+// noch keinen Ton, und ein Wechsel der Ansicht bräche das Teilen ab (Review PR #85, Fund 1).
 export default function RaumOffen({
   code,
   online,
   adresse,
   schublade,
-  tonTeilen,
   anmeldenAus,
   hinweis,
   onAnmelden,
@@ -19,7 +19,6 @@ export default function RaumOffen({
   online: boolean;
   adresse: string;
   schublade: React.ReactNode;
-  tonTeilen?: React.ReactNode;
   anmeldenAus: boolean;
   hinweis?: React.ReactNode;
   onAnmelden: () => void;
@@ -27,23 +26,25 @@ export default function RaumOffen({
 }) {
   return (
     <div className="flex w-full flex-1 flex-col text-left">
-      <section className="relative flex-1 overflow-hidden border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] sm:min-h-[640px]">
+      <section className="relative flex-1 border-b border-licht/10 bg-[radial-gradient(ellipse_at_80%_40%,#2a2620_0,var(--color-grund)_60%)] sm:min-h-[640px]">
+        {/* Nur der Ring wird zugeschnitten, sonst schnitte overflow-hidden auch Schublade und Fehlerzeile ab. */}
         <div
           aria-hidden
-          className="absolute top-[70px] -right-[150px] size-[300px] rounded-full opacity-35 xl:top-[110px] xl:-right-[190px] xl:size-[640px] xl:opacity-90"
-          style={ring}
-        />
-        <div
-          aria-hidden
-          className="absolute top-[110px] right-[112px] z-[1] hidden border-x-[18px] border-t-[34px] border-x-transparent border-t-licht xl:block"
-        />
-        <header className="relative z-[2] flex h-[60px] items-center gap-4 px-5 sm:h-[68px] sm:px-12">
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
+          <div
+            className="absolute top-[70px] -right-[150px] size-[300px] rounded-full opacity-35 xl:top-[110px] xl:-right-[190px] xl:size-[640px] xl:opacity-90"
+            style={ring}
+          />
+          <div className="absolute top-[110px] right-[112px] z-[1] hidden border-x-[18px] border-t-[34px] border-x-transparent border-t-licht xl:block" />
+        </div>
+        <header className="relative z-[2] flex h-[60px] items-center px-5 sm:h-[68px] sm:px-12">
           <Logo />
-          {tonTeilen && <div className="ml-auto">{tonTeilen}</div>}
         </header>
         <div className="relative z-[2] grid gap-8 px-5 pt-5 pb-9 sm:px-12 sm:pt-10 sm:pb-14 lg:grid-cols-[256px_minmax(0,600px)] lg:gap-16">
-          {/* Ab lg liegt die Schublade absolut, die Mindesthöhe hält ihr den Platz frei. */}
-          <div className="relative order-2 mx-auto w-full max-w-xs lg:order-none lg:mx-0 lg:min-h-[440px]">
+          {/* Die Schublade schwebt ab lg sonst frei (lg:absolute in RaumKopf). Hier steht sie im Fluss, damit die Spalte
+              mit vielen Spielern mitwächst. min-h-10: Platz für den Knopf, wenn sie ausgeblendet ist. */}
+          <div className="relative order-2 mx-auto min-h-10 w-full max-w-xs lg:order-none lg:mx-0 lg:[&>section]:static">
             {schublade}
           </div>
           <div className="lg:pt-8">

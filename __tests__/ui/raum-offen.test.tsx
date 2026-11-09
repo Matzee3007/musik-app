@@ -52,25 +52,23 @@ test("anmeldenAus schaltet nur Anmelden aus, der Hinweis steht da", () => {
   expect(screen.getByText("Spotify ist hier nicht eingerichtet")).toBeDefined();
 });
 
-test("am Tisch erklärt das Band QR-Code und Adresse, online den Link", () => {
+test("am Tisch erklärt das Band QR-Code und Adresse", () => {
   zeigen();
   expect(
     screen.getByText(
       "QR-Code scannen oder musik-bingo.vercel.app öffnen und EHMF eingeben.",
     ),
   ).toBeDefined();
-  cleanup();
-  zeigen({ online: true });
-  expect(
-    screen.getByText("Link schicken: musik-bingo.vercel.app/raum/EHMF"),
-  ).toBeDefined();
 });
 
-test("zeigt Schublade und Ton teilen, ohne tonTeilen keinen Platzhalter", () => {
+test("zeigt die Schublade", () => {
   zeigen();
   expect(screen.getByText("Schublade")).toBeDefined();
-  expect(screen.queryByRole("button", { name: "Ton teilen" })).toBeNull();
-  cleanup();
-  zeigen({ tonTeilen: <button>Ton teilen</button> });
-  expect(knopf("Ton teilen")).toBeDefined();
+});
+
+test("online zeigt das Band einen vollständigen Link mit https", () => {
+  zeigen({ online: true, adresse: "https://musik-bingo.vercel.app" });
+  expect(
+    screen.getByText("Link schicken: https://musik-bingo.vercel.app/raum/EHMF"),
+  ).toBeDefined();
 });

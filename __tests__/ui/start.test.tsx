@@ -404,10 +404,14 @@ test("gespeicherter Online-Raum ist nach dem Neuladen wieder online", async () =
   expect(screen.getAllByRole("button", { name: /^Feld / })).toHaveLength(25);
 });
 
-test("im Online-Raum gibt es Ton teilen, im lokalen nicht", async () => {
+test("im Online-Raum gibt es Ton teilen erst nach Raum offen, im lokalen nicht", async () => {
   mitSupabase();
   tischRaumSpeichern({ code: "ABCD", bekannt: [], dj: "Matthias" });
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  // Vor dem Anmelden gibt es noch keinen Ton (Review PR #85, Fund 1).
+  await screen.findByRole("heading", { level: 1, name: /ist offen/ });
+  expect(screen.queryByRole("button", { name: "Ton teilen" })).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Demo starten" }));
   expect(
     await screen.findByRole("button", { name: "Ton teilen" }),
   ).toBeDefined();

@@ -34,10 +34,13 @@ Variante A aus dem Mock `scratchpad/mock-raum-anmelden/index.html` (Session 2026
   Darunter der Absatz „Deine Mitspieler können jetzt beitreten. Melde dich bei Spotify an, dann spielst du die Songs aus
   deinen eigenen Playlists.“ Knöpfe „Mit Spotify anmelden“ (haupt) mit „Nur du brauchst ein Konto, deine Mitspieler
   nicht.“ und „Demo starten“ (neben) mit „Mit Beispielsongs, ganz ohne Spotify.“ Band „So kommen die anderen rein“: am
-  Tisch „QR-Code scannen oder {adresse} öffnen und {code} eingeben.“, online „Link schicken: {adresse}/raum/{code}“.
+  Tisch „QR-Code scannen oder {adresse} öffnen und {code} eingeben.“, online „Link schicken: {adresse}/raum/{code}“. `adresse` ist `window.location.origin` (mit `https://`, wie der
+  QR-Code), nach `/code-review` von PR #85 (Fund 6).
 - Laptop (ab `lg`): Schublade links (Spalte `w-64`), Text rechts daneben, Ring rechts wie auf der Bühne. Handy: zuerst
   der Text, darunter die Schublade, Ring blass (wie die Bühne am Handy).
-- „Ton teilen“ (nur Online-Raum) steht rechts im Kopf.
+- ~~„Ton teilen“ (nur Online-Raum) steht rechts im Kopf.~~ Geändert nach `/code-review` von PR #85 (Fund 1), entschieden
+  im Gespräch am 2026-11-09: „Raum offen“ zeigt „Ton teilen“ nicht. Es erscheint wie bisher erst nach Anmelden oder
+  Demo. Vor dem Anmelden gibt es keinen Ton, und der Wechsel der Ansicht hätte ein laufendes Teilen abgebrochen.
 - 1440 px und 390 px ohne seitliches Scrollen, sichtbarer Tastaturfokus (`outline-akzent`).
 
 ## Prüf-Schwerpunkte

@@ -209,10 +209,23 @@ for (const [breite, hoch] of [
       if (umschalten)
         await seite.getByRole("button", { name: "Raum ausblenden" }).click();
       expect(await breiteDerSeite()).toBeLessThanOrEqual(breite);
-      await anmelden.scrollIntoViewIfNeeded();
-      await expect(anmelden).toBeInViewport();
-      // Probeklick ohne Auslösen: scheitert, wenn etwas den Knopf überdeckt.
-      await anmelden.click({ trial: true });
+      const pruefen = umschalten
+        ? [anmelden]
+        : [anmelden, seite.getByRole("button", { name: "Raum schließen" })];
+      for (const ziel of pruefen) {
+        await ziel.scrollIntoViewIfNeeded();
+        await expect(ziel).toBeInViewport();
+        // Liegt an der Mitte des Knopfs ein anderes Element obenauf, ist er überdeckt oder abgeschnitten.
+        // Anders als ein Probeklick geht das auch, wenn Anmelden ohne Client-ID aus ist (Review PR #85, Fund 5).
+        expect(
+          await ziel.evaluate((e) => {
+            const r = e.getBoundingClientRect();
+            return e.contains(
+              document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2),
+            );
+          }),
+        ).toBe(true);
+      }
     }
     await kontext.close();
   });

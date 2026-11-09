@@ -146,9 +146,6 @@ export default function Start({
     );
   }
 
-  // Im Raum wie im Studio: die Bühne über die ganze Breite, links oben die Schublade mit Code und Spielern.
-  // Schmaler als lg steht die Schublade über der Bühne, darüber Platz für den Knopf.
-  // Die Hülle mit der Überschrift stand bis zur Bühne in app/page.tsx, Tisch und Vorbereiten sehen aus wie vorher.
   const schublade = (
     <RaumKopf
       code={tischRaum.code}
@@ -161,8 +158,6 @@ export default function Start({
       }}
     />
   );
-  // Online hört jeder den Song im eigenen Browser (ADR 0008).
-  const tonTeilen = tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />;
 
   // Noch nicht angemeldet: im Stil der Bühne (Plan docs/plaene/2026-11-09-raum-offen-buehne.md).
   if (!token && !demo) {
@@ -170,9 +165,8 @@ export default function Start({
       <RaumOffen
         code={tischRaum.code}
         online={tischRaum.dj !== undefined}
-        adresse={window.location.host}
+        adresse={window.location.origin}
         schublade={schublade}
-        tonTeilen={tonTeilen}
         anmeldenAus={!id}
         hinweis={ohneClientIdHinweis || unerreichbarHinweis}
         onAnmelden={anmelden}
@@ -181,6 +175,9 @@ export default function Start({
     );
   }
 
+  // Im Raum wie im Studio: die Bühne über die ganze Breite, links oben die Schublade mit Code und Spielern.
+  // Schmaler als lg steht die Schublade über der Bühne, darüber Platz für den Knopf.
+  // Die Hülle mit der Überschrift stand bis zur Bühne in app/page.tsx, Tisch und Vorbereiten sehen aus wie vorher.
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 p-8 text-center">
       <h1 className="font-schild text-4xl text-akzent sm:text-5xl">
@@ -188,7 +185,8 @@ export default function Start({
       </h1>
       <div className="relative flex w-full flex-col items-center gap-8 pt-14 lg:pt-0">
         {schublade}
-        {tonTeilen}
+        {/* Online hört jeder den Song im eigenen Browser (ADR 0008). */}
+        {tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />}
         <div className="flex w-full justify-center">{ablauf()}</div>
       </div>
     </div>
