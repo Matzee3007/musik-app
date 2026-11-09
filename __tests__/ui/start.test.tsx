@@ -221,6 +221,51 @@ test("Am Tisch spielen zeigt den Raum-Kopf, danach Demo und Anmelden", async () 
     screen.getByRole("button", { name: "Mit Spotify anmelden" }),
   ).toBeDefined();
   expect(screen.getByRole("button", { name: "Demo starten" })).toBeDefined();
+  expect(
+    screen.getByRole("heading", {
+      level: 1,
+      name: `Raum ${raum!.code} ist offen. Verbinde die Musik.`,
+    }),
+  ).toBeDefined();
+  expect(screen.queryByRole("heading", { name: "Musik-Bingo" })).toBeNull();
+});
+
+test("im Raum ohne Client-ID ist Anmelden aus, der Hinweis steht da, die Demo geht", async () => {
+  mitSupabase();
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "");
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  const anmelden = await screen.findByRole<HTMLButtonElement>("button", {
+    name: "Mit Spotify anmelden",
+  });
+  expect(anmelden.disabled).toBe(true);
+  expect(
+    screen.getByText(
+      "Spotify ist hier nicht eingerichtet, nur die Demo. Lokal: NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.",
+    ),
+  ).toBeDefined();
+  fireEvent.click(screen.getByRole("button", { name: "Demo starten" }));
+  expect(screen.getByRole("button", { name: "Spiel starten" })).toBeDefined();
+});
+
+test("im Raum nach dem Anmelden kommt die Playlist-Auswahl wie bisher", async () => {
+  mitSupabase();
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  angemeldet(Date.now() + 3_600_000);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) =>
+      url.endsWith("/v1/me")
+        ? antwort({ id: "dj" })
+        : antwort({ items: [], next: null }),
+    ),
+  );
+  tischRaumSpeichern({ code: "ABCD", bekannt: [] });
+  render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
+  expect(
+    await screen.findByRole("heading", { name: "Playlist wählen" }),
+  ).toBeDefined();
+  expect(screen.queryByRole("heading", { name: /ist offen/ })).toBeNull();
 });
 
 test("mit Supabase kommen Anmelden und Demo erst nach dem Eröffnen", async () => {
@@ -239,6 +284,9 @@ test("gespeicherter Raum ist nach dem Neuladen wieder da", async () => {
   render(<Start kanalOeffnen={nachgebauterRaum().oeffnen} />);
   expect(await screen.findByText("ABCD")).toBeDefined();
   expect(screen.queryByRole("button", { name: "Am Tisch spielen" })).toBeNull();
+  expect(
+    screen.getByRole("heading", { level: 1, name: /^Raum ABCD ist offen\./ }),
+  ).toBeDefined();
 });
 
 test("Raum schließen führt zurück zu Eröffnen und Beitreten", async () => {

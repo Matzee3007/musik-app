@@ -6,6 +6,7 @@ import Buehne from "@/app/ui/buehne";
 import Knopf from "@/app/ui/knopf";
 import PlaylistAuswahl from "@/app/ui/playlist-auswahl";
 import RaumKopf from "@/app/ui/raum-kopf";
+import RaumOffen from "@/app/ui/raum-offen";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import TonTeilen from "@/app/ui/ton-teilen";
 import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
@@ -112,6 +113,24 @@ export default function Start({
     />
   );
 
+  async function anmelden() {
+    window.location.assign(await anmeldungStarten(id!));
+  }
+
+  const unerreichbarHinweis = unerreichbar && (
+    <p className="max-w-sm text-sm text-licht/70">
+      Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu
+      laden.
+    </p>
+  );
+
+  const ohneClientIdHinweis = !id && (
+    <p className="max-w-sm text-sm text-licht/70">
+      Spotify ist hier nicht eingerichtet, nur die Demo. Lokal:
+      NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
+    </p>
+  );
+
   // Mit Supabase zuerst der Raum, Anmelden und Demo erst danach.
   if (supabase && !tischRaum) return raumWahl;
   if (token === undefined) return null;
@@ -130,24 +149,46 @@ export default function Start({
   // Im Raum wie im Studio: die Bühne über die ganze Breite, links oben die Schublade mit Code und Spielern.
   // Schmaler als lg steht die Schublade über der Bühne, darüber Platz für den Knopf.
   // Die Hülle mit der Überschrift stand bis zur Bühne in app/page.tsx, Tisch und Vorbereiten sehen aus wie vorher.
+  const schublade = (
+    <RaumKopf
+      code={tischRaum.code}
+      kanal={kanal}
+      stand={stand}
+      dj={tischRaum.dj}
+      onGeschlossen={() => {
+        setTischRaum(null);
+        setStand(null);
+      }}
+    />
+  );
+  // Online hört jeder den Song im eigenen Browser (ADR 0008).
+  const tonTeilen = tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />;
+
+  // Noch nicht angemeldet: im Stil der Bühne (Plan docs/plaene/2026-11-09-raum-offen-buehne.md).
+  if (!token && !demo) {
+    return (
+      <RaumOffen
+        code={tischRaum.code}
+        online={tischRaum.dj !== undefined}
+        adresse={window.location.host}
+        schublade={schublade}
+        tonTeilen={tonTeilen}
+        anmeldenAus={!id}
+        hinweis={ohneClientIdHinweis || unerreichbarHinweis}
+        onAnmelden={anmelden}
+        onDemo={() => setDemo(true)}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 p-8 text-center">
       <h1 className="font-schild text-4xl text-akzent sm:text-5xl">
         Musik-Bingo
       </h1>
       <div className="relative flex w-full flex-col items-center gap-8 pt-14 lg:pt-0">
-        <RaumKopf
-          code={tischRaum.code}
-          kanal={kanal}
-          stand={stand}
-          dj={tischRaum.dj}
-          onGeschlossen={() => {
-            setTischRaum(null);
-            setStand(null);
-          }}
-        />
-        {/* Online hört jeder den Song im eigenen Browser (ADR 0008). */}
-        {tischRaum.dj !== undefined && <TonTeilen kanal={kanal} />}
+        {schublade}
+        {tonTeilen}
         <div className="flex w-full justify-center">{ablauf()}</div>
       </div>
     </div>
@@ -170,10 +211,6 @@ export default function Start({
       );
     }
 
-    async function anmelden() {
-      window.location.assign(await anmeldungStarten(id!));
-    }
-
     function abmeldenKlick() {
       abmelden();
       setToken(null);
@@ -184,13 +221,6 @@ export default function Start({
       <Knopf art="neben" onClick={() => setDemo(true)}>
         Demo starten
       </Knopf>
-    );
-
-    const unerreichbarHinweis = unerreichbar && (
-      <p className="max-w-sm text-sm text-licht/70">
-        Spotify ist gerade nicht erreichbar. Verbindung prüfen und die Seite neu
-        laden.
-      </p>
     );
 
     if (token) {
@@ -213,12 +243,7 @@ export default function Start({
         <Knopf disabled={!id} onClick={anmelden}>
           Mit Spotify anmelden
         </Knopf>
-        {!id && (
-          <p className="max-w-sm text-sm text-licht/70">
-            Spotify ist hier nicht eingerichtet, nur die Demo. Lokal:
-            NEXT_PUBLIC_SPOTIFY_CLIENT_ID in .env.local eintragen.
-          </p>
-        )}
+        {ohneClientIdHinweis}
         {unerreichbarHinweis}
         {demoKnopf}
       </div>
