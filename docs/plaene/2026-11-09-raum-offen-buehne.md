@@ -83,7 +83,7 @@ keine (Spotify und Supabase nur über den bestehenden Code, unverändert)
 - Liefert:
   `export default function RaumOffen(props: { code: string; online: boolean; adresse: string; schublade: React.ReactNode; tonTeilen?: React.ReactNode; anmeldenAus: boolean; hinweis?: React.ReactNode; onAnmelden: () => void; onDemo: () => void })`
 
-- [ ] **Schritt 1: Tests schreiben** (`__tests__/ui/raum-offen.test.tsx`, Grundwerte `code="EHMF"`,
+- [x] **Schritt 1: Tests schreiben** (`__tests__/ui/raum-offen.test.tsx`, Grundwerte `code="EHMF"`,
   `adresse="musik-bingo.vercel.app"`, `schublade={<p>Schublade</p>}`):
   - `"zeigt die Schlagzeile mit dem Code als h1 und das Logo"`:
     `getByRole("heading", { level: 1, name: "Raum EHMF ist offen. Verbinde die Musik." })`, Text „Musik-Bingo“.
@@ -95,16 +95,16 @@ keine (Spotify und Supabase nur über den bestehenden Code, unverändert)
     musik-bingo.vercel.app/raum/EHMF“.
   - `"zeigt Schublade und Ton teilen, ohne tonTeilen keinen Platzhalter"`: „Schublade“ da; mit
     `tonTeilen={<button>Ton teilen</button>}` Knopf da, ohne kein Knopf „Ton teilen“.
-- [ ] **Schritt 2:** `npx vitest run __tests__/ui/raum-offen.test.tsx` → FAIL (Modul fehlt)
-- [ ] **Schritt 3: `RaumOffen` bauen.** Hülle wie die `section` der Bühne (gleicher Verlauf, `flex-1`, Ring mit den
+- [x] **Schritt 2:** `npx vitest run __tests__/ui/raum-offen.test.tsx` → FAIL (Modul fehlt)
+- [x] **Schritt 3: `RaumOffen` bauen.** Hülle wie die `section` der Bühne (gleicher Verlauf, `flex-1`, Ring mit den
   Klassen der Bühne, Zeiger ab `xl`). Kopf: `Logo` links, `tonTeilen` rechts (`ml-auto`). Inhalt: Raster
   `lg:grid-cols-[256px_minmax(0,600px)] lg:gap-16`, links `div relative` mit `schublade`, rechts Text mit `h1` (`font-schild`,
   `text-[42px] sm:text-[76px]`), Absatz, zwei Wege wie auf der Bühne (`sm:grid-cols-2`), darunter `hinweis`. Am Handy
   steht der Text vor der Schublade (`order-2` für die Schublade unterhalb `lg`). Danach das Band auf `bg-flaeche` mit
   `h2` „So kommen die anderen rein“ wie das Band „Mitspielen“ der Bühne. In `buehne.tsx` den Kopf auf `<Logo />`
   umstellen, `__tests__/ui/buehne.test.tsx` muss unverändert grün bleiben.
-- [ ] **Schritt 4:** `npx vitest run __tests__/ui/raum-offen.test.tsx __tests__/ui/buehne.test.tsx` → PASS
-- [ ] **Schritt 5:** `npm run check`, dann `git commit -m "Add room-open view in stage style"`
+- [x] **Schritt 4:** `npx vitest run __tests__/ui/raum-offen.test.tsx __tests__/ui/buehne.test.tsx` → PASS
+- [x] **Schritt 5:** `npm run check`, dann `git commit -m "Add room-open view in stage style"`
 
 ### Aufgabe 2: `RaumOffen` in die Startseite einbauen
 
@@ -115,37 +115,37 @@ keine (Spotify und Supabase nur über den bestehenden Code, unverändert)
 **Schnittstellen:**
 - Nutzt: `RaumOffen` aus Aufgabe 1
 
-- [ ] **Schritt 1: Tests anpassen und ergänzen:**
+- [x] **Schritt 1: Tests anpassen und ergänzen:**
   - `"Am Tisch spielen zeigt den Raum-Kopf, danach Demo und Anmelden"`: zusätzlich
     `getByRole("heading", { level: 1, name: /^Raum [A-Z]{4} ist offen\./ })`, keine Überschrift „Musik-Bingo“ als `h1`.
   - `"gespeicherter Raum ist nach dem Neuladen wieder da"`: zusätzlich die Überschrift „Raum … ist offen“.
   - Neu `"im Raum ohne Client-ID ist Anmelden aus, der Hinweis steht da, die Demo geht"`.
   - Neu `"im Raum nach dem Anmelden kommt die Playlist-Auswahl wie bisher"`: mit Token und gemerktem Raum gibt es
     `heading` „Playlist wählen“ und keine Überschrift „Raum … ist offen“.
-- [ ] **Schritt 2:** `npx vitest run __tests__/ui/start.test.tsx` → FAIL bei den neuen Erwartungen
-- [ ] **Schritt 3: Umbauen.** `RaumKopf` einmal als `const schublade = <RaumKopf … />` und `TonTeilen` als
+- [x] **Schritt 2:** `npx vitest run __tests__/ui/start.test.tsx` → FAIL bei den neuen Erwartungen
+- [x] **Schritt 3: Umbauen.** `RaumKopf` einmal als `const schublade = <RaumKopf … />` und `TonTeilen` als
   `tonTeilen` bauen. Im Raum gilt: ohne `token`, ohne `demo` → `<RaumOffen code={tischRaum.code}
   online={tischRaum.dj !== undefined} adresse={window.location.host} schublade={schublade} tonTeilen={…}
   anmeldenAus={!id} hinweis={…} onAnmelden={anmelden} onDemo={() => setDemo(true)} />`. Der Hinweis ist der bisherige
   Text ohne Client-ID bzw. `unerreichbarHinweis`. Dafür ziehen `anmelden` und `unerreichbarHinweis` aus `ablauf()` in
   den Rumpf von `Start`. Sonst bleibt die bisherige Hülle mit „Musik-Bingo“ für Playlists, Vorbereiten, Demo und Tisch.
-- [ ] **Schritt 4:** `npm test` → PASS
-- [ ] **Schritt 5:** `npm run check`, dann `git commit -m "Show room-open view before Spotify login"`
+- [x] **Schritt 4:** `npm test` → PASS
+- [x] **Schritt 5:** `npm run check`, dann `git commit -m "Show room-open view before Spotify login"`
 
 ### Aufgabe 3: Im Browser prüfen
 
 **Dateien:**
 - Test: `e2e/design.spec.ts`
 
-- [ ] **Schritt 1: Test schreiben:** `"Raum offen bei 1440 und 390 px ohne seitliches Scrollen, Schublade ein und aus"`
+- [x] **Schritt 1: Test schreiben:** `"Raum offen bei 1440 und 390 px ohne seitliches Scrollen, Schublade ein und aus"`
   (je Breite): Raum über „Am Tisch spielen“ eröffnen, Überschrift „Raum … ist offen“ sichtbar,
   `document.documentElement.scrollWidth <= innerWidth`, „Mit Spotify anmelden“ sichtbar und nicht überdeckt
   (`toBeInViewport` und Klick-Probe `trial: true`), dasselbe nach „Raum ausblenden“.
-- [ ] **Schritt 2:** `npx playwright test e2e/design.spec.ts -g 'Raum offen'` → PASS (der Test prüft fertigen Code,
+- [x] **Schritt 2:** `npx playwright test e2e/design.spec.ts -g 'Raum offen'` → PASS (der Test prüft fertigen Code,
   rot heißt: Layout nachbessern)
-- [ ] **Schritt 3:** Screenshots bei 1440 und 390 px, je am Tisch und online, neben Variante A des Mocks legen. Dann
+- [x] **Schritt 3:** Screenshots bei 1440 und 390 px, je am Tisch und online, neben Variante A des Mocks legen. Dann
   `npm run e2e` → alle grün.
-- [ ] **Schritt 4:** `npm run check`, dann `git commit -m "Check room-open view in the browser"`
+- [x] **Schritt 4:** `npm run check`, dann `git commit -m "Check room-open view in the browser"`
 
 ## Abschluss
 
