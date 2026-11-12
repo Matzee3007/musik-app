@@ -38,5 +38,6 @@ nur die Zahl der abgehakten Felder und „Bingo“. Presence liefert die Liste d
 - Kein Datenbankschema in Phase 3, nur ein Supabase-Projekt mit öffentlichem Schlüssel (anon key) für Realtime.
 - Lädt der Tisch neu, ist die laufende Runde weg. Der Tisch muss deshalb Raum-Code und Spielstand selbst im
   `localStorage` halten.
-- Wer den Raum-Code kennt, kann mithören und mitspielen. Für einen privaten Spieleabend ist das in Ordnung.
+- Wer den Raum-Code kennt, kann mithören und mitspielen. Für einen privaten Spieleabend ist das in Ordnung. Seit der
+  Musik über den Raum geht, gilt dafür [[0010-offener-raum-ton-nur-an-sichtbare|ADR 0010]].
 - Tabellen kommen mit dem Scoreboard und „Tisch ganz am Handy“ in Phase 4. Dann wird diese Entscheidung ersetzt.

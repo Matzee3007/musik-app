@@ -1,4 +1,5 @@
 import type { RaumKanal } from "@/lib/raum/kanal";
+import type { Anwesend } from "@/lib/raum/spieler";
 
 // Ton vom DJ im Online-Modus (ADR 0008): Der DJ schickt die Tonspur seines Tabs per WebRTC an jeden Spieler, eine
 // Verbindung je Spieler. Die Verbindungsdaten (Signaling) laufen als Raum-Nachricht "ton" über den Kanal des Raums.
@@ -84,20 +85,25 @@ function signalSenden(kanal: RaumKanal, signal: TonSignal): Promise<void> {
 
 // Ton-Signale der Reihe nach verarbeiten: Ein Kandidat darf erst nach Angebot bzw. Antwort eingetragen werden
 // (Lehre aus dem Durchstich). Ein Fehler geht an beiFehler, die nächsten Signale kommen trotzdem dran.
+// einreihen stellt ein Signal von Hand in dieselbe Reihe, abmelden hört auf.
 function nacheinander(
   kanal: RaumKanal,
   verarbeiten: (signal: TonSignal) => Promise<void>,
   beiFehler: (fehler: unknown) => void,
-): () => void {
+): { abmelden: () => void; einreihen: (signal: TonSignal) => void } {
   let kette = Promise.resolve();
-  return kanal.beiNachricht((nachricht) => {
-    if (nachricht.art !== "ton") return;
-    kette = kette.then(() => verarbeiten(nachricht.signal)).catch(beiFehler);
+  function einreihen(signal: TonSignal) {
+    kette = kette.then(() => verarbeiten(signal)).catch(beiFehler);
+  }
+  const abmelden = kanal.beiNachricht((nachricht) => {
+    if (nachricht.art === "ton") einreihen(nachricht.signal);
   });
+  return { abmelden, einreihen };
 }
 
-// Der DJ schickt die Tonspur aus strom an jeden Spieler, der "hallo" sagt. beiAnzahl meldet, wie viele Spieler
-// verbunden sind. Liefert eine Funktion, die alle Verbindungen schließt.
+// Der DJ schickt die Tonspur aus strom an jeden Spieler, der "hallo" sagt und als Spieler in Presence steht
+// (ADR 0010). beiAnzahl meldet, wie viele Spieler verbunden sind. Liefert eine Funktion, die alle Verbindungen
+// schließt.
 export function tonSenden(
   kanal: RaumKanal,
   ich: string,
@@ -118,11 +124,24 @@ export function tonSenden(
     );
   }
 
-  const abmelden = nacheinander(
+  // Ein "hallo" kann vor der Presence des Spielers ankommen: Das letzte je Gerät wartet, bis es sichtbar wird.
+  // Nachgeholt gilt es nur, wenn es dann noch wartet. Ein neueres "hallo" desselben Geräts, das schon in der Reihe
+  // stand, hat es sonst überholt, und das alte schlösse dessen Verbindung.
+  let sichtbar = new Set<string>();
+  const wartend = new Map<string, TonSignal>();
+  const nachgeholt = new WeakSet<TonSignal>();
+
+  const { abmelden, einreihen } = nacheinander(
     kanal,
     async (signal) => {
       if (signal.art === "hallo") {
         const { von: spieler, versuch } = signal;
+        if (nachgeholt.has(signal) && wartend.get(spieler) !== signal) return;
+        if (!sichtbar.has(spieler)) {
+          wartend.set(spieler, signal);
+          return;
+        }
+        wartend.delete(spieler);
         verbindungen.get(spieler)?.v.close();
         const v = neu();
         verbindungen.set(spieler, { v, versuch });
@@ -170,6 +189,18 @@ export function tonSenden(
     },
     beiFehler,
   );
+  function anwesendeSehen(anwesende: Anwesend[]) {
+    sichtbar = new Set(
+      anwesende.filter((a) => a.rolle === "spieler").map((a) => a.schluessel),
+    );
+    for (const [spieler, signal] of wartend) {
+      if (!sichtbar.has(spieler)) continue;
+      nachgeholt.add(signal);
+      einreihen(signal);
+    }
+  }
+  const anwesendeAb = kanal.beiAnwesenden(anwesendeSehen);
+  kanal.verbinden().then(anwesendeSehen, beiFehler);
   // Auch nach einem Wiederbeitritt des DJs: "hallo" aus der Zeit ohne Verbindung sind verloren.
   function bereit() {
     signalSenden(kanal, { art: "bereit", von: ich }).catch(beiFehler);
@@ -179,7 +210,9 @@ export function tonSenden(
 
   return () => {
     abmelden();
+    anwesendeAb();
     verbundenAb();
+    wartend.clear();
     for (const { v } of verbindungen.values()) v.close();
     verbindungen.clear();
     signalSenden(kanal, { art: "ende", von: ich }).catch(beiFehler);
@@ -216,7 +249,7 @@ export function tonEmpfangen(
     signalSenden(kanal, { art: "hallo", von: ich, versuch }).catch(beiFehler);
   }
 
-  const abmelden = nacheinander(
+  const { abmelden } = nacheinander(
     kanal,
     async (signal) => {
       if (signal.art === "bereit") {

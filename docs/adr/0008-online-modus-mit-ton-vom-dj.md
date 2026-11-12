@@ -58,7 +58,8 @@ seines Spotify-Tabs an andere Browser schicken kann:
 
 - Spotify verbietet in seinen Nutzungsbedingungen, Musik weiterzusenden. Für eine private Runde unter Freunden ist
   das dieselbe Grauzone wie Bildschirm teilen in Discord. Der Online-Modus bleibt deshalb privat, kein öffentliches
-  Produkt (wie schon für den Namen des Originalspiels).
+  Produkt (wie schon für den Namen des Originalspiels). Der genaue Wortlaut ist strenger, als hier angenommen, und
+  verbietet auch Spiele selbst: siehe [[0009-spotify-regeln-bewusst-privat|ADR 0009]].
 - Der DJ braucht Chrome oder Edge am Laptop oder PC. Safari bietet beim Teilen keinen Tab-Ton an. Spieler brauchen
   nur einen Browser mit WebRTC.
 - Der DJ hört jeden Song etwa 1 Sekunde früher als die anderen. Für das Spiel ohne Zeitlimit ist das egal.

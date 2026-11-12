@@ -13,9 +13,15 @@ function ton(signal: TonSignal): RaumNachricht {
   return { art: "ton", signal };
 }
 
-// Der DJ "dj" teilt Ton. schicken() spielt ein Signal eines anderen Geräts ein und wartet auf die Verarbeitung.
+// Der DJ "dj" teilt Ton, anna und ben stehen als Spieler in Presence. schicken() spielt ein Signal eines anderen
+// Geräts ein und wartet auf die Verarbeitung.
 function senden() {
   const raum = nachgebauterRaum();
+  raum.anwesendeSetzen([
+    { schluessel: "dj", rolle: "tisch", name: "Dora" },
+    { schluessel: "anna", rolle: "spieler", name: "Anna" },
+    { schluessel: "ben", rolle: "spieler", name: "Ben" },
+  ]);
   const fabrik = verbindungsFabrik();
   const beiAnzahl = vi.fn<(verbunden: number) => void>();
   const beiFehler = vi.fn();
@@ -189,8 +195,58 @@ test("beenden schließt alle Verbindungen und hört nicht mehr zu", async () => 
   await schicken({ art: "hallo", von: "ben", versuch: "b1" });
   beenden();
   expect(alle.map((v) => v.geschlossen)).toEqual([true, true]);
-  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  await schicken({ art: "hallo", von: "anna", versuch: "a2" });
   expect(alle).toHaveLength(2);
+});
+
+// ADR 0010: Ton nur an Geräte, die als Spieler in der Spielerleiste stehen.
+test("kein Angebot an ein Gerät, das nicht als Spieler in Presence steht", async () => {
+  const { raum, alle, schicken } = senden();
+  await schicken({ art: "hallo", von: "lauscher", versuch: "l1" });
+  await schicken({ art: "hallo", von: "dj", versuch: "d1" });
+  expect(alle).toHaveLength(0);
+  expect(raum.gesendet.filter((n) => n.art === "ton")).toEqual([
+    ton({ art: "bereit", von: "dj" }),
+  ]);
+});
+
+test("ein hallo vor der Presence bekommt sein Angebot, sobald der Spieler sichtbar wird", async () => {
+  const { raum, alle, schicken } = senden();
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  await schicken({ art: "hallo", von: "cem", versuch: "c2" });
+  expect(alle).toHaveLength(0);
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(1);
+  expect(raum.gesendet.at(-1)).toEqual(
+    ton({ art: "angebot", an: "cem", von: "dj", versuch: "c2", sdp: angebot }),
+  );
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(1);
+});
+
+test("ein gemerktes hallo verdrängt kein neueres, das schon in der Reihe steht", async () => {
+  const { raum, alle, schicken } = senden();
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  // c2 steht in der Reihe, bevor cem sichtbar wird und c1 nachgeholt würde.
+  raum.nachrichtSchicken(ton({ art: "hallo", von: "cem", versuch: "c2" }));
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(1);
+  expect(alle[0].geschlossen).toBe(false);
+  expect(raum.gesendet.at(-1)).toEqual(
+    ton({ art: "angebot", an: "cem", von: "dj", versuch: "c2", sdp: angebot }),
+  );
+});
+
+test("nach beenden holt ein sichtbar gewordener Spieler kein Angebot mehr", async () => {
+  const { raum, alle, schicken, beenden } = senden();
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  beenden();
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(0);
 });
 
 // Spielerin "anna" möchte Ton. schicken() spielt ein Signal eines anderen Geräts ein und wartet auf die Verarbeitung.
