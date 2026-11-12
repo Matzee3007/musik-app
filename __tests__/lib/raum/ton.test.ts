@@ -226,6 +226,29 @@ test("ein hallo vor der Presence bekommt sein Angebot, sobald der Spieler sichtb
   expect(alle).toHaveLength(1);
 });
 
+test("ein gemerktes hallo verdrängt kein neueres, das schon in der Reihe steht", async () => {
+  const { raum, alle, schicken } = senden();
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  // c2 steht in der Reihe, bevor cem sichtbar wird und c1 nachgeholt würde.
+  raum.nachrichtSchicken(ton({ art: "hallo", von: "cem", versuch: "c2" }));
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(1);
+  expect(alle[0].geschlossen).toBe(false);
+  expect(raum.gesendet.at(-1)).toEqual(
+    ton({ art: "angebot", an: "cem", von: "dj", versuch: "c2", sdp: angebot }),
+  );
+});
+
+test("nach beenden holt ein sichtbar gewordener Spieler kein Angebot mehr", async () => {
+  const { raum, alle, schicken, beenden } = senden();
+  await schicken({ art: "hallo", von: "cem", versuch: "c1" });
+  beenden();
+  raum.anwesendeSetzen([{ schluessel: "cem", rolle: "spieler", name: "Cem" }]);
+  await ruhe();
+  expect(alle).toHaveLength(0);
+});
+
 // Spielerin "anna" möchte Ton. schicken() spielt ein Signal eines anderen Geräts ein und wartet auf die Verarbeitung.
 // versuch() ist der Versuch ihres letzten hallo.
 function empfangen() {

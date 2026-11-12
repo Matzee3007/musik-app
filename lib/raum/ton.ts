@@ -125,14 +125,18 @@ export function tonSenden(
   }
 
   // Ein "hallo" kann vor der Presence des Spielers ankommen: Das letzte je Gerät wartet, bis es sichtbar wird.
+  // Nachgeholt gilt es nur, wenn es dann noch wartet. Ein neueres "hallo" desselben Geräts, das schon in der Reihe
+  // stand, hat es sonst überholt, und das alte schlösse dessen Verbindung.
   let sichtbar = new Set<string>();
   const wartend = new Map<string, TonSignal>();
+  const nachgeholt = new WeakSet<TonSignal>();
 
   const { abmelden, einreihen } = nacheinander(
     kanal,
     async (signal) => {
       if (signal.art === "hallo") {
         const { von: spieler, versuch } = signal;
+        if (nachgeholt.has(signal) && wartend.get(spieler) !== signal) return;
         if (!sichtbar.has(spieler)) {
           wartend.set(spieler, signal);
           return;
@@ -191,7 +195,7 @@ export function tonSenden(
     );
     for (const [spieler, signal] of wartend) {
       if (!sichtbar.has(spieler)) continue;
-      wartend.delete(spieler);
+      nachgeholt.add(signal);
       einreihen(signal);
     }
   }

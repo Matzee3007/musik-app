@@ -26,7 +26,8 @@ Ton kommt:
 - Der Raum bleibt **öffentlich**. Das Risiko ist für einen Abend unter Freunden klein.
 - **Der DJ schickt Ton nur an Geräte, die als Spieler in Presence stehen**, also mit Namen in der Spielerleiste.
   Kommt ein `hallo` vor der Presence an, wartet es, bis das Gerät sichtbar wird (`lib/raum/ton.ts`, `tonSenden`).
-- Wer mithören will, muss sich also als Spieler zeigen. Heimliches Mithören fällt auf, verhindert ist es nicht.
+- Das hält **einfache Lauscher** fern: Wer nur dem Kanal beitritt und um Ton bittet, muss sich als Spieler zeigen.
+  Gegen jemanden, der gezielt Nachrichten fälscht, schützt es nicht (siehe Konsequenzen).
 
 ## Alternativen
 
@@ -39,8 +40,12 @@ Ton kommt:
 
 ## Konsequenzen
 
-- Ein Gerät kann sich in Presence trotzdem mit beliebigem Namen und Schlüssel eintragen. Die Prüfung macht Mithören
-  sichtbar, nicht unmöglich.
+- Jede Nachricht im öffentlichen Kanal ist fälschbar, auch der Absender (`von`) im `hallo`. Die Schlüssel aller
+  sichtbaren Spieler stehen für jeden lesbar in Presence. Ein gezielter Lauscher kann deshalb unter dem Schlüssel
+  eines echten Spielers um Ton bitten. Er bekommt ihn dann, ohne in der Spielerleiste zu stehen, und der echte
+  Spieler verliert seine Verbindung, bis er neu um Ton bittet. Verhindern ließe sich das nur mit einem privaten Kanal
+  (siehe Alternativen). Hinweis darauf: Ein Spieler meldet am Abend, dass sein Ton immer wieder abreißt.
+- Ein Gerät kann sich außerdem in Presence mit beliebigem Namen und Schlüssel eintragen.
 - Wer aus Presence verschwindet (etwa ein gesperrtes Handy), behält eine schon bestehende Tonverbindung. Getrennt wird
   sie erst, wenn WebRTC sie als abgebrochen meldet. So reißt der Ton bei kurzen Aussetzern nicht ab.
 - Wird der Raum privat (siehe Alternativen), ersetzt das diese Entscheidung.

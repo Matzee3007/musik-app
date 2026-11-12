@@ -39,7 +39,7 @@ Regeln betreffen, was die App tut, nicht den technischen Weg.
 - **Online-Ton streichen:** Kein Weitersenden mehr, aber das Spielverbot und die Pflicht zum Cover blieben. Löst also
   nur einen Teil und kostet den Online-Modus. Verworfen.
 - **Andere Musikquelle** (eigene Dateien, ein Dienst, der Spiele erlaubt): Wäre regelkonform, ist aber ein großer
-  Umbau und widerspricht [[0001-stack|ADR 0001]]. Bleibt Ausweg, falls Spotify die App sperrt.
+  Umbau und widerspricht [[projects/musik-app/docs/adr/0001-stack|ADR 0001]]. Bleibt Ausweg, falls Spotify die App sperrt.
 - **Erst später entscheiden:** Hätte den Spieleabend weiter aufgeschoben, ohne dass sich an der Lage etwas ändert.
   Verworfen.
 
