@@ -39,9 +39,9 @@ Fortsetzung von [[Lernjournal Phase 4 - Raum offen und Dependabot]]. Gehört zu
 | Technik | Raum bleibt öffentlich, Ton nur an sichtbare Spieler | [[0010-offener-raum-ton-nur-an-sichtbare\|ADR 0010]] | Entwickler |
 | Prüfen | Review #88: Nr. 1, 2, 3, 6, 7 beheben, Nr. 4 (leere Sichtbaren-Liste nach gescheitertem ersten Abgleich) und Nr. 5 (wartende `hallo` nie aufgeräumt) liegen lassen | Nr. 4 sehr selten und dann ist der ganze Raum gestört, Nr. 5 nur bei gezieltem Angriff schädlich | Entwickler |
 | Bauen | Erst Spieleabend, dann Teil 2 des Online-Modus oder Restpunkte | Echter Test zeigt, was wirklich fehlt | Entwickler |
-| Technik | Nachgeholte `hallo` per `WeakSet` markieren und beim Verarbeiten prüfen, ob sie noch warten, statt die Warteschlange umzubauen | Kleinster Eingriff, der den Fall „altes hallo überholt neues“ löst | ungefragt |
-| Bauen | ADR 0004 und 0008 bekommen nur einen Verweis auf 0009/0010, ihr Status bleibt `akzeptiert` | Sie werden nicht ersetzt, nur genauer gefasst | ungefragt |
-| Bauen | PR #88 nach dem Umsetzen der abgestimmten Funde ohne zweites Review gemergt | Funde waren mit dem Entwickler abgestimmt, CI grün | ungefragt |
+| Technik | Nachgeholte `hallo` per `WeakSet` markieren und beim Verarbeiten prüfen, ob sie noch warten, statt die Warteschlange umzubauen | Kleinster Eingriff, der den Fall „altes hallo überholt neues“ löst | Entwickler |
+| Bauen | ADR 0004 und 0008 bekommen nur einen Verweis auf 0009/0010, ihr Status bleibt `akzeptiert` | Sie werden nicht ersetzt, nur genauer gefasst | Entwickler |
+| Bauen | PR #88 nach dem Umsetzen der abgestimmten Funde ohne zweites Review gemergt | Funde waren mit dem Entwickler abgestimmt, CI grün | Entwickler |
 
 ## Befehle: Supabase und Production prüfen
 

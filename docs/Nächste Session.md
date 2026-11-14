@@ -50,12 +50,9 @@ Stand vom 2026-11-14. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
    und Karte auf die Bildschirme? Fehler zuerst mit `fehler-diagnose` eingrenzen. Steht der Abend noch aus: vorher
    Supabase prüfen ([[projects/musik-app/docs/tools/Supabase|Supabase]], „Pausiert das kostenlose Projekt?“) und
    einen kurzen Probelauf mit zwei Geräten machen.
-2. **Anstehende Entscheidungen** (im Journal „ungefragt“), bitte bestätigen oder umdrehen:
-   - Nachgeholte `hallo` per `WeakSet` markieren statt die Warteschlange umzubauen.
-   - ADR 0004 und 0008 nur mit Verweis auf 0009/0010, Status bleibt `akzeptiert`.
-   - PR #88 nach Umsetzen der abgestimmten Funde ohne zweites Review gemergt.
-   - Aus der vorigen Übergabe noch offen: Dependabot-PRs einzeln mergen, bei `CONFLICTING` `@dependabot rebase`;
-     `minimatch` (Dependabot-Hinweis Nr. 1, nur Entwicklungs-Abhängigkeit) liegen lassen.
+2. **Anstehende Entscheidungen** aus der vorletzten Übergabe, bitte bestätigen oder umdrehen: Dependabot-PRs einzeln
+   mergen, bei `CONFLICTING` `@dependabot rebase`; `minimatch` (Dependabot-Hinweis Nr. 1, nur
+   Entwicklungs-Abhängigkeit) liegen lassen.
 3. **Teil 2 des Online-Modus mit `plan-schreiben` planen:** Notizen in der Auflösung. Jeder schickt seine Notizfläche
    mit, die Auflösung zeigt alle Antworten, der DJ sieht vorher, wer schon etwas notiert hat. Vorher
    `docs/Tools für später.md` auf vorgemerkte Werkzeuge für Phase 4 prüfen.
