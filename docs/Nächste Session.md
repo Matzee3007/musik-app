@@ -69,6 +69,7 @@ Stand vom 2026-11-14. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
    (Artikel 38)?
 7. **Restpunkte**, wenn Zeit ist: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) ohne Netz, Karte im Querformat oder
    auf dem Tablet, `e2e/raum.spec.ts` beobachten, Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`.
+- **`checks.sh` anlegen** (aus dem Ecosystem, 2026-11-17, dort ADR 0024): alle Prüfbefehle aus „Befehle“ der `CLAUDE.md` in eine `checks.sh` im Wurzelordner (Vorlage: `~/claude-ecosystem/vorlagen/projekt/checks.sh`), einmal auf `main` grün laufen lassen und „Vor jedem Commit“ in der `CLAUDE.md` auf `bash checks.sh` umstellen. Ab dann läuft sie vor jedem `/code-review`. Kleiner eigener PR vor der nächsten Aufgabe; hat das Projekt noch keine Prüfbefehle, entfällt der Punkt.
 
 ## Passende Skills
 
