@@ -70,6 +70,10 @@ Stand vom 2026-11-14. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 7. **Restpunkte**, wenn Zeit ist: `app/ui/vorbereiten-ansicht.tsx` (`tokenHolen`) ohne Netz, Karte im Querformat oder
    auf dem Tablet, `e2e/raum.spec.ts` beobachten, Funde aus PR #24 und PR #20, `noUncheckedIndexedAccess`.
 
+**Aus dem Ecosystem (2026-11-17): MIT-Lizenz.** Das Repo ist seit 2026-11-16 öffentlich (siehe [[docs/GitHub-Profil|GitHub-Profil]]).
+Eine `LICENSE` mit MIT-Lizenz im Wurzelordner anlegen, als Rechteinhaber `Matzee3007` (kein Klarname, Entscheidung im
+GitHub-Profil), dazu in der README einen kurzen Abschnitt „Lizenz“. Eigener kleiner PR.
+
 ## Passende Skills
 
 - `fehler-diagnose`: wenn am Spieleabend etwas nicht klang oder nicht passte
