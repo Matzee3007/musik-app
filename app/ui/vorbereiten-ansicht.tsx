@@ -22,6 +22,10 @@ import {
   vorbereiten,
 } from "@/lib/vorbereiten";
 
+// Rechts oben: Links liegt im Raum ab lg die Schublade mit Code und QR-Code darüber.
+export const ZURUECK_LINK =
+  "self-end text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2";
+
 type Geladen = {
   songs: PlaylistSong[];
   uebersprungen: number;
@@ -149,7 +153,14 @@ export default function VorbereitenAnsicht({
 
   if (spielSongs) {
     return (
-      <div className="flex w-full flex-col items-center gap-8">
+      <div className="flex w-full flex-col items-center gap-4">
+        {/* Beendet das Spiel, die Spielansicht meldet den Handys beim Verschwinden selbst "kein Spiel". */}
+        <button
+          className={ZURUECK_LINK}
+          onClick={() => window.confirm("Spiel beenden?") && onZurueck()}
+        >
+          Andere Playlist
+        </button>
         <SpielAnsicht
           songs={spielSongs}
           sofort
@@ -157,23 +168,13 @@ export default function VorbereitenAnsicht({
           onJahrKorrigiert={korrekturSpeichern}
           raum={raum}
         />
-        {/* Beendet das Spiel, die Spielansicht meldet den Handys beim Verschwinden selbst "kein Spiel". */}
-        <Knopf
-          art="neben"
-          onClick={() => window.confirm("Spiel beenden?") && onZurueck()}
-        >
-          Andere Playlist
-        </Knopf>
       </div>
     );
   }
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <button
-        className="self-start text-akzent underline outline-akzent focus-visible:outline-2 focus-visible:outline-offset-2"
-        onClick={onZurueck}
-      >
+      <button className={ZURUECK_LINK} onClick={onZurueck}>
         Zurück
       </button>
       <h2 className="font-schild text-3xl text-akzent">{playlist.name}</h2>
