@@ -9,7 +9,7 @@ import RaumKopf from "@/app/ui/raum-kopf";
 import RaumOffen from "@/app/ui/raum-offen";
 import SpielAnsicht from "@/app/ui/spiel-ansicht";
 import TonTeilen from "@/app/ui/ton-teilen";
-import VorbereitenAnsicht from "@/app/ui/vorbereiten-ansicht";
+import VorbereitenAnsicht, { ZURUECK_LINK } from "@/app/ui/vorbereiten-ansicht";
 import { neuerRaumCode } from "@/lib/raum/code";
 import { supabaseRaumKanal, type KanalOeffnen } from "@/lib/raum/kanal";
 import type { TischStand } from "@/lib/raum/stand";
@@ -199,14 +199,14 @@ export default function Start({
       : undefined;
     if (demo) {
       return (
-        <div className="flex w-full flex-col items-center gap-8">
-          <SpielAnsicht songs={SONGLISTE} raum={raum} />
-          <Knopf
-            art="neben"
+        <div className="flex w-full flex-col items-center gap-4">
+          <button
+            className={ZURUECK_LINK}
             onClick={() => window.confirm("Spiel beenden?") && setDemo(false)}
           >
             Demo beenden
-          </Knopf>
+          </button>
+          <SpielAnsicht songs={SONGLISTE} raum={raum} />
         </div>
       );
     }
