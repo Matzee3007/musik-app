@@ -197,7 +197,19 @@ export default function Start({
     const raum = kanal
       ? { kanal, onStand: setStand, dj: tischRaum?.dj }
       : undefined;
-    if (demo) return <SpielAnsicht songs={SONGLISTE} raum={raum} />;
+    if (demo) {
+      return (
+        <div className="flex w-full flex-col items-center gap-8">
+          <SpielAnsicht songs={SONGLISTE} raum={raum} />
+          <Knopf
+            art="neben"
+            onClick={() => window.confirm("Spiel beenden?") && setDemo(false)}
+          >
+            Demo beenden
+          </Knopf>
+        </div>
+      );
+    }
     if (token && gewaehlt) {
       return (
         <VorbereitenAnsicht

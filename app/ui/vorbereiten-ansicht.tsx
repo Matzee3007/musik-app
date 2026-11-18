@@ -149,13 +149,22 @@ export default function VorbereitenAnsicht({
 
   if (spielSongs) {
     return (
-      <SpielAnsicht
-        songs={spielSongs}
-        sofort
-        abspieler={abspieler}
-        onJahrKorrigiert={korrekturSpeichern}
-        raum={raum}
-      />
+      <div className="flex w-full flex-col items-center gap-8">
+        <SpielAnsicht
+          songs={spielSongs}
+          sofort
+          abspieler={abspieler}
+          onJahrKorrigiert={korrekturSpeichern}
+          raum={raum}
+        />
+        {/* Beendet das Spiel, die Spielansicht meldet den Handys beim Verschwinden selbst "kein Spiel". */}
+        <Knopf
+          art="neben"
+          onClick={() => window.confirm("Spiel beenden?") && onZurueck()}
+        >
+          Andere Playlist
+        </Knopf>
+      </div>
     );
   }
 

@@ -274,3 +274,26 @@ test("beim Verlassen wird der Player getrennt", async () => {
   unmount();
   expect(abspieler.trennen).toHaveBeenCalledTimes(1);
 });
+
+test("nach dem Spiel führt Andere Playlist nach einer Rückfrage zurück zur Auswahl", async () => {
+  netz(() => antwort({ jahr: 1975 }));
+  const onZurueck = vi.fn();
+  render(
+    <VorbereitenAnsicht
+      playlist={partyhits}
+      accessToken="a1"
+      onZurueck={onZurueck}
+      warten={async () => {}}
+      verbinden={async () => nachgebauterAbspieler()}
+    />,
+  );
+  fireEvent.click(await screen.findByRole("button", { name: "Spiel starten" }));
+  const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+  fireEvent.click(screen.getByRole("button", { name: "Andere Playlist" }));
+  expect(confirm).toHaveBeenCalledWith("Spiel beenden?");
+  expect(onZurueck).not.toHaveBeenCalled();
+  confirm.mockReturnValue(true);
+  fireEvent.click(screen.getByRole("button", { name: "Andere Playlist" }));
+  expect(onZurueck).toHaveBeenCalledTimes(1);
+  confirm.mockRestore();
+});
