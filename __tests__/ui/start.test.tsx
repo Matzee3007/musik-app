@@ -437,3 +437,16 @@ test("mit Supabase steht die Bühne sofort da, auch wenn Spotify noch nicht gean
     await screen.findByRole("button", { name: "Am Tisch spielen" }),
   ).toBeDefined();
 });
+
+test("Demo beenden führt nach einer Rückfrage zurück zu Anmelden und Demo", async () => {
+  vi.stubEnv("NEXT_PUBLIC_SPOTIFY_CLIENT_ID", "abc");
+  render(<Start />);
+  fireEvent.click(await screen.findByRole("button", { name: "Demo starten" }));
+  const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+  fireEvent.click(screen.getByRole("button", { name: "Demo beenden" }));
+  expect(confirm).toHaveBeenCalledWith("Spiel beenden?");
+  expect(screen.queryByRole("button", { name: "Demo starten" })).toBeNull();
+  confirm.mockReturnValue(true);
+  fireEvent.click(screen.getByRole("button", { name: "Demo beenden" }));
+  expect(screen.getByRole("button", { name: "Demo starten" })).toBeDefined();
+});
