@@ -1,23 +1,24 @@
 ---
 titel: Nächste Session
 status: aktiv
-erstellt: 2026-11-14
+erstellt: 2026-11-19
 tags: [session, übergabe]
 ---
 
 # Nächste Session
 
-Stand vom 2026-11-14. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
-[[Lernjournal Phase 4 - Spotify-Regeln und Ton nur an Sichtbare]].
+Stand vom 2026-11-19. Gehört zu [[projects/musik-app/docs/Projektvision|Projektvision]], letztes Journal:
+[[Lernjournal Phase 4 - Zurück aus dem Spiel]].
 
 ## Stand bei Sessionende
 
-- **Branch:** `main` (nach dem Merge von PR #89)
-- **Offene PRs:** keine
+- **Branch:** `main` (nach dem Merge von PR #97)
+- **Offene PRs:** #91 und #92 von Dependabot (nicht aus dieser Session, siehe „Vor dem Start“ Schritt 3)
 - **Nicht committet:** `.codex/` (nicht von Claude, stammt vermutlich vom Codex-Import am 2026-11-05). `.env.local` mit
   Spotify-Client-ID und Supabase-Werten liegt nur lokal und ist von Git ignoriert.
-- **Production:** `https://musik-bingo.vercel.app` mit „Ton nur an Sichtbare“ (PR #88), Deployment `success`.
-- **Supabase:** lief am 2026-11-14 (Gesundheitscheck `200`).
+- **Production:** `https://musik-bingo.vercel.app` mit dem Ausweg aus Spiel und Demo oben rechts (PR #95, #96),
+  Deployment `success`, vom Entwickler gesehen.
+- **Supabase:** am 2026-11-18 im Raum am Tisch benutzt (Demo-Raum lokal und in der Production eröffnet).
 
 ## Vor dem Start
 
@@ -44,6 +45,10 @@ Stand vom 2026-11-14. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 **Phase 4 – Eigene Ideen** läuft weiter. Claude fragt zuerst, was als Nächstes ansteht.
 
+0. **Anstehende Entscheidungen aus [[Lernjournal Phase 4 - Zurück aus dem Spiel]]** (alle „ungefragt“, bitte
+   bestätigen, umdrehen oder parken): Ausweg aus der Demo heißt „Demo beenden“; auch er steht oben rechts; beide PRs
+   mit `/code-review low`; PR #96 ohne eigene Rückfrage gemergt. Nebenbei: „Andere Playlist“ beim nächsten Spiel mit
+   Spotify einmal benutzen.
 1. **Spieleabend auswerten:** Der Online-Spieleabend war am Sessionende vorbereitet, sein Ergebnis noch nicht
    berichtet. Claude fragt danach: Bekam jeder Ton (sonst Netz notieren, evtl. TURN, siehe [[WebRTC]])? Riss bei
    jemandem der Ton immer wieder ab (Hinweis aus [[0010-offener-raum-ton-nur-an-sichtbare|ADR 0010]])? Passten Tisch
