@@ -35,11 +35,11 @@ Fortsetzung von [[Lernjournal Phase 4 - Spotify-Regeln und Ton nur an Sichtbare]
 |---|---|---|---|
 | Design | Aus dem Spiel führt ein Knopf zurück zur Playlist-Auswahl, mit Rückfrage „Spiel beenden?“ | Ein Fehlklick soll das Spiel nicht löschen | Entwickler |
 | Design | Die Demo bekommt denselben Ausweg | Gleicher Fehler, eine Zeile | Entwickler |
-| Design | Der Ausweg aus der Demo heißt „Demo beenden“, nicht „Andere Playlist“ | In der Demo gibt es keine Playlist, zu der man zurückkehrt | ungefragt |
+| Design | Der Ausweg aus der Demo heißt „Demo beenden“, nicht „Andere Playlist“ | In der Demo gibt es keine Playlist, zu der man zurückkehrt | Entwickler |
 | Design | Links zum Verlassen stehen oben rechts statt oben links | Oben links verdeckt im Raum ab `lg` die Schublade alles | Entwickler |
-| Design | Auch „Demo beenden“ steht oben rechts | Alle drei Auswege an derselben Stelle | ungefragt |
-| Prüfen | Beide PRs mit `/code-review low` | Kleine Änderung an der Oberfläche, keine Daten, Rechte oder Schlüssel | ungefragt |
-| Betrieb | PR #96 nach grüner CI und Review ohne Funde gemergt, ohne eigene Rückfrage | Der Entwickler konnte den Knopf mit Spotify nur in der Production prüfen | ungefragt |
+| Design | Auch „Demo beenden“ steht oben rechts | Alle drei Auswege an derselben Stelle | Entwickler |
+| Prüfen | Beide PRs mit `/code-review low` | Kleine Änderung an der Oberfläche, keine Daten, Rechte oder Schlüssel | Entwickler |
+| Betrieb | PR #96 nach grüner CI und Review ohne Funde gemergt, ohne eigene Rückfrage | Der Entwickler konnte den Knopf mit Spotify nur in der Production prüfen | Entwickler |
 
 ## Befehle: Fehler im Browser nachstellen
 

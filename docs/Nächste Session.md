@@ -45,10 +45,7 @@ Stand vom 2026-11-19. Gehört zu [[projects/musik-app/docs/Projektvision|Projekt
 
 **Phase 4 – Eigene Ideen** läuft weiter. Claude fragt zuerst, was als Nächstes ansteht.
 
-0. **Anstehende Entscheidungen aus [[Lernjournal Phase 4 - Zurück aus dem Spiel]]** (alle „ungefragt“, bitte
-   bestätigen, umdrehen oder parken): Ausweg aus der Demo heißt „Demo beenden“; auch er steht oben rechts; beide PRs
-   mit `/code-review low`; PR #96 ohne eigene Rückfrage gemergt. Nebenbei: „Andere Playlist“ beim nächsten Spiel mit
-   Spotify einmal benutzen.
+0. Nebenbei: „Andere Playlist“ beim nächsten Spiel mit Spotify einmal benutzen.
 1. **Spieleabend auswerten:** Der Online-Spieleabend war am Sessionende vorbereitet, sein Ergebnis noch nicht
    berichtet. Claude fragt danach: Bekam jeder Ton (sonst Netz notieren, evtl. TURN, siehe [[WebRTC]])? Riss bei
    jemandem der Ton immer wieder ab (Hinweis aus [[0010-offener-raum-ton-nur-an-sichtbare|ADR 0010]])? Passten Tisch
